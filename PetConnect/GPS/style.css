@@ -1,0 +1,68 @@
+body {
+  background-color: #1e1e1e;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 40px;
+  font-size: 2em;
+  background: linear-gradient(90deg, #6a5acd, #ff6b6b);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+form {
+  margin: 100px;
+}
+
+input {
+  all: unset;
+  color: #fff;
+  border: 1px solid #999797;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+
+input:is(:focus, :hover) {
+  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  background: linear-gradient(#121125, #121125) padding-box,
+    linear-gradient(45deg, blue, red) border-box;
+}
+
+button {
+  all: unset;
+  color: #fff;
+  border: 1px solid #999797;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:is(:hover) {
+  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  background: linear-gradient(#121125, #121125) padding-box,
+    linear-gradient(45deg, blue, red) border-box;
+}
+
+#coordinates {
+  font-size: 20px;
+  margin: 10px 0;
+  background-color: #1e1e1e;
+}
+
+#iframe {
+  height: 1000px;
+  width: 100%;
+  margin: auto;
+  border-radius: 10px;
+}
+#map {
+  height: 500px;
+  width: 80%;
+  border-radius: 10px;
+}

@@ -7,8 +7,8 @@
 
 /* Estilo para el body */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #121212;
+  font-family: Open, sans-serif;
+  background-color: #45242c;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,12 +16,61 @@ body {
   color: #fff;
 }
 
-/* Contenedor central */
+p {
+  margin-top: 30px;
+  font-size: 1em;
+  font-family: Open, sans-serif;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 160, 137, 1) 50%,
+    rgba(230, 160, 137, 1) 80%
+  );
+  background-clip: text;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h1 {
+  margin-top: 10px;
+  font-size: 2em;
+  font-family: Open, sans-serif;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 160, 137, 1) 50%,
+    rgba(230, 160, 137, 1) 80%
+  );
+  background-clip: text;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  margin-top: 10px;
+  font-size: 2em;
+  font-family: Open, sans-serif;
+  background: linear-gradient(
+    90deg,
+    rgba(69, 36, 44, 1) 16%,
+    rgba(230, 160, 137, 1) 50%,
+    rgba(230, 160, 137, 1) 80%
+  );
+  background-clip: text;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 .container {
-  background-color: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 500px;
+  text-align: center;
+  background-color: #5c2d37;
   padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.322);
   text-align: center;
 }
 
@@ -31,6 +80,7 @@ body {
   font-weight: bold;
   background: linear-gradient(90deg, #6b73ff, #000dff);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 20px;
 }
@@ -44,11 +94,12 @@ body {
 
 /* Estilo para los botones */
 .buttons button {
-  background: linear-gradient(90deg, #6b73ff, #000dff);
+  background: linear-gradient(90deg, blue, rgb(146, 16, 66));
   color: #fff;
   border: none;
   padding: 12px 24px;
-  margin: 10px;
+  margin: 50px;
+  margin-top: 60px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
@@ -58,4 +109,84 @@ body {
 .buttons button:hover {
   background: linear-gradient(90deg, #5a62d7, #000bcc);
   transform: scale(1.05);
+}
+
+form label {
+  font-family: Open, sans-serif;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 160, 137, 1) 50%,
+    rgba(230, 160, 137, 1) 80%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#full_name {
+  position: relative;
+  align-items: flex-end;
+  flex-direction: column;
+  all: unset;
+  color: #fff;
+  border: 1px solid #999797;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+#full_name:is(:focus, :hover) {
+  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  background: linear-gradient(#121125, #121125) padding-box,
+    linear-gradient(45deg, blue, red) border-box;
+}
+
+#email {
+  position: relative;
+  all: unset;
+  flex-direction: column;
+  color: #fff;
+  border: 1px solid #999797;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+#email:is(:focus, :hover) {
+  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  background: linear-gradient(#36171d, #36171d) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(69, 36, 44, 1) 16%,
+        rgba(230, 160, 137, 1) 50%,
+        rgba(230, 160, 137, 1) 80%
+      )
+      border-box;
+}
+
+#password {
+  all: unset;
+  color: #fff;
+  border: 1px solid #999797;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+#password:is(:focus, :hover) {
+  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  background: linear-gradient(#121125, #121125) padding-box,
+    linear-gradient(45deg, blue, red) border-box;
+}
+
+button {
+  all: unset;
+  color: #fff;
+  border: 1px solid #999797;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:is(:hover) {
+  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  background: linear-gradient(#121125, #121125) padding-box,
+    linear-gradient(45deg, blue, red) border-box;
 }

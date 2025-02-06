@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rastreador GPS</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+      body {
+        background-color: #1e1e1e;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      h1 {
+        font-size: 2em;
+        background: linear-gradient(90deg, #6a5acd, #ff6b6b);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      #map {
+        height: 500px;
+        width: 80%;
+        margin: auto;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Rastreador GPS</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+      var map = L.map("map").setView([0, 0], 15);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
+
+      var marker = L.marker([0, 0]).addTo(map);
+      var circle = L.circle([0, 0], { radius: 50 }).addTo(map);
+
+      async function updateLocation() {
+        try {
+          const response = await fetch("http://localhost:5000/gps-data");
+          const data = await response.json();
+
+          if (data.valid && !isNaN(data.lat) && !isNaN(data.lng)) {
+            marker.setLatLng([data.lat, data.lng]);
+            circle.setLatLng([data.lat, data.lng]);
+            map.setView([data.lat, data.lng], 17);
+            marker.bindTooltip(`Posición actual:<br>
+                      Lat: ${data.lat.toFixed(6)}<br>
+                      Lon: ${data.lng.toFixed(6)}`);
+          } else {
+            marker.bindTooltip("Señal GPS no disponible<br>Esperando datos...");
+            map.setView([19.4326, -99.1332], 9);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          map.setView([0, 0], 1);
+        }
+      }
+
+      // Actualizar cada segundo
+      setInterval(updateLocation, 1000);
+      updateLocation(); // Primera actualización
+    </script>
+  </body>
+</html>

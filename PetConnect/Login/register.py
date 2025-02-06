@@ -3,25 +3,25 @@ from flask_bcrypt import Bcrypt
 from config import get_db_connection
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Necesario para manejar mensajes flash
+app.secret_key = "supersecretkey"  
 bcrypt = Bcrypt(app)
 
-# Ruta para mostrar el formulario de registro
+
 @app.route('/register', methods=['GET'])
 def register_form():
     return render_template('register.html')
 
-# Ruta para procesar el formulario de registro
+
 @app.route('/register', methods=['POST'])
 def register():
     email = request.form['email']
     full_name = request.form['full_name']
     password = request.form['password']
 
-    # Generar el hash de la contraseña
+    
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # Guardar en la base de datos
+    
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
