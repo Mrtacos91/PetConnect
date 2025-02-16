@@ -3,6 +3,30 @@ const locationInput = document.getElementById("locationInput");
 const coordinatesElement = document.getElementById("coordinates");
 const mapIframe = document.getElementById("map");
 
+// Esta función obtiene la ubicación desde el servidor Flask cada 10 segundos
+function fetchLocation() {
+  fetch(`http://localhost:5000/gps-data`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.valid) {
+        const { lat, lng } = data;
+        updateMap(lat, lng);
+      } else {
+        alert("No se obtuvo una ubicación válida.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error al obtener la ubicación:", error);
+      alert("Hubo un problema al obtener la ubicación.");
+    });
+}
+
+// Llamar a la función para obtener la ubicación por primera vez
+fetchLocation();
+
+// Refrescar la ubicación cada 10 segundos (10000 milisegundos)
+setInterval(fetchLocation, 10000);
+
 locationForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const input = locationInput.value.trim();
@@ -45,9 +69,6 @@ function updateMap(lat, lng) {
   coordinatesElement.textContent = `Latitud: ${lat}, Longitud: ${lng}`;
 
   // Actualizar el iframe para mostrar el mapa en la nueva ubicación
-  mapIframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${
-    lng - 0.01
-  },${lat - 0.01},${lng + 0.01},${
-    lat + 0.01
-  }&layer=mapnik&marker=${lat},${lng}`;
+  mapIframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01
+    },${lat - 0.01},${lng + 0.01},${lat + 0.01}&layer=mapnik&marker=${lat},${lng}`;
 }
