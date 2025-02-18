@@ -1,7 +1,10 @@
-import { Home } from "./pages/home";
+import React from "react";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
-  return <Home />;
-}
+import "./styles/global.css";
+
+const App: React.FC = () => {
+  return <Dashboard />;
+};
 
 export default App;

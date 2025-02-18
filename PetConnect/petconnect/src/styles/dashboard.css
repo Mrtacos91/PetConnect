@@ -1,0 +1,91 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  margin: 0; /* Asegúrate de que no haya márgenes */
+  padding: 0; /* Asegúrate de que no haya padding */
+}
+
+/* Sidebar */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: -250px; /* Oculto inicialmente */
+  width: 250px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: left 0.4s ease-in-out;
+  z-index: 900; /* Debajo del botón */
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px;
+}
+
+/* Contenido Principal */
+.content {
+  flex: 1;
+  display: flex;
+  margin-left: 250px; /* Ajusta el margen izquierdo para dejar espacio para la barra lateral */
+}
+
+/* Panel Izquierdo */
+.left-panel {
+  flex: 1;
+  text-align: center;
+}
+
+/* Círculo de Estadísticas */
+.stats-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+.stats-circle img {
+  width: 80%;
+  border-radius: 50%;
+}
+
+/* Botones */
+.buttons button {
+  display: block;
+  width: 80%;
+  margin: 10px auto;
+  padding: 10px;
+  background: #0a74da;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Panel Derecho */
+.right-panel {
+  flex: 1;
+}
+
+/* Perfil de Mascota */
+.pet-profile {
+  text-align: center;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.pet-profile img {
+  width: 100px;
+  border-radius: 50%;
+}
+
+/* Información del Usuario */
+.user-info {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}

@@ -1,0 +1,25 @@
+/* Botón de menú hamburguesa */
+.menu-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: white;
+  color: black;
+  font-size: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, background 0.3s;
+  z-index: 1001; /* Siempre sobre el Sidebar */
+}
+
+.menu-button.rotate {
+  transform: rotate(180deg); /* Animación de giro */
+  background: white;
+}
+
+.icon {
+  color: black;
+}
