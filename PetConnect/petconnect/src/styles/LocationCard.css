@@ -1,0 +1,106 @@
+/* Contenedor principal */
+.highlight-container-location {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 16px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 100px;
+}
+
+/* Título */
+.highlight-title-location {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Tarjeta de ubicación */
+.location-card {
+  width: 100%;
+  padding: 16px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.location-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Botón "Ver en el mapa" */
+.location-card__button {
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ff5a5f;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.location-card__button:hover {
+  background-color: #e0484d;
+  transform: translateY(-3px);
+}
+
+/* Información de la ubicación */
+.location-card__info {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.location-card__info p {
+  margin: 5px 0;
+}
+
+/* 📌 Responsividad */
+@media (max-width: 768px) {
+  .highlight-container-location {
+    max-width: 90%;
+  }
+
+  .location-card {
+    padding: 12px;
+  }
+
+  .location-card__button {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .highlight-title-location {
+    font-size: 1.2rem;
+  }
+
+  .location-card__info {
+    font-size: 0.9rem;
+  }
+
+  .location-card__button {
+    font-size: 0.85rem;
+  }
+}

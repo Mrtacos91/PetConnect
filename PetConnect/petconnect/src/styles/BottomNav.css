@@ -1,17 +1,19 @@
 .bottom-nav {
   position: fixed;
-  bottom: 20px; /* Lo levanta un poco del fondo */
+  bottom: 20px;
   left: 50%;
+  text-align: center;
   transform: translateX(-50%);
   width: 90%;
   max-width: 400px;
   background: white;
-  border-radius: 20px; /* Bordes redondeados */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra para efecto flotante */
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   padding: 10px 0;
   display: flex;
   justify-content: space-around;
   align-items: center;
+  overflow: hidden;
 }
 
 .bottom-nav ul {
@@ -21,6 +23,7 @@
   justify-content: space-around;
   padding: 0;
   margin: 0;
+  position: relative;
 }
 
 .bottom-nav li {
@@ -28,17 +31,56 @@
   flex-direction: column;
   align-items: center;
   font-size: 14px;
-  color: black; /* Color azul claro */
+  color: black;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, color 0.3s;
+  width: 25%; /* Se ajusta automáticamente */
+  z-index: 10;
 }
 
 .bottom-nav li:hover {
-  transform: scale(1.1); /* Efecto de agrandado al pasar el mouse */
+  transform: scale(1.1);
 }
 
 .bottom-nav li svg {
   font-size: 20px;
+}
+
+/* 🔵 Indicador animado corregido */
+.indicator {
+  position: absolute;
+  bottom: -10px;
+  width: 75px;
+  height: 80px;
+  background: black;
+  border-radius: 50%;
+  transition: left 0.3s ease-in-out;
+  box-shadow: 0px 5px 15px rgb(65, 66, 66);
+  z-index: 0;
+  left: 12px; /* Posición inicial */
+  transform: translateX(0%);
+}
+
+/* 🌀 Curva inferior */
+.indicator::before {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  width: 60px;
+  height: 15px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* ✨ Efecto del icono activo */
+.bottom-nav .list.active {
+  color: #dfe0e2;
+  font-weight: bold;
+}
+
+.bottom-nav .list.active svg {
+  transform: scale(1.2);
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 @media (max-width: 480px) {
@@ -53,5 +95,15 @@
 
   .bottom-nav li svg {
     font-size: 18px;
+  }
+
+  .indicator {
+    width: 50px;
+    height: 50px;
+  }
+
+  .indicator::before {
+    width: 50px;
+    height: 12px;
   }
 }

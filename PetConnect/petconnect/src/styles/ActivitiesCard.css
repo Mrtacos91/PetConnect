@@ -1,0 +1,95 @@
+/* Ajustes generales */
+.highlight-container-activities {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  min-height: auto;
+  margin: 30px auto;
+  padding: 10px;
+  cursor: pointer;
+}
+
+p {
+  margin: 5px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.highlight-title-activities {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.highlight-card-activities {
+  color: black;
+  display: flex;
+  flex-direction: column; /* Cambiado a columna para mejor responsividad */
+  align-items: flex-start 0; /* Alinea los elementos al inicio */
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 100%;
+  max-width: 450px;
+  transition: transform 0.2s ease-in-out;
+  z-index: 10;
+}
+
+.highlight-card-activities:hover {
+  transform: translateY(-3px);
+}
+
+.pet-info-activities {
+  display: flex;
+  flex-direction: column;
+  color: #333;
+  margin-right: 15px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Estilo de actividades */
+.activities-section {
+  margin-top: 10px;
+  color: black;
+}
+
+.activity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.icon-activities {
+  margin: 5px;
+  color: #0a74da;
+  font-size: 18px;
+}
+
+/* 📌 Diseño responsivo */
+@media (max-width: 600px) {
+  .highlight-card-activities {
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los elementos al inicio */
+    text-align: left; /* Alinea el texto a la izquierda */
+    padding: 12px;
+  }
+
+  .highlight-title-activities {
+    text-align: center; /* Alinea el título al centro */
+    margin-left: 0; /* Elimina el margen izquierdo */
+  }
+
+  .activity {
+    justify-content: flex-start; /* Alinea las actividades al inicio */
+  }
+}

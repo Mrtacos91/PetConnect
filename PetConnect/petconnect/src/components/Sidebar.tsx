@@ -15,11 +15,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         </div>
         <ul>
           <li>
-            <FaUser className="icon" />
+            <FaUser className="icon-side" />
             Mi cuenta
           </li>
           <li>
-            <FaCog className="icon" />
+            <FaCog className="icon-side" />
             Configuración
           </li>
         </ul>

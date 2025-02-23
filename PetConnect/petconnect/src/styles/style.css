@@ -1,15 +1,15 @@
-body {
+.auth-background {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background: url("foto.jpg") no-repeat center center/cover;
+  background: url("../public/images/foto.jpg") no-repeat center center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-body::before {
+.auth-background::before {
   content: "";
   position: absolute;
   top: 0;
@@ -22,15 +22,27 @@ body::before {
 
 .remember {
   color: #fff;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  margin-bottom: 20px;
+  margin: 10px;
+}
+
+.remember input[type="checkbox"] {
+  border-radius: 50px;
+  border-color: #fff;
+  margin-right: 15px;
+  width: 15px;
+  height: 15px;
 }
 
 h1 {
   color: white;
   font-size: 50px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 20px 0;
 }
 
 .login-container {
@@ -38,19 +50,16 @@ h1 {
   max-width: 350px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  padding: 20px;
+  padding: 40px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
-.remember {
-  color: #fff;
-  position: relative;
-}
 
 h2 {
+  position: relative;
   color: #fff;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 }
 
 .input-container {
@@ -67,6 +76,14 @@ h2 {
   color: #fff;
   outline: none;
   font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.input-container input:focus + label,
+.input-container input:not(:placeholder-shown) + label {
+  top: 5px;
+  font-size: 12px;
+  color: #333;
 }
 
 .input-container label {
@@ -106,6 +123,7 @@ h2 {
 button {
   width: 100%;
   padding: 10px;
+  margin: 10px 0;
   background: rgba(255, 255, 255, 0.3);
   border: none;
   border-radius: 5px;
@@ -120,9 +138,8 @@ button:hover {
 }
 
 p {
-  color: #fff;
+  color: white;
   font-size: 14px;
-  margin-top: 10px;
 }
 
 p a {
@@ -154,4 +171,22 @@ p a:hover {
 
 .terms input {
   margin-right: 8px;
+}
+
+.toggle-password:hover {
+  color: #cac9c9;
+  transition: 0.3s;
+}
+
+.password-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 35%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: white;
 }
