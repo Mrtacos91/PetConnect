@@ -98,8 +98,8 @@
   }
 
   .indicator {
-    width: 50px;
-    height: 50px;
+    width: 75px;
+    height: 80px;
   }
 
   .indicator::before {

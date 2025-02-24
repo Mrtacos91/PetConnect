@@ -6,6 +6,9 @@ import MyPetCard from "../components/MyPetCard";
 import ActivitiesCard from "../components/ActivitiesCard";
 import "../styles/dashboard.css";
 import LocationCard from "../components/LocationCard";
+import FoundDoctorCard from "../components/FoundDoctorCard";
+import FoundHotelCard from "../components/FoundHotelCard";
+import WelcomeCard from "../components/WelcomeCard";
 
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -24,6 +27,9 @@ const Dashboard: React.FC = () => {
 
       {/* 📌 Contenedor principal */}
       <main className="content">
+        <div>
+          <WelcomeCard username="Carlos" /> {/* O puedes dejarlo vacío */}
+        </div>
         <section className="left-panel">
           <MyPetCard
             imageUrl="/images/perro1.jpg"
@@ -51,6 +57,12 @@ const Dashboard: React.FC = () => {
             name="Fido"
             viewMap={() => console.log("Ver en el mapa")}
           />
+        </section>
+        <section className="right-panel">
+          <FoundDoctorCard Info="Encuentra un veterinario cerca de ti aquí" />
+        </section>
+        <section className="right-panel">
+          <FoundHotelCard Info="Encuentra un hotel para tu mascota aquí" />
         </section>
       </main>
 

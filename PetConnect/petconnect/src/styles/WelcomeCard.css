@@ -1,0 +1,46 @@
+.welcome-card {
+  position: relative;
+  width: 100%;
+  top: 20%;
+  left: 15%; /* Desplazado un poco a la izquierda */
+  transform: translateY(-50%);
+  text-align: left;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.welcome-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+}
+
+.welcome-subtext {
+  font-size: 18px;
+  color: #777;
+}
+
+/* 🌀 Animación para que aparezca suavemente */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-card {
+    left: 5%; /* Más centrado en pantallas pequeñas */
+  }
+
+  .welcome-text {
+    font-size: 24px;
+  }
+
+  .welcome-subtext {
+    font-size: 16px;
+  }
+}
