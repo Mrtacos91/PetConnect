@@ -13,6 +13,11 @@ import ActivitiesCard from "../components/ActivitiesCard";
 import "../styles/dashboard.css";
 import "../styles/Actividades.css";
 
+<<<<<<< Updated upstream
+=======
+import ActivitiesCard from "../components/ActivitiesCard";
+
+>>>>>>> Stashed changes
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
@@ -77,19 +82,30 @@ const Dashboard: React.FC = () => {
           </section>
         )}
 
+<<<<<<< Updated upstream
         {/* Pestaña Asistente */}
         {activeTab === "asistente" && (
           <section className="right-panel">
             <h2>Asistente Virtual</h2>
             <p>Aquí irá la lógica del asistente...</p>
           </section>
+=======
+        {activeTab !== "inicio" && activeTab !== "actividades" && (
+          <div className="Actividades">
+            <Actividades />
+          </div>
+>>>>>>> Stashed changes
         )}
 
         {/* Pestaña Localizar */}
         {activeTab === "localizar" && (
           <section className="right-panel">
+<<<<<<< Updated upstream
             <h2>Localización de Mascota</h2>
             <LocationCard location="Calle 123, Colonia Ejemplo, CDMX" hour="10:00 AM" lastLocation="Última actualización hace 5 minutos" name="Fido" viewMap={() => console.log("Ver en el mapa")} />
+=======
+            <Actividades />
+>>>>>>> Stashed changes
           </section>
         )}
       </main>

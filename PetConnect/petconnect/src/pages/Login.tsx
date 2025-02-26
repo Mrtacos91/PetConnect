@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import supabase from "../supabase";
+import supabase from "../supabase"; // Asegúrate de que supabaseClient.ts esté configurado correctamente
+import AlertMessage from "../components/AlertMessage";
 import "../styles/style.css";
 
 const Login: React.FC = () => {
@@ -15,14 +16,20 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Normalizar el email a minúsculas para que coincida con la base de datos
+    // Normalizar el email a minúsculas
     const normalizedEmail = email.toLowerCase();
 
+    // Autenticamos al usuario con Supabase Auth
     const { data: signInData, error: signInError } =
       await supabase.auth.signInWithPassword({
         email: normalizedEmail,
@@ -30,7 +37,7 @@ const Login: React.FC = () => {
       });
 
     if (signInError) {
-      alert(`Error al iniciar sesión: ${signInError.message}`);
+      setAlert({ type: "error", message: signInError.message });
       return;
     }
 
@@ -42,16 +49,23 @@ const Login: React.FC = () => {
       .single();
 
     if (userError || !userData) {
-      alert("El usuario no se encuentra registrado en la base de datos.");
+      setAlert({
+        type: "error",
+        message: "El usuario no se encuentra registrado en la base de datos.",
+      });
       return;
     }
 
-    // Si todo es correcto, redirigimos a /dashboard
-    navigate("/dashboard");
+    // Si todo es correcto, mostramos un mensaje de éxito y redirigimos
+    setAlert({ type: "success", message: "Inicio de sesión exitoso!" });
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 1500);
   };
 
   return (
     <div className="login-container">
+      {alert && <AlertMessage type={alert.type} message={alert.message} />}
       <form className="login-box" onSubmit={handleLogin} autoComplete="off">
         <h2>Bienvenido a PetConnect</h2>
 

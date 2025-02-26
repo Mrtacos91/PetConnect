@@ -1,0 +1,75 @@
+.alert-message {
+  position: fixed;
+  bottom: 20px; /* Cambiado para que aparezca más arriba */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  z-index: 2000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease,
+    transform 0.3s ease-in-out;
+}
+
+/* 🟢 Mensaje de éxito */
+.alert-message.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* 🔴 Mensaje de error */
+.alert-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* 🌀 Ícono del mensaje */
+.alert-icon {
+  font-size: 1.2rem;
+}
+
+/* 📌 Animación de fade-in cuando aparece */
+.alert-message.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 📌 Animación de fade-out cuando desaparece */
+.alert-message.hide {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(10px);
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+/* 🔹 Keyframes de FadeIn */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 🔹 Keyframes de FadeOut */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+}

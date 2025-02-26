@@ -200,3 +200,48 @@
   width: 80%;
   height: 14px;
 }
+
+/* 📌 Botón Editar */
+.edit-button-MyPet {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* 📌 Icono de lápiz */
+.edit-icon {
+  font-size: 16px;
+}
+
+/* 📌 Mostrar el botón al pasar el mouse */
+.highlight-container-MyPet:hover .edit-button-MyPet {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 📌 Estilos responsivos */
+@media (max-width: 768px) {
+  .edit-button-MyPet {
+    top: 5px;
+    right: 10px;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .edit-icon {
+    font-size: 14px;
+  }
+}

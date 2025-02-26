@@ -11,3 +11,21 @@ body {
   background-color: white;
   box-shadow: none;
 }
+
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --primary-color: #007bff;
+}
+
+body.dark-mode {
+  --background-color: #1e1e2e;
+  --text-color: #f8f8f2;
+  --primary-color: #bb86fc;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease;
+}

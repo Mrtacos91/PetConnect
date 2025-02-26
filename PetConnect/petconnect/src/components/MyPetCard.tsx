@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Redirección
+import { FaEdit } from "react-icons/fa"; // Ícono de edición
 import "../styles/MyPet.css";
 
 interface MyPetCardProps {
@@ -15,14 +17,30 @@ const HighlightCard: React.FC<MyPetCardProps> = ({
   breed,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isHovered, setIsHovered] = useState(false); // Estado para mostrar "Editar"
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 2000); // Simula el tiempo de carga
   }, []);
 
   return (
-    <div className="highlight-container-MyPet">
+    <div
+      className="highlight-container-MyPet"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <h2 className="highlight-title-MyPet">Mi mascota</h2>
+
+      {/* 🔹 Botón "Editar" que aparece al pasar el mouse */}
+      {isHovered && (
+        <button
+          className="edit-button-MyPet"
+          onClick={() => navigate("/customise")}
+        >
+          <FaEdit className="edit-icon" /> Editar
+        </button>
+      )}
 
       {isLoading ? (
         // 🔹 Skeleton Loader
