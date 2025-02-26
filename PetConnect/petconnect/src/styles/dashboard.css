@@ -8,7 +8,8 @@
   overflow: hidden;
   box-shadow: none;
   padding-top: 60px;
-  overflow-y: scroll; /* Para que el contenido haga scroll */
+  overflow-y: scroll;
+  scrollbar-width: thin;
 }
 
 /* Sidebar */
