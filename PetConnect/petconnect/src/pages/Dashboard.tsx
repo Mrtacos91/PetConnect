@@ -4,12 +4,16 @@ import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
 import BottomNav from "../components/BottomNav";
 import MyPetCard from "../components/MyPetCard";
-import ActivitiesCard from "../components/ActivitiesCard";
+import Actividades from "../components/Actividades";
 import LocationCard from "../components/LocationCard";
 import FoundDoctorCard from "../components/FoundDoctorCard";
 import FoundHotelCard from "../components/FoundHotelCard";
 import WelcomeCard from "../components/WelcomeCard";
 import "../styles/dashboard.css";
+import "../styles/Actividades.css";
+
+import ActivitiesCard from "../components/ActivitiesCard";
+
 
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -38,9 +42,10 @@ const Dashboard: React.FC = () => {
     fetchUserData();
   }, []);
 
-  const toggleSidebar = () => {
+
+  function toggleSidebar() {
     setIsSidebarOpen(!isSidebarOpen);
-  };
+  }
 
   return (
     <div className="dashboard">
@@ -62,12 +67,12 @@ const Dashboard: React.FC = () => {
                 imageUrl="/images/perro1.jpg"
                 name="Fido"
                 type="Perro"
-                breed="Labrador retriever"
+                breed="Labrador Retriever"
               />
             </section>
             <section className="right-panel">
               <ActivitiesCard
-                imageUrl="../public/images/perro1.jpg"
+                imageUrl="/images/perro1.jpg"
                 name="Fido"
                 type="Perro"
                 breed="Labrador Retriever"
@@ -79,7 +84,7 @@ const Dashboard: React.FC = () => {
               <LocationCard
                 location="Calle 123, Colonia Ejemplo, CDMX"
                 hour="10:00 AM"
-                lastLocation="Calle 123, Colonia Ejemplo, CDMX, última actualización hace 5 minutos"
+                lastLocation="Última actualización hace 5 minutos"
                 name="Fido"
                 viewMap={() => console.log("Ver en el mapa")}
               />
@@ -93,11 +98,31 @@ const Dashboard: React.FC = () => {
           </>
         )}
 
-        {/* En otras pestañas se podría renderizar otro contenido */}
-        {activeTab !== "inicio" && (
-          <div className="no-content">
-            <p>No hay contenido para esta pestaña.</p>
+        {activeTab === "activitiesCard" && (
+          <section className="right-panel">
+            <ActivitiesCard
+              imageUrl="/images/perro1.jpg"
+              name="Fido"
+              type="Perro"
+              breed="Labrador Retriever"
+              vetAppointment="Lunes, 26 de Febrero - 10:00 AM"
+              walkSchedule="Martes, 27 de Febrero - 6:30 PM"
+            />
+          </section>
+        )}
+
+        {activeTab !== "inicio" && activeTab !== "actividades" && (
+          <div className="Actividades">
+            <Actividades />
+
           </div>
+        )}
+
+        {activeTab === "Actividades" && (
+          <section className="right-panel">
+            <Actividades
+            />
+          </section>
         )}
       </main>
       <section>
