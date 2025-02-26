@@ -1,0 +1,99 @@
+.location-map-container {
+  top: -30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Permite que el mapa crezca en pantallas grandes */
+  margin: 0 auto;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.location-map-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Estilo para el mapa */
+.map {
+  width: 200%;
+  max-width: 900px; /* Permite que sea más grande en pantallas anchas */
+  min-height: 450px; /* Asegura que tenga una altura mínima */
+  height: 50vh; /* Hace que el mapa sea proporcional a la pantalla */
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Skeleton Loader para el mapa */
+.skeleton-location {
+  width: 100%;
+  max-width: 900px;
+  min-height: 450px;
+  height: 50vh;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s infinite;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsividad */
+@media (max-width: 1024px) {
+  .map,
+  .skeleton-location {
+    min-height: 400px;
+    height: 45vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .map,
+  .skeleton-location {
+    width: 100%;
+    min-height: 350px;
+    height: 40vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .map,
+  .skeleton-location {
+    width: 100%;
+    min-height: 300px;
+    height: 35vh;
+  }
+}
+
+.pet-location-info {
+  margin-top: 30px;
+  padding: 12px;
+  width: 100%;
+  max-width: 600px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.pet-location-info p {
+  font-size: 16px;
+  color: #333;
+  margin: 6px 0;
+}
+
+.pet-location-info strong {
+  color: #000;
+}

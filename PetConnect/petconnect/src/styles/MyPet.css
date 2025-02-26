@@ -26,6 +26,7 @@
 
 /* 📌 Tarjeta de la mascota */
 .highlight-card-MyPet {
+  position: relative; /* Permite posicionar elementos absolutamente dentro */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -204,21 +205,20 @@
 /* 📌 Botón Editar */
 .edit-button-MyPet {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  background: rgba(255, 255, 255, 0.8);
-  border: none;
-  padding: 6px 10px;
-  font-size: 14px;
+  top: -10px;
+  right: 0px;
   color: #444;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  border-radius: 8px;
+  gap: 4px;
+  border-radius: 4px;
+  box-shadow: none;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  opacity: 0;
-  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 50;
 }
 
 /* 📌 Icono de lápiz */
@@ -243,5 +243,18 @@
 
   .edit-icon {
     font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-button-MyPet {
+    top: 5px;
+    right: 5px;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .edit-icon {
+    font-size: 12px;
   }
 }

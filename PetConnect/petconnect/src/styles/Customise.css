@@ -1,0 +1,167 @@
+/* Estilos globales para la página de personalización */
+.customise-page .content {
+  padding: 20px;
+  margin-top: 60px; /* Espacio para el menú y sidebar */
+  margin-bottom: 60px; /* Espacio para el BottomNav */
+}
+
+.customise-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.customise-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.customise-form .form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.customise-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.customise-form input[type="text"],
+.customise-form input[type="number"],
+.customise-form input[type="file"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.save-button {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.save-button:hover {
+  background: #0056b3;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .customise-container {
+    padding: 15px;
+    margin: 0 10px;
+  }
+  .customise-form input {
+    font-size: 0.9rem;
+  }
+  .save-button {
+    font-size: 0.9rem;
+  }
+}
+
+/* Botón para volver a /dashboard */
+.back-button {
+  position: fixed;
+  top: 20px;
+  max-width: 500px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #333; /* Ajusta el color según tu tema */
+  cursor: pointer;
+  z-index: 50;
+  transition: color 0.3s ease;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.back-button:hover {
+  transform: translateY(-3px);
+}
+
+/* Resto de estilos existentes para la página Customise */
+.customise-page .content {
+  padding: 20px;
+  margin-top: 60px; /* Espacio para el menú y sidebar */
+  margin-bottom: 60px; /* Espacio para otros elementos fijos */
+}
+
+.customise-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.customise-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.customise-form .form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.customise-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.customise-form input[type="text"],
+.customise-form input[type="number"],
+.customise-form input[type="file"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.save-button {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.save-button:hover {
+  background: #0056b3;
+  transform: translateY(-3px);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .customise-container {
+    padding: 15px;
+    margin: 0 10px;
+  }
+  .customise-form input {
+    font-size: 0.9rem;
+  }
+  .save-button {
+    font-size: 0.9rem;
+  }
+}
