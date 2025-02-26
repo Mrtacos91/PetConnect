@@ -3,9 +3,10 @@
   width: 100%;
   top: 20%;
   left: 15%; /* Desplazado un poco a la izquierda */
-  transform: translateY(-50%);
   text-align: left;
-  animation: fadeIn 0.8s ease-in-out;
+  opacity: 0;
+  transform: translateY(-30%);
+  animation: fadeIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 .welcome-text {
@@ -19,13 +20,13 @@
   color: #777;
 }
 
-/* 🌀 Animación para que aparezca suavemente */
+/* Animación mejorada para que aparezca suavemente */
 @keyframes fadeIn {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-30%);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }

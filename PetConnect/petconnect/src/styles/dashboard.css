@@ -12,6 +12,10 @@
   scrollbar-width: thin;
 }
 
+span:hover {
+  box-shadow: none;
+}
+
 /* Sidebar */
 .sidebar-container {
   position: fixed;
@@ -36,7 +40,8 @@
   align-items: flex-start;
   gap: 20px;
   padding: 20px;
-  flex-wrap: wrap; /* Para que se acomoden en pantallas pequeñas */
+  flex-wrap: wrap;
+  box-shadow: none; /* Para que se acomoden en pantallas pequeñas */
 }
 
 /* Panel Izquierdo */

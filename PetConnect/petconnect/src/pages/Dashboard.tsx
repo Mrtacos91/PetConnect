@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import supabase from "../supabase";
 import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
 import BottomNav from "../components/BottomNav";
@@ -13,6 +14,29 @@ import "../styles/dashboard.css";
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      // 🔹 Obtener usuario autenticado
+      const { data: userSession, error: sessionError } =
+        await supabase.auth.getUser();
+      if (sessionError || !userSession?.user) return;
+
+      const userEmail = userSession.user.email; // Obtenemos el email del usuario
+
+      // 🔹 Buscar en la tabla `users` por email
+      const { data: user, error: userError } = await supabase
+        .from("Users") // Asegúrate de que la tabla se llama "users" en minúscula en Supabase
+        .select("full_name")
+        .eq("email", userEmail) // Buscamos por email
+        .single();
+
+      if (!userError) setUsername(user?.full_name);
+    };
+
+    fetchUserData();
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -31,7 +55,7 @@ const Dashboard: React.FC = () => {
         {activeTab === "inicio" && (
           <>
             <div className="welcome-section">
-              <WelcomeCard username="Carlos" />
+              <WelcomeCard username={username || ""} />
             </div>
             <section className="left-panel">
               <MyPetCard
@@ -76,9 +100,10 @@ const Dashboard: React.FC = () => {
           </div>
         )}
       </main>
-
+      <section>
+        <BottomNav setActiveTab={setActiveTab} />
+      </section>
       {/* Menú inferior */}
-      <BottomNav setActiveTab={setActiveTab} />
     </div>
   );
 };

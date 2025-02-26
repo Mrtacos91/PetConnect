@@ -145,3 +145,58 @@
     font-size: 0.9rem;
   }
 }
+
+/* Skeleton Loader */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Estructura del Skeleton */
+.skeleton-container-MyPet {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 100%;
+  max-width: 650px;
+}
+
+.skeleton-image-MyPet {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-text-MyPet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 16px;
+}
+
+.skeleton-title-MyPet {
+  width: 60%;
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeleton-subtext-MyPet {
+  width: 80%;
+  height: 14px;
+}

@@ -8,7 +8,6 @@
   max-width: 400px;
   background: white;
   border-radius: 20px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   padding: 10px 0;
   display: flex;
   justify-content: space-around;
@@ -25,7 +24,9 @@
   margin: 0;
   position: relative;
 }
-
+li {
+  box-shadow: none !important;
+}
 .bottom-nav li {
   display: flex;
   flex-direction: column;
@@ -33,9 +34,10 @@
   font-size: 14px;
   color: black;
   cursor: pointer;
+  box-shadow: none !important;
   transition: transform 0.2s ease-in-out, color 0.3s;
   width: 25%; /* Se ajusta automáticamente */
-  z-index: 10;
+  z-index: 900;
 }
 
 .bottom-nav li:hover {
