@@ -1,0 +1,91 @@
+.activities-card {
+    background: #c99797;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(161, 20, 20, 0.1);
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+}
+
+.activities-card h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.input-group button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.input-group button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.input-group button:hover:not(:disabled) {
+    background: #45a049;
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+}
+
+.activity-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.activity-list li.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.activity-list button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 10px;
+    transition: 0.3s;
+}
+
+.activity-list button:hover {
+    opacity: 0.7;
+}
+
+.activity-list button:first-of-type {
+    color: #2196F3;
+}
+
+.activity-list button:last-of-type {
+    color: #ff4d4d;
+}
