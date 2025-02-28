@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import supabase from "../supabase"; // Asegúrate de que supabaseClient.ts esté configurado correctamente
+import supabase from "../supabase";
 import AlertMessage from "../components/AlertMessage";
 import "../styles/style.css";
 
 const Login: React.FC = () => {
-  useEffect(() => {
-    document.body.classList.add("auth-background");
-    return () => {
-      document.body.classList.remove("auth-background");
-    };
-  }, []);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -23,49 +16,80 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
+  // 🔹 Aplica los estilos correctos al cargar la pantalla de login
+  useEffect(() => {
+    document.body.classList.add("auth-background");
+
+    return () => {
+      document.body.classList.remove("auth-background");
+    };
+  }, []);
+
+  // 🔹 Verificar si hay una sesión activa y redirigir al Dashboard
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) {
+        navigate("/dashboard");
+      }
+    };
+
+    checkSession();
+
+    // 🔹 Detectar cambios en la sesión
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN") {
+          navigate("/dashboard");
+        } else if (event === "SIGNED_OUT") {
+          navigate("/login"); // 🔹 Solo redirige sin recargar
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
+  // 🔹 Inicio de sesión con email y contraseña
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Normalizar el email a minúsculas
     const normalizedEmail = email.toLowerCase();
 
-    // Autenticamos al usuario con Supabase Auth
-    const { data: signInData, error: signInError } =
-      await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
 
-    if (signInError) {
-      setAlert({ type: "error", message: signInError.message });
+    if (error) {
+      setAlert({ type: "error", message: error.message });
       return;
     }
 
-    // Verificamos que el usuario exista en la tabla "users"
-    const { data: userData, error: userError } = await supabase
-      .from("Users")
-      .select("*")
-      .eq("email", normalizedEmail)
-      .single();
+    setAlert({ type: "success", message: "Inicio de sesión exitoso!" });
 
-    if (userError || !userData) {
+    // No es necesario un timeout, `useEffect` redirigirá automáticamente
+  };
+
+  // 🔹 Inicio de sesión con Google
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    if (error) {
       setAlert({
         type: "error",
-        message: "El usuario no se encuentra registrado en la base de datos.",
+        message: "Error al iniciar sesión con Google",
       });
-      return;
     }
-
-    // Si todo es correcto, mostramos un mensaje de éxito y redirigimos
-    setAlert({ type: "success", message: "Inicio de sesión exitoso!" });
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 1500);
   };
 
   return (
     <div className="login-container">
       {alert && <AlertMessage type={alert.type} message={alert.message} />}
+
       <form className="login-box" onSubmit={handleLogin} autoComplete="off">
         <h2>Bienvenido a PetConnect</h2>
 
@@ -100,6 +124,16 @@ const Login: React.FC = () => {
         </div>
 
         <button type="submit">Iniciar sesión</button>
+
+        {/* 🔹 Botón para iniciar sesión con Google */}
+        <button
+          type="button"
+          className="google-login-button"
+          onClick={handleGoogleLogin}
+        >
+          <img src="../google-icon.png" alt="Google" className="google-icon" />
+          Iniciar sesión con Google
+        </button>
 
         <p>
           ¿No tienes una cuenta?{" "}
