@@ -1,91 +1,205 @@
-.activities-card {
-    background: #c99797;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0px 4px 10px rgba(161, 20, 20, 0.1);
-    max-width: 400px;
-    margin: auto;
-    text-align: center;
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.activities-card h2 {
-    font-size: 22px;
+html,
+body {
+    height: 100%;
+    overflow-x: hidden;
+    /* Elimina cualquier barra lateral horizontal */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa;
     color: #333;
-    margin-bottom: 15px;
-}
-
-.input-group {
     display: flex;
-    gap: 8px;
-    margin-bottom: 15px;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    animation: fadeIn 1s ease-out;
+    overflow-y: hidden;
+    /* Asegura que no haya barras de desplazamiento vertical */
 }
 
-.input-group input {
-    flex: 1;
-    padding: 10px;
+.container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: slideUp 0.5s ease-out forwards;
+    overflow: hidden;
+    /* Elimina el desbordamiento en el contenedor */
+}
+
+.titulo {
+    font-size: 2rem;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeIn 1s 0.5s ease-out forwards;
+}
+
+.subtitulo {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+.seccion {
+    margin-bottom: 20px;
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
     border: 2px solid #ddd;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 1rem;
+    transition: border-color 0.3s, transform 0.3s;
 }
 
-.input-group button {
-    background: #4CAF50;
-    color: white;
+.input:focus {
+    border-color: #3498db;
+    outline: none;
+    transform: scale(1.02);
+}
+
+/* Estilo para el campo de nombre de la cita */
+.input::placeholder {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.boton {
+    width: 100%;
+    padding: 14px;
+    background-color: #3498db;
+    color: #fff;
     border: none;
-    padding: 10px 15px;
     border-radius: 6px;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
+    animation: fadeIn 1s 1s ease-out forwards;
 }
 
-.input-group button:disabled {
-    background: #ccc;
+.boton:disabled {
+    background-color: #bdc3c7;
     cursor: not-allowed;
 }
 
-.input-group button:hover:not(:disabled) {
-    background: #45a049;
+.boton:hover:enabled {
+    background-color: #2980b9;
+    transform: translateY(-3px);
 }
 
-.activity-list {
-    list-style: none;
-    padding: 0;
+/* Mensajes de error o éxito */
+.mensajeError {
+    color: #e74c3c;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 15px;
+    animation: fadeIn 1s ease-out;
 }
 
-.activity-list li {
+.mensajeExito {
+    color: #2ecc71;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 15px;
+    animation: fadeIn 1s ease-out;
+}
+
+/* Estilos para las citas agendadas */
+.citasAgendadas {
+    margin-top: 30px;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s ease-out forwards;
+}
+
+.citasAgendadas h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    animation: fadeIn 1s 1.5s ease-out forwards;
+}
+
+.citasAgendadas ul {
+    list-style-type: none;
+}
+
+.citasAgendadas li {
+    background-color: #ecf0f1;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f9f9f9;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    transition: 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards;
+    animation-delay: 2s;
 }
 
-.activity-list li.completed {
-    text-decoration: line-through;
-    opacity: 0.6;
-}
-
-.activity-list button {
-    background: none;
+.citasAgendadas button {
+    background-color: #e74c3c;
+    color: #fff;
     border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
-    padding: 5px 10px;
-    transition: 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-left: 10px;
 }
 
-.activity-list button:hover {
-    opacity: 0.7;
+.citasAgendadas button:hover {
+    background-color: #c0392b;
+    transform: translateY(-3px);
 }
 
-.activity-list button:first-of-type {
-    color: #2196F3;
+.citasAgendadas button:focus {
+    outline: none;
 }
 
-.activity-list button:last-of-type {
-    color: #ff4d4d;
+/* Botón Editar */
+.citasAgendadas button:first-of-type {
+    background-color: #3498db;
+}
+
+.citasAgendadas button:first-of-type:hover {
+    background-color: #2980b9;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
