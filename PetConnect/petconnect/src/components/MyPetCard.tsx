@@ -32,6 +32,16 @@ const HighlightCard: React.FC<MyPetCardProps> = ({
     >
       <h2 className="highlight-title-MyPet">Mi mascota</h2>
 
+      {/* 🔹 Botón "Editar" que aparece al pasar el mouse */}
+      {isHovered && (
+        <button
+          className="edit-button-MyPet"
+          onClick={() => navigate("/customise")}
+        >
+          <FaEdit className="edit-icon" /> Editar
+        </button>
+      )}
+
       {isLoading ? (
         // 🔹 Skeleton Loader
         <div className="skeleton-container-MyPet">

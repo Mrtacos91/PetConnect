@@ -89,7 +89,6 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       {alert && <AlertMessage type={alert.type} message={alert.message} />}
-
       <form className="login-box" onSubmit={handleLogin} autoComplete="off">
         <h2>Bienvenido a PetConnect</h2>
 
@@ -131,11 +130,11 @@ const Login: React.FC = () => {
           className="google-login-button"
           onClick={handleGoogleLogin}
         >
-          <img src="../google-icon.png" alt="Google" className="google-icon" />
+          <img src="/google-icon.png" alt="Google" className="google-icon" />
           Iniciar sesión con Google
         </button>
 
-        <p>
+        <p className="parraf">
           ¿No tienes una cuenta?{" "}
           <button
             type="button"
