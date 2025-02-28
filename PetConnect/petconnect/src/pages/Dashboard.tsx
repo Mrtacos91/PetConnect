@@ -13,6 +13,8 @@ import ActivitiesCard from "../components/ActivitiesCard";
 import Location from "../components/Location";
 import "../styles/dashboard.css";
 import "../styles/Actividades.css";
+import "../styles/TrackingMedico.css";
+import TrackingMedico from "../components/TrackingMedico";
 
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -94,6 +96,7 @@ const Dashboard: React.FC = () => {
         {activeTab === "actividad" && (
           <section className="right-panel">
             <Actividades />
+            <TrackingMedico />
           </section>
         )}
 
