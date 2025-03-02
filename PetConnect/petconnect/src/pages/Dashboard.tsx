@@ -10,6 +10,7 @@ import FoundDoctorCard from "../components/FoundDoctorCard";
 import FoundHotelCard from "../components/FoundHotelCard";
 import WelcomeCard from "../components/WelcomeCard";
 import ActivitiesCard from "../components/ActivitiesCard";
+import AssistantCard from "../components/AssistantCard";
 import Location from "../components/Location";
 import "../styles/dashboard.css";
 import "../styles/Actividades.css";
@@ -20,29 +21,62 @@ const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
   const [username, setUsername] = useState<string | null>(null);
+  const [petData, setPetData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const { data: userSession, error: sessionError } =
+      setLoading(true);
+      // Obtén la sesión del usuario autenticado en Supabase Auth
+      const { data: sessionData, error: sessionError } =
         await supabase.auth.getUser();
-      if (sessionError || !userSession?.user) return;
+      if (sessionError || !sessionData?.user) {
+        console.error(
+          "Error obteniendo el usuario de Supabase Auth:",
+          sessionError
+        );
+        setLoading(false);
+        return;
+      }
+      const userEmail = sessionData.user.email;
 
-      const userEmail = userSession.user.email;
-      const { data: user, error: userError } = await supabase
+      // Obtén el usuario local (tabla Users) con id y full_name usando el email
+      const { data: localUser, error: userError } = await supabase
         .from("Users")
-        .select("full_name")
+        .select("id, full_name")
         .eq("email", userEmail)
         .single();
 
-      if (!userError) setUsername(user?.full_name);
+      if (!userError && localUser) {
+        setUsername(localUser.full_name);
+      } else {
+        console.error("Error obteniendo el usuario local:", userError);
+      }
+
+      // Obtén la mascota asociada al usuario local usando su id
+      const { data: pets, error: petsError } = await supabase
+        .from("Pets")
+        .select("*")
+        .eq("user_id", localUser?.id)
+        .limit(1);
+
+      if (petsError) {
+        console.error("Error obteniendo la mascota:", petsError);
+      } else if (pets && pets.length > 0) {
+        setPetData(pets[0]);
+      } else {
+        console.log("No se encontraron mascotas registradas.");
+      }
+
+      setLoading(false);
     };
 
     fetchUserData();
   }, []);
 
-  function toggleSidebar() {
+  const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  }
+  };
 
   return (
     <div className="dashboard">
@@ -54,22 +88,28 @@ const Dashboard: React.FC = () => {
         {activeTab === "inicio" && (
           <>
             <div className="welcome-section">
-              <WelcomeCard username={username || ""} />
+              <WelcomeCard username={username || "Usuario"} />
             </div>
             <section className="left-panel">
-              <MyPetCard
-                imageUrl="/images/perro1.jpg"
-                name="Fido"
-                type="Perro"
-                breed="Labrador Retriever"
-              />
+              {loading ? (
+                <p>Cargando datos de la mascota...</p>
+              ) : petData ? (
+                <MyPetCard
+                  imageUrl={petData.image_pet || "../public/images/foto.jpg"}
+                  name={petData.pet_name}
+                  type={petData.pet_type}
+                  breed={petData.pet_breed}
+                />
+              ) : (
+                <p>No se encontraron mascotas registradas.</p>
+              )}
             </section>
             <section className="right-panel">
               <ActivitiesCard
                 imageUrl="/images/perro1.jpg"
-                name="Fido"
-                type="Perro"
-                breed="Labrador Retriever"
+                name={petData?.pet_name || "Fido"}
+                type={petData?.pet_type || "Perro"}
+                breed={petData?.pet_breed || "Labrador Retriever"}
                 vetAppointment="Lunes, 26 de Febrero - 10:00 AM"
                 walkSchedule="Martes, 27 de Febrero - 6:30 PM"
               />
@@ -79,7 +119,7 @@ const Dashboard: React.FC = () => {
                 location="Calle 123, Colonia Ejemplo, CDMX"
                 hour="10:00 AM"
                 lastLocation="Última actualización hace 5 minutos"
-                name="Fido"
+                name={petData?.pet_name || "Fido"}
                 viewMap={() => console.log("Ver en el mapa")}
               />
             </section>
@@ -104,7 +144,7 @@ const Dashboard: React.FC = () => {
         {activeTab === "asistente" && (
           <section className="right-panel">
             <h2>Asistente Virtual</h2>
-            <p>Página en mantenimiento..</p>
+            <AssistantCard url="https://www.stack-ai.com/chat/67beadc6abbff18e8093f3d5-2e8W5L3shpTdxFCG4W53S5" />
           </section>
         )}
 
@@ -112,7 +152,11 @@ const Dashboard: React.FC = () => {
         {activeTab === "localizar" && (
           <section className="right-panel">
             <h2>Localización de Mascota</h2>
-            <Location latitude={19.4326} longitude={-99.1332} name="Fido" />
+            <Location
+              latitude={19.5575302}
+              longitude={-99.3174041}
+              name={petData?.pet_name || "Fido"}
+            />
           </section>
         )}
       </main>

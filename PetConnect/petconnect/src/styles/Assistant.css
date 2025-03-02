@@ -1,0 +1,94 @@
+.assistant-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80vh;
+  min-width: 1000px; /* Mantiene el tamaño en pantallas grandes */
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  top: -100px;
+  box-shadow: 0px 5px 15px rgba(65, 66, 66, 0.5);
+  border-radius: 20px;
+  background: white; /* Evita transparencias raras */
+}
+
+/* Ajustes del iframe */
+.assistant-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  visibility: hidden;
+}
+
+.skeleton-loader {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+/* Muestra el iframe cuando carga */
+.assistant-card iframe:not([src=""]) {
+  visibility: visible;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 📱 Media queries para tablets */
+@media (max-width: 1024px) {
+  .assistant-card {
+    width: 95%;
+    height: 75vh;
+    top: -50px;
+    min-width: auto; /* Permite que se reduzca */
+  }
+}
+
+/* 📱 Media queries para móviles */
+@media (max-width: 768px) {
+  .assistant-card {
+    width: 100%;
+    min-width: auto; /* Elimina restricciones de tamaño */
+    min-height: 100vh; /* Ocupa toda la pantalla */
+    height: auto;
+    top: -100; /* Corrige posición */
+    box-shadow: 0px 3px 10px rgba(65, 66, 66, 0.3);
+    border-radius: 15px;
+  }
+
+  .assistant-iframe {
+    width: 100%;
+    height: 100vh; /* Se asegura de llenar el espacio */
+  }
+}
+
+/* 📱 Media queries para móviles pequeños */
+@media (max-width: 480px) {
+  .assistant-card {
+    width: 100%;
+    min-width: auto;
+    min-height: 100vh;
+    height: auto;
+    box-shadow: none;
+    border-radius: 10px;
+  }
+
+  .assistant-iframe {
+    width: 100%;
+    height: 100vh;
+  }
+}

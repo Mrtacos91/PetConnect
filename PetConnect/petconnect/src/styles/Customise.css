@@ -24,6 +24,12 @@
   margin-bottom: 15px;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.3s, transform 0.3s;
+  animation: fadeIn 1s 1s ease-out forwards;
+}
+.customise-form .form-group:hover {
+  background-color: #f9f9f9;
+  transform: translateY(-3px);
 }
 
 .customise-form label {
@@ -163,5 +169,102 @@
   }
   .save-button {
     font-size: 0.9rem;
+  }
+}
+
+/* 📸 Contenedor de la foto centrado debajo del título */
+.pet-photo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+/* 🟠 Foto de la mascota en un círculo más grande */
+.pet-photo-circle {
+  width: 150px; /* 🔺 Tamaño más grande */
+  height: 150px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* 📷 Imagen dentro del círculo */
+.pet-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 📌 Icono de lápiz en la esquina inferior derecha */
+.edit-icon-customise {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: none;
+  color: #333;
+  padding: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.3s, transform 0.3s;
+  animation: fadeIn 1s 1s ease-out forwards;
+}
+.edit-icon-customise:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+/* 🔽 Texto inicial de carga */
+.upload-text {
+  font-size: 24px;
+  color: #666;
+}
+
+/* Ocultar input de archivo */
+.hidden-file-input {
+  display: none;
+}
+
+/* 📱 Responsividad */
+@media (max-width: 768px) {
+  .pet-photo-circle {
+    width: 120px;
+    height: 120px;
+  }
+
+  .edit-icon {
+    color: #333;
+    font-size: 10px;
+    bottom: 3px;
+    right: 3px;
+    padding: 4px;
+    cursor: pointer;
+  }
+
+  .upload-text {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pet-photo-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .edit-icon {
+    font-size: 9px;
+    padding: 3px;
   }
 }

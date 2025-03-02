@@ -76,7 +76,7 @@ select:focus {
 }
 
 /* Estilo para el botón */
-button {
+.button-add {
   width: 100%;
   padding: 10px;
   background-color: #3498db;
@@ -88,7 +88,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+.button-add:hover {
   background-color: #2980b9;
 }
 

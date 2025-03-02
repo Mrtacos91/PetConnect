@@ -78,7 +78,9 @@ const TrackingMedico = () => {
           onChange={handleInputChange}
           placeholder="Veterinario"
         />
-        <button onClick={addRecord}>Agregar Registro</button>
+        <button className="button-add" onClick={addRecord}>
+          Agregar Registro
+        </button>
       </div>
       <div className="records-list1">
         <h3>Registros Médicos</h3>
