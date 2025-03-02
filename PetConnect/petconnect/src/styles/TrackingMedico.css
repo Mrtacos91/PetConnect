@@ -1,133 +1,133 @@
 /* Animaciones */
 @keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 0;
+  }
 
-    100% {
-        opacity: 1;
-    }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-    0% {
-        transform: translateY(20px);
-        opacity: 0;
-    }
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
 
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Estilo general para el contenedor principal */
 .tracking-medico1 {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 600px;
-    margin: 20px auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 1s ease-out forwards;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1s ease-out forwards;
 }
 
 /* Títulos */
-h2 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 20px;
+.h2-tracking {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-h3 {
-    color: #34495e;
-    margin-bottom: 10px;
+.h3-tracking {
+  color: #34495e;
+  margin-bottom: 10px;
 }
 
 /* Estilo para el formulario de agregar nuevo registro */
 .add-record1 {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-    animation: slideUp 1s ease-out forwards;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  animation: slideUp 1s ease-out forwards;
 }
 
 /* Estilos para los campos de entrada */
 input,
 select {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
 }
 
 /* Efecto al enfocarse en un campo de entrada */
 input:focus,
 select:focus {
-    border-color: #3498db;
-    outline: none;
+  border-color: #3498db;
+  outline: none;
 }
 
 /* Estilo para el botón */
 button {
-    width: 100%;
-    padding: 10px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #2980b9;
+  background-color: #2980b9;
 }
 
 /* Estilo para la lista de registros médicos */
 .records-list1 {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 1s ease-out forwards;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1s ease-out forwards;
 }
 
 .records-list1 ul {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .records-list1 li {
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
 }
 
 .records-list1 li:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .records-list1 p {
-    margin: 5px 0;
-    color: #34495e;
+  margin: 5px 0;
+  color: #34495e;
 }
 
 .records-list1 p strong {
-    color: #2c3e50;
+  color: #2c3e50;
 }
 
 /* Mensaje cuando no hay registros */
 .records-list1 p {
-    color: #e74c3c;
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
+  color: #e74c3c;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
 }
