@@ -64,8 +64,6 @@ const Dashboard: React.FC = () => {
         console.error("Error obteniendo la mascota:", petsError);
       } else if (pets && pets.length > 0) {
         setPetData(pets[0]);
-      } else {
-        console.log("No se encontraron mascotas registradas.");
       }
 
       setLoading(false);
@@ -93,15 +91,13 @@ const Dashboard: React.FC = () => {
             <section className="left-panel">
               {loading ? (
                 <p>Cargando datos de la mascota...</p>
-              ) : petData ? (
-                <MyPetCard
-                  imageUrl={petData.image_pet || "../public/images/foto.jpg"}
-                  name={petData.pet_name}
-                  type={petData.pet_type}
-                  breed={petData.pet_breed}
-                />
               ) : (
-                <p>No se encontraron mascotas registradas.</p>
+                <MyPetCard
+                  imageUrl={petData?.image_pet || "../public/images/foto.jpg"}
+                  name={petData?.pet_name || "Mascota"}
+                  type={petData?.pet_type || "Perro"}
+                  breed={petData?.pet_breed || "Pug"}
+                />
               )}
             </section>
             <section className="right-panel">

@@ -4,8 +4,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 150%;
-  max-width: 700px; /* Aumenta el ancho máximo */
+  width: 100%;
+  max-width: 700px;
+  min-width: 100%;
+  min-width: 400px; /* Aumenta el ancho máximo */
   min-height: 100%;
   margin: 0 auto;
   margin-top: 30px;

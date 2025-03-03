@@ -1,10 +1,10 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
 import supabase from "../supabase"; // Importa tu cliente de Supabase
 import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
 import "../styles/Customise.css";
+import { useState } from "react";
 
 const Customise: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

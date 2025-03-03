@@ -16,43 +16,67 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // 🔹 Aplica los estilos correctos al cargar la pantalla de login
   useEffect(() => {
     document.body.classList.add("auth-background");
-
     return () => {
       document.body.classList.remove("auth-background");
     };
   }, []);
 
-  // 🔹 Verificar si hay una sesión activa y redirigir al Dashboard
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data?.session) {
+        await saveUserToDatabase(data.session.user);
         navigate("/dashboard");
       }
     };
 
     checkSession();
 
-    // 🔹 Detectar cambios en la sesión
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === "SIGNED_IN") {
+      async (event, session) => {
+        if (event === "SIGNED_IN" && session?.user) {
+          await saveUserToDatabase(session.user);
           navigate("/dashboard");
         } else if (event === "SIGNED_OUT") {
-          navigate("/login"); // 🔹 Solo redirige sin recargar
+          navigate("/login");
         }
       }
     );
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authListener?.subscription.unsubscribe();
     };
   }, [navigate]);
 
-  // 🔹 Inicio de sesión con email y contraseña
+  // Guardar usuario en "Users" si no existe
+  const saveUserToDatabase = async (user: any) => {
+    try {
+      const { data: existingUser, error } = await supabase
+        .from("Users")
+        .select("id")
+        .eq("email", user.email)
+        .single();
+
+      if (error || !existingUser) {
+        const { error: insertError } = await supabase.from("Users").insert([
+          {
+            full_name: user.user_metadata?.full_name || user.email,
+            email: user.email,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (insertError) {
+          console.error("Error insertando usuario en Users:", insertError);
+        }
+      }
+    } catch (error) {
+      console.error("Error al guardar el usuario en la base de datos:", error);
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const normalizedEmail = email.toLowerCase();
@@ -68,13 +92,10 @@ const Login: React.FC = () => {
     }
 
     setAlert({ type: "success", message: "Inicio de sesión exitoso!" });
-
-    // No es necesario un timeout, `useEffect` redirigirá automáticamente
   };
 
-  // 🔹 Inicio de sesión con Google
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
 
@@ -83,6 +104,11 @@ const Login: React.FC = () => {
         type: "error",
         message: "Error al iniciar sesión con Google",
       });
+      return;
+    }
+
+    if (data?.url) {
+      window.location.href = data.url;
     }
   };
 
@@ -124,7 +150,6 @@ const Login: React.FC = () => {
 
         <button type="submit">Iniciar sesión</button>
 
-        {/* 🔹 Botón para iniciar sesión con Google */}
         <button
           type="button"
           className="google-login-button"
