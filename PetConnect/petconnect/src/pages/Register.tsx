@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import supabase from "../supabase"; // Importamos el cliente de Supabase
-import bcrypt from "bcryptjs"; // Importamos bcryptjs para hashear la contraseña
+import supabase from "../supabase"; // Cliente de Supabase
+import bcrypt from "bcryptjs"; // Para hashear la contraseña
 import "../styles/style.css";
 
 const Register: React.FC = () => {
@@ -39,57 +39,63 @@ const Register: React.FC = () => {
       return;
     }
 
-    // Hashear la contraseña con bcryptjs
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(formData.password, salt);
+    try {
+      // Hashear la contraseña con bcryptjs
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(formData.password, salt);
 
-    // Registrar al usuario en Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
+      // Registrar al usuario en Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.fullName,
+            phone: formData.phone,
+          },
+        },
+      });
+
+      if (error) {
+        alert(`Error al crear la cuenta: ${error.message}`);
+        return;
+      }
+
+      // Obtenemos el ID del usuario creado en Supabase
+      const userId = data?.user?.id;
+      if (!userId) {
+        alert("Error: No se pudo obtener el ID del usuario");
+        return;
+      }
+
+      // Insertar la información en la tabla 'Users' con el UUID correcto
+      const { error: insertError } = await supabase.from("Users").insert([
+        {
+          UUID: userId, // 🔹 Asignamos el UUID del usuario creado en Supabase Auth
+          email: formData.email,
+          password_hash: hashedPassword,
           full_name: formData.fullName,
           phone: formData.phone,
+          created_at: new Date().toISOString(), // Registrar la fecha de creación
         },
-      },
-    });
+      ]);
 
-    if (error) {
-      alert(`Error al crear la cuenta: ${error.message}`);
-      return;
-    }
-
-    // Obtenemos el id del usuario creado (si existe)
-    const userId = data?.user?.id;
-    if (!userId) {
-      alert("Error: No se pudo obtener el ID del usuario");
-      return;
-    }
-
-    // Insertar la información en la tabla 'users'
-    const { error: insertError } = await supabase.from("Users").insert([
-      {
-        // Suponemos que la columna 'id' se genera automáticamente
-        email: formData.email,
-        password_hash: hashedPassword,
-        full_name: formData.fullName,
-        phone: formData.phone,
-      },
-    ]);
-
-    if (insertError) {
-      alert(`Error al guardar el perfil: ${insertError.message}`);
-    } else {
-      alert("Registro exitoso! Revisa tu correo para verificar tu cuenta.");
-      navigate("/login"); // Redirige al login
+      if (insertError) {
+        alert(`Error al guardar el perfil: ${insertError.message}`);
+      } else {
+        alert("Registro exitoso! Revisa tu correo para verificar tu cuenta.");
+        navigate("/login"); 
+      }
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      alert("Ocurrió un error inesperado. Inténtalo de nuevo.");
     }
   };
 
   return (
     <div className="register-container">
       <form className="register-box" onSubmit={handleSubmit} autoComplete="off">
-        <h2>Unete a Petconnect</h2>
+        <h2>Unete a PetConnect</h2>
 
         <div className="input-container">
           <input
