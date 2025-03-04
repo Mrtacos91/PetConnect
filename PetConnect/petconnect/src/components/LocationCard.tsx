@@ -9,6 +9,7 @@ interface LocationCardProps {
   lastLocation: string;
   name: string;
   viewMap: () => void;
+  setActiveTab: (tab: string) => void;
 }
 
 const LocationCard: React.FC<LocationCardProps> = ({
@@ -17,6 +18,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
   lastLocation,
   name,
   viewMap,
+  setActiveTab,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,8 +26,12 @@ const LocationCard: React.FC<LocationCardProps> = ({
     setTimeout(() => setIsLoading(false), 2000); // Simula el tiempo de carga
   }, []);
 
+  const handleCardClick = () => {
+    setActiveTab("localizar"); // 🔹 Cambiamos a la pestaña de actividades
+  };
+
   return (
-    <div className="highlight-container-location">
+    <div className="highlight-container-location" onClick={handleCardClick}>
       <h2 className="highlight-title-location">Ubicación actual</h2>
 
       {isLoading ? (

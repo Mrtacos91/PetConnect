@@ -7,8 +7,9 @@ interface ActivitiesCardProps {
   name: string;
   type: string;
   breed: string;
-  vetAppointment?: string; // Fecha de la cita con el veterinario
-  walkSchedule?: string; // Fecha y hora del paseo
+  vetAppointment?: string;
+  walkSchedule?: string;
+  setActiveTab: (tab: string) => void; // 🔹 Nueva prop para cambiar el tab
 }
 
 const ActivitiesCard: React.FC<ActivitiesCardProps> = ({
@@ -17,19 +18,23 @@ const ActivitiesCard: React.FC<ActivitiesCardProps> = ({
   breed,
   vetAppointment,
   walkSchedule,
+  setActiveTab, // 🔹 Recibimos setActiveTab
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000); // Simula el tiempo de carga
+    setTimeout(() => setIsLoading(false), 2000);
   }, []);
 
+  const handleCardClick = () => {
+    setActiveTab("actividad"); // 🔹 Cambiamos a la pestaña de actividades
+  };
+
   return (
-    <div className="highlight-container-activities">
+    <div className="highlight-container-activities" onClick={handleCardClick}>
       <h2 className="highlight-title-activities">Próximas actividades</h2>
 
       {isLoading ? (
-        // 🔹 Skeleton Loader
         <div className="skeleton-container-activities">
           <div className="skeleton skeleton-title-activities"></div>
           <div className="skeleton skeleton-subtext-activities"></div>
@@ -38,7 +43,6 @@ const ActivitiesCard: React.FC<ActivitiesCardProps> = ({
           <div className="skeleton skeleton-activity"></div>
         </div>
       ) : (
-        // 🔹 Contenido real
         <div className="highlight-card-activities">
           <aside className="pet-info-activities">
             <h3>{name}</h3>
@@ -49,7 +53,6 @@ const ActivitiesCard: React.FC<ActivitiesCardProps> = ({
               <strong>{breed}</strong>
             </p>
 
-            {/* 📌 Sección de Actividades */}
             <div className="activities-section">
               {vetAppointment && (
                 <div className="activity">

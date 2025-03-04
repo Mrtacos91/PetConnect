@@ -16,7 +16,7 @@ const AssistantCard: React.FC<AssistantCardProps> = ({ url }) => {
         title="Assistant View"
         className="assistant-iframe"
         sandbox="allow-scripts allow-same-origin allow-popups"
-        onLoad={() => setLoading(false)} // Oculta el skeleton al cargar
+        onLoad={() => setLoading(false)}
       />
     </div>
   );

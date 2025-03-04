@@ -53,7 +53,6 @@ const Dashboard: React.FC = () => {
         console.error("Error obteniendo el usuario local:", userError);
       }
 
-      // Obtén la mascota asociada al usuario local usando su id
       const { data: pets, error: petsError } = await supabase
         .from("Pets")
         .select("*")
@@ -108,6 +107,7 @@ const Dashboard: React.FC = () => {
                 breed={petData?.pet_breed || "Labrador Retriever"}
                 vetAppointment="Lunes, 26 de Febrero - 10:00 AM"
                 walkSchedule="Martes, 27 de Febrero - 6:30 PM"
+                setActiveTab={setActiveTab}
               />
             </section>
             <section className="right-panel">
@@ -117,6 +117,7 @@ const Dashboard: React.FC = () => {
                 lastLocation="Última actualización hace 5 minutos"
                 name={petData?.pet_name || "Fido"}
                 viewMap={() => console.log("Ver en el mapa")}
+                setActiveTab={setActiveTab}
               />
             </section>
             <section className="right-panel">
