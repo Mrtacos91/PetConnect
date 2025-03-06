@@ -3,7 +3,6 @@
   0% {
     opacity: 0;
   }
-
   100% {
     opacity: 1;
   }
@@ -14,7 +13,6 @@
     transform: translateY(20px);
     opacity: 0;
   }
-
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -76,24 +74,73 @@ select:focus {
   outline: none;
 }
 
-/* Estilo para el botón */
-.button-add {
-  width: 100%;
+/* Botones generales */
+button {
   padding: 10px;
-  background-color: #3498db;
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Botón Agregar */
+.button-add {
+  width: 100%;
+  background-color: #3498db;
+  color: rgb(6, 4, 4);
 }
 
 .button-add:hover {
   background-color: #2980b9;
+  transform: scale(1.05);
 }
 
-/* Estilo para la lista de registros médicos */
+/* Botón Editar */
+.button-edit {
+  background-color: #f39c12;
+  color: rgb(11, 8, 8);
+}
+
+.button-edit:hover {
+  background-color: #e67e22;
+  transform: scale(1.05);
+}
+
+/* Botón Guardar */
+.button-save {
+  background-color: #2ecc71;
+  color: rgb(9, 7, 7);
+}
+
+.button-save:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}
+
+/* Botón Cancelar */
+.button-cancel {
+  background-color: #020405;
+  color: rgb(224, 20, 20);
+}
+
+.button-cancel:hover {
+  background-color: #7f8c8d;
+  transform: scale(1.05);
+}
+
+/* Botón Eliminar */
+.button-delete {
+  background-color: #e74c3c;
+  color: rgb(15, 10, 10);
+}
+
+.button-delete:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Contenedor de la lista de registros */
 .records-list1 {
   background-color: #fff;
   padding: 20px;
@@ -102,6 +149,7 @@ select:focus {
   animation: fadeIn 1s ease-out forwards;
 }
 
+/* Lista de registros */
 .records-list1 ul {
   list-style-type: none;
   padding: 0;
@@ -109,13 +157,19 @@ select:focus {
 
 .records-list1 li {
   padding: 15px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #a92424;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
 }
 
+/* Último elemento sin borde */
 .records-list1 li:last-child {
   border-bottom: none;
 }
 
+/* Texto en registros */
 .records-list1 p {
   margin: 5px 0;
   color: #34495e;
@@ -125,8 +179,14 @@ select:focus {
   color: #2c3e50;
 }
 
+/* Botones dentro de los registros */
+.records-list1 li button {
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
 /* Mensaje cuando no hay registros */
-.records-list1 p {
+.records-list1 .empty-message {
   color: #e74c3c;
   text-align: center;
   font-size: 16px;
