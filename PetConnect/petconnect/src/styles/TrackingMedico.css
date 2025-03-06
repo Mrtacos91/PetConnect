@@ -3,6 +3,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -13,6 +14,7 @@
     transform: translateY(20px);
     opacity: 0;
   }
+
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -32,7 +34,7 @@
   margin-bottom: 100px;
 }
 
-/* Títulos */
+
 .h2-tracking {
   color: #2c3e50;
   text-align: center;
@@ -44,7 +46,7 @@
   margin-bottom: 10px;
 }
 
-/* Estilo para el formulario de agregar nuevo registro */
+
 .add-record1 {
   background-color: #fff;
   padding: 20px;
@@ -54,7 +56,7 @@
   animation: slideUp 1s ease-out forwards;
 }
 
-/* Estilos para los campos de entrada */
+
 input,
 select {
   width: 100%;
@@ -67,14 +69,14 @@ select {
   transition: border-color 0.3s ease;
 }
 
-/* Efecto al enfocarse en un campo de entrada */
+
 input:focus,
 select:focus {
   border-color: #3498db;
   outline: none;
 }
 
-/* Botones generales */
+
 button {
   padding: 10px;
   border: none;
@@ -84,63 +86,60 @@ button {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Botón Agregar */
-.button-add {
+.button-add-tm {
   width: 100%;
   background-color: #3498db;
-  color: rgb(6, 4, 4);
+  color: white;
 }
 
-.button-add:hover {
+.button-add-tm:hover {
   background-color: #2980b9;
   transform: scale(1.05);
 }
 
-/* Botón Editar */
-.button-edit {
+
+.button-edit-tm {
   background-color: #f39c12;
-  color: rgb(11, 8, 8);
+  color: white;
 }
 
-.button-edit:hover {
+.button-edit-tm:hover {
   background-color: #e67e22;
   transform: scale(1.05);
 }
 
-/* Botón Guardar */
-.button-save {
+
+.button-save-tm {
   background-color: #2ecc71;
-  color: rgb(9, 7, 7);
+  color: white;
 }
 
-.button-save:hover {
+.button-save-tm:hover {
   background-color: #27ae60;
   transform: scale(1.05);
 }
 
-/* Botón Cancelar */
-.button-cancel {
-  background-color: #020405;
-  color: rgb(224, 20, 20);
+.button-cancel-tm {
+  background-color: #7f8c8d;
+  color: white;
 }
 
-.button-cancel:hover {
-  background-color: #7f8c8d;
+.button-cancel-tm:hover {
+  background-color: #5d6d7e;
   transform: scale(1.05);
 }
 
-/* Botón Eliminar */
-.button-delete {
+.button-delete-tm {
   background-color: #e74c3c;
-  color: rgb(15, 10, 10);
+  color: white;
 }
 
-.button-delete:hover {
+.button-delete-tm:hover {
   background-color: #c0392b;
   transform: scale(1.05);
 }
 
-/* Contenedor de la lista de registros */
+
 .records-list1 {
   background-color: #fff;
   padding: 20px;
@@ -149,7 +148,6 @@ button {
   animation: fadeIn 1s ease-out forwards;
 }
 
-/* Lista de registros */
 .records-list1 ul {
   list-style-type: none;
   padding: 0;
@@ -157,7 +155,7 @@ button {
 
 .records-list1 li {
   padding: 15px;
-  border-bottom: 1px solid #a92424;
+  border-bottom: 1px solid #ccc;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

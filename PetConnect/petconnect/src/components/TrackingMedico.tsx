@@ -110,15 +110,15 @@ const TrackingMedico = () => {
         />
         {editingRecord ? (
           <>
-            <button className="button-edit" onClick={saveEdit}>
+            <button className="button-edit-tm" onClick={saveEdit}>
               Guardar Cambios
             </button>
-            <button className="button-cancel" onClick={cancelEdit}>
+            <button className="button-cancel-tm" onClick={cancelEdit}>
               Cancelar
             </button>
           </>
         ) : (
-          <button className="button-add" onClick={addRecord}>
+          <button className="button-add-tm" onClick={addRecord}>
             Agregar Registro
           </button>
         )}
