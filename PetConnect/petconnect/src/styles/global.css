@@ -34,8 +34,8 @@ body {
   --text-secondary: #cccccc;
   --shadow-default: rgba(0, 0, 0, 0.3); /* Sombra sin opacidad */
   --shadow-hover: rgba(0, 0, 0, 0.4); /* Sombra sin opacidad */
-  --skeleton-gradient-start: #333333;
-  --skeleton-gradient-mid: #444444;
+  --skeleton-gradient-start: #363241;
+  --skeleton-gradient-mid: #464053;
   --circle-animation: #646cff;
   --logo: url("/images/Logo.png");
 }
