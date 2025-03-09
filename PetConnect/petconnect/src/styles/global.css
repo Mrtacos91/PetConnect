@@ -11,6 +11,34 @@ body {
   background-color: white;
   box-shadow: none;
 }
+:root {
+  --bg-default: #ffffff; /* Fondo general */
+  --card-background: #ffffff; /* Fondo de la tarjeta */
+  --text-primary: #333333;
+  --text-bottomnav: #ffffff;
+  --text-secondary: #555555;
+  --shadow-default: rgba(0, 0, 0, 0.3); /* Sombra sin opacidad */
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+  --circle-animation: #333333; /* Sombra sin opacidad */
+  --skeleton-gradient-start: #f0f0f0;
+  --skeleton-gradient-mid: #e0e0e0;
+  --logo: url("/images/Logo_black.png");
+}
+
+/* Variables para modo oscuro */
+.dark-mode {
+  --bg-default: #181818;
+  --card-background: #1e1e2e;
+  --text-primary: #eeeeee;
+  --text-bottomnav: #eeeeee;
+  --text-secondary: #cccccc;
+  --shadow-default: rgba(0, 0, 0, 0.3); /* Sombra sin opacidad */
+  --shadow-hover: rgba(0, 0, 0, 0.4); /* Sombra sin opacidad */
+  --skeleton-gradient-start: #333333;
+  --skeleton-gradient-mid: #444444;
+  --circle-animation: #646cff;
+  --logo: url("/images/Logo.png");
+}
 
 :root {
   --background-color: #ffffff;

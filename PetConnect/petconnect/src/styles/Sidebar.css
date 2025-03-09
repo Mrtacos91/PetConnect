@@ -1,5 +1,4 @@
 /* Contenedor del Sidebar */
-
 /* Cuando el Sidebar está abierto */
 .sidebar-container.open {
   left: 0; /* Se muestra */
@@ -10,7 +9,7 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background: none;
+  background: var(--background-card);
   border: none;
   font-size: 24px;
   cursor: pointer;
@@ -39,7 +38,7 @@ li {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: black;
+  color: var(--text-primary);
   padding: 10px;
   font-size: 18px;
   cursor: pointer;
@@ -53,5 +52,5 @@ li:hover {
 /* Íconos */
 .icon-side {
   font-size: 20px;
-  color: #333;
+  color: var(--text-primary);
 }

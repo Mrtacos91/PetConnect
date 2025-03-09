@@ -6,13 +6,16 @@
   transform: translateX(-50%);
   width: 90%;
   max-width: 400px;
-  background: white;
+  background: var(--card-background); /* Fondo dinámico */
   border-radius: 20px;
   padding: 10px 0;
   display: flex;
+  box-shadow: 0px 5px 15px rgb(65, 66, 66); /* Sombra dinámica */
   justify-content: space-around;
   align-items: center;
   overflow: hidden;
+  z-index: 1000;
+  backdrop-filter: none;
 }
 
 .bottom-nav ul {
@@ -24,15 +27,18 @@
   margin: 0;
   position: relative;
 }
+
+/* Eliminamos sombras */
 li {
   box-shadow: none !important;
 }
+
 .bottom-nav li {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 14px;
-  color: black;
+  color: var(--text-primary); /* Color dinámico del texto */
   cursor: pointer;
   box-shadow: none !important;
   transition: transform 0.2s ease-in-out, color 0.3s;
@@ -46,18 +52,22 @@ li {
 
 .bottom-nav li svg {
   font-size: 20px;
+  color: var(--text-secondary); /* Color dinámico del icono */
+  transition: color 0.3s ease;
 }
 
-/* 🔵 Indicador animado corregido */
+/* 🔵 Indicador animado */
 .indicator {
   position: absolute;
   bottom: -10px;
   width: 75px;
   height: 80px;
-  background: black;
+  background: var(
+    --circle-animation
+  ); /* Fondo de la card en modo claro/oscuro */
   border-radius: 50%;
   transition: left 0.3s ease-in-out;
-  box-shadow: 0px 5px 15px rgb(65, 66, 66);
+  box-shadow: 0px 5px 15px rgb(65, 66, 66); /* Se mantiene */
   z-index: 0;
   left: 12px; /* Posición inicial */
   transform: translateX(0%);
@@ -70,21 +80,23 @@ li {
   bottom: -15px;
   width: 60px;
   height: 15px;
-  background: white;
+  background: var(--bg-default); /* Se adapta al fondo */
   border-radius: 50%;
 }
 
 /* ✨ Efecto del icono activo */
 .bottom-nav .list.active {
-  color: #dfe0e2;
+  color: var(--text-bottomnav); /* Color dinámico del activo */
   font-weight: bold;
 }
 
 .bottom-nav .list.active svg {
+  color: var(--text-bottomnav);
   transform: scale(1.2);
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
+/* 📌 Responsividad */
 @media (max-width: 480px) {
   .bottom-nav {
     width: 95%;

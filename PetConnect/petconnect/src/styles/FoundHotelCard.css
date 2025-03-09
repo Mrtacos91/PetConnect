@@ -1,70 +1,73 @@
-/* Contenedor principal */
+/* 🔹 Contenedor Principal */
 .Container-FoundHotel {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 150%; /* Ajusta el ancho al 100% */
-  max-width: 500px; /* Aumenta el ancho máximo */
+  width: 100%; /* Se ajusta al 100% en lugar de 150% */
+  max-width: 500px;
   padding: 10px;
-  background-color: #ffffff;
+  background-color: var(--card-background);
   border-radius: 12px;
-  margin: 0 auto 100px auto; /* Centra el contenedor horizontalmente y agrega margen inferior */
+  margin: 0 auto 100px auto;
+  box-shadow: 0px 4px 10px var(--shadow-default);
 }
 
-/* Título */
+/* 🔹 Título */
 .Container-Title-FoundHotel {
   font-size: 22px;
   font-weight: bold;
   text-align: center;
-  color: #333;
+  color: var(--text-primary);
   width: 100%;
-  margin-bottom: 15px; /* Agrega margen inferior */
+  margin-bottom: 15px;
 }
 
-/* Tarjeta del hotel */
+/* 🔹 Tarjeta del Hotel */
 .FoundHotel-Card {
-  color: black;
+  color: var(--text-primary);
   display: flex;
-  flex-direction: column; /* Cambiado a columna para mejor responsividad */
-  align-items: flex-start; /* Alinea los elementos al inicio */
-  background: white;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--card-background);
   border-radius: 16px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px var(--shadow-default);
   padding: 16px;
   width: 100%;
-  max-width: 650px; /* Aumenta el ancho máximo */
+  max-width: 650px;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 }
 
+/* 🔹 Efecto Hover */
 .FoundHotel-Card:hover {
   transform: translateY(-3px);
+  box-shadow: 0px 5px 12px var(--shadow-hover);
 }
 
-/* Información del hotel */
+/* 🔹 Información del Hotel */
 .FoundHotel-Info {
   display: flex;
   flex-direction: column;
-  color: #333;
+  color: var(--text-primary);
   margin-right: 15px;
   justify-content: center;
   width: 100%;
 }
 
-/* 📌 Diseño responsivo */
+/* 📌 Diseño Responsivo */
 @media (max-width: 768px) {
   .Container-FoundHotel {
-    max-width: 90%; /* Ajusta el ancho máximo para tabletas */
+    max-width: 90%;
   }
 
   .FoundHotel-Card {
-    max-width: 100%; /* Ajusta el ancho máximo para tabletas */
+    max-width: 100%;
     padding: 12px;
   }
 
   .FoundHotel-Info {
-    justify-content: flex-start; /* Alinea las actividades al inicio */
+    justify-content: flex-start;
   }
 }
 
@@ -72,54 +75,59 @@
   .Container-FoundHotel {
     width: 100%;
     flex-direction: column;
-    align-items: flex-start; /* Alinea los elementos al inicio */
-    text-align: left; /* Alinea el texto a la izquierda */
+    align-items: flex-start;
+    text-align: left;
     padding: 12px;
   }
+
   .FoundHotel-Card {
-    display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Alinea los elementos al inicio */
-    text-align: left; /* Alinea el texto a la izquierda */
+    align-items: flex-start;
+    text-align: left;
     padding: 12px;
   }
 
   .Container-Title-FoundHotel {
-    text-align: center; /* Alinea el título al centro */
-    margin-left: 0; /* Elimina el margen izquierdo */
+    text-align: center;
+    margin-left: 0;
   }
 
   .FoundHotel-Info {
-    display: flex;
-    justify-content: flex-start; /* Alinea las actividades al inicio */
+    justify-content: flex-start;
   }
 }
 
 @media (max-width: 480px) {
   .Container-Title-FoundHotel {
-    font-size: 20px; /* Ajusta el tamaño de la fuente para móviles */
+    font-size: 20px;
   }
 
   .FoundHotel-Card {
-    flex-direction: column; /* Cambia a columna en pantallas pequeñas */
+    flex-direction: column;
     align-items: center;
     padding: 10px;
   }
 
   .FoundHotel-Info {
-    align-items: center; /* Centra el texto en pantallas pequeñas */
-    text-align: center; /* Centra el texto en pantallas pequeñas */
+    align-items: center;
+    text-align: center;
   }
 }
 
 /* 📌 Skeleton Loader */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
   background-size: 200% 100%;
   animation: loadingAnimation 1.5s infinite;
   border-radius: 8px;
 }
 
+/* 📌 Animación del Skeleton */
 @keyframes loadingAnimation {
   0% {
     background-position: 200% 0;
@@ -133,9 +141,9 @@
 .skeleton-container-foundHotel {
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--card-background);
   border-radius: 16px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px var(--shadow-default);
   padding: 16px;
   width: 100%;
   max-width: 650px;

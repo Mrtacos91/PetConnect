@@ -6,8 +6,8 @@
   width: 50px;
   height: 50px;
   border: none;
-  background: white;
-  color: black;
+  background: var(--background-color);
+  color: var(--text-primary);
   font-size: 24px;
   border-radius: 50%;
   cursor: pointer;
@@ -17,9 +17,9 @@
 
 .menu-button.rotate {
   transform: rotate(180deg); /* Animación de giro */
-  background: white;
+  background: var(--background-color);
 }
 
 .icon {
-  color: black;
+  color: var(--text-primary);
 }

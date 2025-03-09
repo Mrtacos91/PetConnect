@@ -9,7 +9,10 @@
   box-shadow: none;
   padding-top: 60px;
   overflow-y: scroll;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+}
+.dashboard::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 span:hover {
@@ -23,8 +26,8 @@ span:hover {
   left: -250px;
   width: 250px;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  background: var(--card-background);
+  box-shadow: 2px 0 10px var(--shadow-default);
   transition: left 0.4s ease-in-out;
   z-index: 900; /* Debajo del botón */
   display: flex;
@@ -34,6 +37,7 @@ span:hover {
 
 /* Contenido Principal */
 .content {
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -41,7 +45,7 @@ span:hover {
   gap: 20px;
   padding: 20px;
   flex-wrap: wrap;
-  box-shadow: none; /* Para que se acomoden en pantallas pequeñas */
+  box-shadow: none;
 }
 
 /* Panel Izquierdo */
@@ -57,7 +61,7 @@ span:hover {
   margin: 10px auto;
   padding: 10px;
   background: #0a74da;
-  color: white;
+  color: var(--background-card);
   border: rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   cursor: pointer;

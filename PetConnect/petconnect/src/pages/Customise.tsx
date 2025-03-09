@@ -117,7 +117,7 @@ const Customise: React.FC = () => {
   };
 
   return (
-    <div className="dashboard customise-page">
+    <div className="customise-page">
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} />
 
@@ -161,6 +161,7 @@ const Customise: React.FC = () => {
                 value={petName}
                 onChange={(e) => setPetName(e.target.value)}
                 placeholder="Nuevo nombre"
+                autoComplete="off"
               />
             </div>
 
@@ -188,6 +189,7 @@ const Customise: React.FC = () => {
                 value={petBreed}
                 onChange={(e) => setPetBreed(e.target.value)}
                 placeholder="Nueva raza"
+                autoComplete="off"
               />
             </div>
 

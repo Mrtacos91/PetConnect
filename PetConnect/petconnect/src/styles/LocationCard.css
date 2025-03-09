@@ -1,4 +1,4 @@
-/* Contenedor principal */
+/* 🔹 Contenedor Principal */
 .highlight-container-location {
   display: flex;
   flex-direction: column;
@@ -8,46 +8,49 @@
   max-width: 500px;
   margin: 0 auto;
   padding: 16px;
-  background-color: #ffffff;
+  background-color: var(--background-card);
   border-radius: 12px;
   margin-bottom: 20px;
+  box-shadow: 0px 4px 10px var(--shadow-default);
 }
 
-/* Título */
+/* 🔹 Título */
 .highlight-title-location {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 10px;
   text-align: center;
 }
 
-/* Tarjeta de ubicación */
+/* 🔹 Tarjeta de Ubicación */
 .location-card {
   width: 100%;
   padding: 16px;
-  background-color: white;
+  background-color: var(--background-card);
   border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px var(--shadow-default);
   display: flex;
   flex-direction: column;
   gap: 10px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease-in-out;
 }
 
+/* 🔹 Efecto Hover */
 .location-card:hover {
   transform: translateY(-3px);
+  box-shadow: 0px 5px 12px var(--shadow-hover);
 }
 
-/* Botón "Ver en el mapa" */
+/* 🔹 Botón "Ver en el mapa" */
 .location-card__button {
   text-align: center;
   justify-content: center;
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #ff5a5f;
+  background-color: #ff5a5f; /* Color rojo fijo */
   color: white;
   font-size: 1rem;
   font-weight: bold;
@@ -55,18 +58,19 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, background-color 0.3s ease;
 }
 
+/* 🔹 Hover del Botón */
 .location-card__button:hover {
   background-color: #e0484d;
   transform: translateY(-3px);
 }
 
-/* Información de la ubicación */
+/* 🔹 Información de Ubicación */
 .location-card__info {
   font-size: 1rem;
-  color: #333;
+  color: var(--text-primary);
   line-height: 1.5;
 }
 
@@ -107,12 +111,18 @@
 
 /* 📌 Skeleton Loader */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
   background-size: 200% 100%;
   animation: loadingAnimation 1.5s infinite;
   border-radius: 8px;
 }
 
+/* 📌 Animación del Skeleton */
 @keyframes loadingAnimation {
   0% {
     background-position: 200% 0;
@@ -126,9 +136,9 @@
 .skeleton-container-location {
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--background-card);
   border-radius: 16px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px var(--shadow-default);
   padding: 16px;
   width: 100%;
   max-width: 650px;

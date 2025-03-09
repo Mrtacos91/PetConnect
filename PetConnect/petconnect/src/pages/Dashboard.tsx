@@ -16,6 +16,7 @@ import "../styles/dashboard.css";
 import "../styles/Actividades.css";
 import "../styles/TrackingMedico.css";
 import TrackingMedico from "../components/TrackingMedico";
+import ThemeToggle from "../components/ThemeToggle";
 
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -78,6 +79,10 @@ const Dashboard: React.FC = () => {
   return (
     <div className="dashboard">
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
+      {/* Integración del toggle de modo claro/oscuro */}
+      <ThemeToggle />
+
       <Sidebar isOpen={isSidebarOpen} />
 
       <main className="content">

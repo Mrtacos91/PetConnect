@@ -1,5 +1,6 @@
 /* Estilos globales para la página de personalización */
 .customise-page .content {
+  color: var(--text-primary);
   padding: 20px;
   margin-top: 60px; /* Espacio para el menú y sidebar */
   margin-bottom: 60px; /* Espacio para el BottomNav */
@@ -8,27 +9,27 @@
 .customise-container {
   max-width: 600px;
   margin: 0 auto;
-  background: white;
+  background: var(--card-background);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px var(--shadow-default);
 }
 
 .customise-container h1 {
   text-align: center;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .customise-form .form-group {
   margin-bottom: 15px;
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s, transform 0.3s;
   animation: fadeIn 1s 1s ease-out forwards;
 }
 .customise-form .form-group:hover {
-  background-color: #f9f9f9;
   transform: translateY(-3px);
 }
 
@@ -53,7 +54,7 @@
   background: #007bff;
   border: none;
   border-radius: 8px;
-  color: white;
+  color: var(--text-primary);
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -86,11 +87,12 @@
   background: transparent;
   border: none;
   font-size: 1.5rem;
-  color: #333; /* Ajusta el color según tu tema */
+  color: var(--text-primary); /* Ajusta el color según tu tema */
   cursor: pointer;
   z-index: 50;
   transition: color 0.3s ease;
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: none !important;
 }
 
 .back-button:hover {
@@ -107,7 +109,6 @@
 .customise-container {
   max-width: 600px;
   margin: 0 auto;
-  background: white;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -116,7 +117,6 @@
 .customise-container h1 {
   text-align: center;
   margin-bottom: 20px;
-  color: #333;
 }
 
 .customise-form .form-group {
@@ -128,7 +128,7 @@
 .customise-form label {
   margin-bottom: 5px;
   font-weight: bold;
-  color: #555;
+  color: var(--text-primary);
 }
 
 .customise-form input[type="text"],

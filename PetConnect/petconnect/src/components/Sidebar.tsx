@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaCog, FaSignOutAlt } from "react-icons/fa";
 import supabase from "../supabase"; // Asegúrate de que supabase está bien configurado
@@ -10,6 +10,14 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const navigate = useNavigate();
+  const [logoSrc, setLogoSrc] = useState("");
+
+  useEffect(() => {
+    // Obtener el valor de la variable CSS --logo
+    const rootStyles = getComputedStyle(document.documentElement);
+    const logoUrl = rootStyles.getPropertyValue("--logo").trim().slice(5, -2); // Eliminar 'url("")'
+    setLogoSrc(logoUrl);
+  }, []);
 
   // 🔹 Función para cerrar sesión
   const handleLogout = async () => {
@@ -21,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
       <nav className="sidebar">
         <div className="logo">
-          <img src="/images/Logo_black.png" alt="PetConnect" />
+          <img src={logoSrc} />
         </div>
         <ul>
           <li>

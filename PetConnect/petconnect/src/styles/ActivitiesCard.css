@@ -1,4 +1,4 @@
-/* Ajustes generales */
+/* 🔹 Contenedor Principal */
 .highlight-container-activities {
   display: flex;
   flex-direction: column;
@@ -13,95 +13,108 @@
   margin-bottom: 20px;
 }
 
+/* 🔹 Texto General */
 p {
   margin: 5px 0;
-  color: #333;
+  color: var(--text-primary);
   font-size: 16px;
 }
 
+/* 🔹 Título */
 .highlight-title-activities {
   font-size: 22px;
   font-weight: bold;
   text-align: center;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
   width: 100%;
 }
 
+/* 🔹 Tarjeta de Actividades */
 .highlight-card-activities {
-  color: black;
   display: flex;
-  flex-direction: column; /* Cambiado a columna para mejor responsividad */
-  align-items: flex-start 0; /* Alinea los elementos al inicio */
-  background: white;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--background-card);
   border-radius: 16px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px var(--shadow-default);
   padding: 16px;
   width: 100%;
   max-width: 450px;
   transition: transform 0.2s ease-in-out;
 }
 
+/* 🔹 Efecto Hover */
 .highlight-card-activities:hover {
   transform: translateY(-3px);
+  box-shadow: 0px 5px 12px var(--shadow-hover);
 }
 
+/* 🔹 Información de Mascota */
 .pet-info-activities {
   display: flex;
   flex-direction: column;
-  color: #333;
+  color: var(--text-primary);
   margin-right: 15px;
   justify-content: center;
   width: 100%;
 }
 
-/* Estilo de actividades */
+/* 🔹 Sección de Actividades */
 .activities-section {
   margin-top: 10px;
-  color: black;
+  color: var(--text-primary);
 }
 
+/* 🔹 Elemento de Actividad */
 .activity {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #555;
+  color: var(--text-secondary);
 }
 
+/* 🔹 Icono de Actividad */
 .icon-activities {
   margin: 5px;
-  color: #0a74da;
+  color: #0a74da; /* Se mantiene el color azul */
   font-size: 18px;
 }
 
-/* 📌 Diseño responsivo */
+/* 📌 Diseño Responsivo */
 @media (max-width: 600px) {
   .highlight-card-activities {
     flex-direction: column;
-    align-items: flex-start; /* Alinea los elementos al inicio */
-    text-align: left; /* Alinea el texto a la izquierda */
+    align-items: flex-start;
+    text-align: left;
     padding: 12px;
   }
 
   .highlight-title-activities {
-    text-align: center; /* Alinea el título al centro */
-    margin-left: 0; /* Elimina el margen izquierdo */
+    text-align: center;
+    margin-left: 0;
   }
 
   .activity {
-    justify-content: flex-start; /* Alinea las actividades al inicio */
+    justify-content: flex-start;
   }
 }
 
 /* 📌 Skeleton Loader */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
   background-size: 200% 100%;
   animation: loadingAnimation 1.5s infinite;
   border-radius: 8px;
 }
 
+/* 📌 Animación del Skeleton */
 @keyframes loadingAnimation {
   0% {
     background-position: 200% 0;
@@ -115,9 +128,9 @@ p {
 .skeleton-container-activities {
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--background-card);
   border-radius: 16px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px var(--shadow-default);
   padding: 16px;
   width: 100%;
   max-width: 650px;

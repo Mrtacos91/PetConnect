@@ -12,12 +12,12 @@
 .welcome-text {
   font-size: 28px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .welcome-subtext {
   font-size: 18px;
-  color: #777;
+  color: var(--text-secondary);
 }
 
 /* Animación mejorada para que aparezca suavemente */
