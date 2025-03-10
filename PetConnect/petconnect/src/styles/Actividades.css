@@ -56,7 +56,7 @@
 .boton {
   width: 100%;
   padding: 14px;
-  background-color: #3498db;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   color: white;
   border: none;
   border-radius: 6px;
@@ -67,12 +67,12 @@
 }
 
 .boton:disabled {
-  background-color: #2980b9;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   cursor: not-allowed;
 }
 
 .boton:hover:enabled {
-  background-color: #2980b9;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   transform: translateY(-3px);
 }
 

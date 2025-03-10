@@ -5,13 +5,13 @@
   align-items: center;
   justify-content: center;
   width: 100%; /* Se ajusta al 100% en lugar de 150% */
+  height: 100%;
   max-width: 500px; /* Aumenta el ancho máximo */
   padding: 10px;
   background-color: var(--card-background);
   border-radius: 12px;
   margin: 0 auto 30px auto;
   margin-bottom: 20px;
-  box-shadow: 0px 4px 10px var(--shadow-default);
 }
 
 /* 🔹 Título */

@@ -125,7 +125,7 @@ const Customise: React.FC = () => {
         &#8592; Volver
       </button>
 
-      <main className="content">
+      <main className="dashboard">
         <div className="customise-container">
           <h1>Personaliza tu mascota</h1>
 

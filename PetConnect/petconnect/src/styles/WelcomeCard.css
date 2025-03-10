@@ -4,9 +4,10 @@
   top: 20%;
   left: 15%; /* Desplazado un poco a la izquierda */
   text-align: left;
+  justify-content: center;
   opacity: 0;
   transform: translateY(-30%);
-  animation: fadeIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: fadeInDown 1s ease-in-out forwards;
 }
 
 .welcome-text {
@@ -21,14 +22,14 @@
 }
 
 /* Animación mejorada para que aparezca suavemente */
-@keyframes fadeIn {
+@keyframes fadeInDown {
   0% {
     opacity: 0;
-    transform: translateY(-30%);
+    transform: translateY(-30%); /* Comienza desde un poco más arriba */
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0); /* Termina en su posición normal */
   }
 }
 

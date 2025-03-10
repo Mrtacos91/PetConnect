@@ -85,13 +85,43 @@ const Dashboard: React.FC = () => {
 
       <Sidebar isOpen={isSidebarOpen} />
 
+      {/* Mostrar WelcomeCard solo si activeTab === "inicio" */}
+      {activeTab === "inicio" && (
+        <div className="welcome-section">
+          <WelcomeCard username={username || "Usuario"} />
+        </div>
+      )}
+
+      {activeTab === "actividad" && (
+        <section className="right-panel">
+          <Actividades />
+          <TrackingMedico />
+        </section>
+      )}
+
+      {/* Pestaña Asistente */}
+      {activeTab === "asistente" && (
+        <section className="right-panel">
+          <h2>Asistente Virtual</h2>
+          <AssistantCard url="https://www.stack-ai.com/chat/67beadc6abbff18e8093f3d5-2e8W5L3shpTdxFCG4W53S5" />
+        </section>
+      )}
+
+      {/* Pestaña Localizar */}
+      {activeTab === "localizar" && (
+        <section className="right-panel">
+          <Location
+            latitude={19.5575302}
+            longitude={-99.3174041}
+            name={petData?.pet_name || "Fido"}
+          />
+        </section>
+      )}
+
       <main className="content">
         {/* Pestaña Inicio */}
         {activeTab === "inicio" && (
           <>
-            <div className="welcome-section">
-              <WelcomeCard username={username || "Usuario"} />
-            </div>
             <section className="left-panel">
               {loading ? (
                 <p>Cargando datos de la mascota...</p>
@@ -132,34 +162,6 @@ const Dashboard: React.FC = () => {
               <FoundHotelCard Info="Encuentra un hotel para tu mascota aquí" />
             </section>
           </>
-        )}
-
-        {/* Pestaña Actividades */}
-        {activeTab === "actividad" && (
-          <section className="right-panel">
-            <Actividades />
-            <TrackingMedico />
-          </section>
-        )}
-
-        {/* Pestaña Asistente */}
-        {activeTab === "asistente" && (
-          <section className="right-panel">
-            <h2>Asistente Virtual</h2>
-            <AssistantCard url="https://www.stack-ai.com/chat/67beadc6abbff18e8093f3d5-2e8W5L3shpTdxFCG4W53S5" />
-          </section>
-        )}
-
-        {/* Pestaña Localizar */}
-        {activeTab === "localizar" && (
-          <section className="right-panel">
-            <h2>Localización de Mascota</h2>
-            <Location
-              latitude={19.5575302}
-              longitude={-99.3174041}
-              name={petData?.pet_name || "Fido"}
-            />
-          </section>
         )}
       </main>
 

@@ -14,7 +14,9 @@
 .dashboard::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
-
+button {
+  box-shadow: none !important;
+}
 span:hover {
   box-shadow: none;
 }
@@ -39,13 +41,16 @@ span:hover {
 .content {
   color: var(--text-primary);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: flex-start;
   gap: 20px;
   padding: 20px;
   flex-wrap: wrap;
   box-shadow: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto;
 }
 
 /* Panel Izquierdo */
@@ -64,18 +69,26 @@ span:hover {
   color: var(--background-card);
   border: rgba(0, 0, 0, 0.2);
   border-radius: 5px;
+  box-shadow: none;
   cursor: pointer;
 }
 
 /* Panel Derecho */
 .right-panel {
   flex: 1;
+  display: flexbox;
 }
 
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 768px) {
   .content {
     flex-direction: column;
     align-items: center;
+    grid-template-columns: 1fr;
   }
 
   .left-panel,

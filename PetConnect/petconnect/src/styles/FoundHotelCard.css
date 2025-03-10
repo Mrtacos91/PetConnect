@@ -10,7 +10,6 @@
   background-color: var(--card-background);
   border-radius: 12px;
   margin: 0 auto 100px auto;
-  box-shadow: 0px 4px 10px var(--shadow-default);
 }
 
 /* 🔹 Título */

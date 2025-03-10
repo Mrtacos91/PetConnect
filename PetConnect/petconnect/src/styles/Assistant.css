@@ -14,6 +14,9 @@
   border-radius: 20px;
   background: white; /* Evita transparencias raras */
 }
+.assistant-iframe::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
 
 /* Ajustes del iframe */
 .assistant-iframe {
@@ -21,6 +24,8 @@
   height: 100%;
   border: none;
   visibility: hidden;
+  overflow: hidden;
+  scrollbar-width: none; /* Firefox */ /* Oculta la scrollbar */
 }
 
 .skeleton-loader {
@@ -34,6 +39,7 @@
   top: 0;
   left: 0;
 }
+
 /* Muestra el iframe cuando carga */
 .assistant-card iframe:not([src=""]) {
   visibility: visible;
@@ -73,6 +79,7 @@
   .assistant-iframe {
     width: 100%;
     height: 100vh; /* Se asegura de llenar el espacio */
+    overflow: hidden; /* Oculta la scrollbar */
   }
 }
 
@@ -90,5 +97,6 @@
   .assistant-iframe {
     width: 100%;
     height: 100vh;
+    overflow: hidden; /* Oculta la scrollbar */
   }
 }

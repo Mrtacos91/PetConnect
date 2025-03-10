@@ -85,12 +85,12 @@ button {
 
 .button-add-tm {
   width: 100%;
-  background-color: #3498db;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   color: white;
 }
 
 .button-add-tm:hover {
-  background-color: #2980b9;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   transform: scale(1.05);
 }
 

@@ -1,9 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+@import "animate.css";
+
 * {
   position: relative;
   margin: 0;
 
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif, sans-serif;
+  font-family: "Poppins", Arial, Helvetica, sans-serif, sans-serif;
   box-shadow: none;
 }
 
@@ -19,7 +22,12 @@ body {
   --text-secondary: #555555;
   --shadow-default: rgba(0, 0, 0, 0.3); /* Sombra sin opacidad */
   --shadow-hover: rgba(0, 0, 0, 0.4);
-  --circle-animation: #333333; /* Sombra sin opacidad */
+  --circle-animation: linear-gradient(
+    144deg,
+    #af40ff,
+    #5b42f3 50%,
+    #00ddeb
+  ); /* Sombra sin opacidad */
   --skeleton-gradient-start: #f0f0f0;
   --skeleton-gradient-mid: #e0e0e0;
   --logo: url("/images/Logo_black.png");
@@ -36,7 +44,7 @@ body {
   --shadow-hover: rgba(0, 0, 0, 0.4); /* Sombra sin opacidad */
   --skeleton-gradient-start: #363241;
   --skeleton-gradient-mid: #464053;
-  --circle-animation: #646cff;
+  --circle-animation: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   --logo: url("/images/Logo.png");
 }
 
@@ -56,4 +64,7 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   transition: background 0.3s ease, color 0.3s ease;
+}
+button {
+  box-shadow: none !important;
 }

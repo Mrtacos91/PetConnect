@@ -52,7 +52,7 @@ li {
 
 .bottom-nav li svg {
   font-size: 20px;
-  color: var(--text-secondary); /* Color dinámico del icono */
+  color: var(--text-primary); /* Color dinámico del icono */
   transition: color 0.3s ease;
 }
 
