@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
-@import "animate.css";
+
 
 * {
   position: relative;
@@ -14,20 +14,23 @@ body {
   background-color: white;
   box-shadow: none;
 }
+
 :root {
-  --bg-default: #ffffff; /* Fondo general */
-  --card-background: #ffffff; /* Fondo de la tarjeta */
+  --bg-default: #ffffff;
+  /* Fondo general */
+  --card-background: #ffffff;
+  /* Fondo de la tarjeta */
   --text-primary: #333333;
   --text-bottomnav: #ffffff;
   --text-secondary: #555555;
-  --shadow-default: rgba(0, 0, 0, 0.3); /* Sombra sin opacidad */
+  --shadow-default: rgba(0, 0, 0, 0.3);
+  /* Sombra sin opacidad */
   --shadow-hover: rgba(0, 0, 0, 0.4);
-  --circle-animation: linear-gradient(
-    144deg,
-    #af40ff,
-    #5b42f3 50%,
-    #00ddeb
-  ); /* Sombra sin opacidad */
+  --circle-animation: linear-gradient(144deg,
+      #af40ff,
+      #5b42f3 50%,
+      #00ddeb);
+  /* Sombra sin opacidad */
   --skeleton-gradient-start: #f0f0f0;
   --skeleton-gradient-mid: #e0e0e0;
   --logo: url("/images/Logo_black.png");
@@ -40,8 +43,10 @@ body {
   --text-primary: #eeeeee;
   --text-bottomnav: #eeeeee;
   --text-secondary: #cccccc;
-  --shadow-default: rgba(0, 0, 0, 0.3); /* Sombra sin opacidad */
-  --shadow-hover: rgba(0, 0, 0, 0.4); /* Sombra sin opacidad */
+  --shadow-default: rgba(0, 0, 0, 0.3);
+  /* Sombra sin opacidad */
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+  /* Sombra sin opacidad */
   --skeleton-gradient-start: #363241;
   --skeleton-gradient-mid: #464053;
   --circle-animation: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
@@ -65,6 +70,7 @@ body {
   color: var(--text-color);
   transition: background 0.3s ease, color 0.3s ease;
 }
+
 button {
   box-shadow: none !important;
 }

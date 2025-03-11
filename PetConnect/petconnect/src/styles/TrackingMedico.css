@@ -1,150 +1,106 @@
-/* Animaciones */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
+/* Contenedor principal para distribuir elementos */
+.tracking-container {
+  display: flex;
+  gap: 20px;
+  /* Espacio entre columnas */
+  align-items: flex-start;
+  /* Alineación superior */
+  padding: 20px;
+  max-width: 1200px;
+  /* Ajusta según tu preferencia */
+  margin: 0 auto;
+  /* Centra el contenedor en la pantalla */
 }
 
-@keyframes slideUp {
-  0% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Estilo general para el contenedor principal */
+/* Estilo general del formulario */
 .tracking-medico1 {
+  flex: 2;
+  /* El formulario ocupa más espacio */
   font-family: Arial, sans-serif;
   background-color: var(--card-background);
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 600px;
-  margin: 20px auto;
-  box-shadow: 0 4px 8px var(--shadow-default);
-  animation: fadeIn 1s ease-out forwards;
-  margin-bottom: 100px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px var(--shadow-default);
+  animation: fadeIn 0.8s ease-out forwards;
 }
 
+/* Nueva columna para agregar más componentes */
+.extra-content {
+  flex: 1;
+  /* Espacio para futuros componentes */
+  background-color: var(--card-background);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px var(--shadow-default);
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Títulos */
 .h2-tracking {
   color: var(--text-primary);
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 24px;
+  border-bottom: 2px solid var(--text-primary);
+  padding-bottom: 5px;
 }
 
 .h3-tracking {
   color: var(--text-secondary);
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 18px;
 }
 
-.add-record1 {
-  background-color: var(--card-background);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px var(--shadow-default);
-  margin-bottom: 30px;
-  animation: slideUp 1s ease-out forwards;
-}
-
+/* Inputs y Select mejorados */
 input,
 select {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
   border: 1px solid #ccc;
   background-color: var(--card-background);
   color: var(--text-primary);
   box-sizing: border-box;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
+  font-size: 15px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input:focus,
 select:focus {
-  border-color: #3498db;
+  border-color: #5b42f3;
+  box-shadow: 0 0 8px rgba(91, 66, 243, 0.5);
   outline: none;
 }
 
+/* Botones uniformes */
 button {
-  padding: 10px;
+  width: 100%;
+  padding: 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  margin-bottom: 10px;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button-add-tm {
-  width: 100%;
   background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   color: white;
 }
 
 .button-add-tm:hover {
   background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
-  transform: scale(1.05);
+  transform: scale(1.07);
 }
 
-.button-edit-tm {
-  background-color: #f39c12;
-  color: white;
-}
-
-.button-edit-tm:hover {
-  background-color: #e67e22;
-  transform: scale(1.05);
-}
-
-.button-save-tm {
-  background-color: #2ecc71;
-  color: white;
-}
-
-.button-save-tm:hover {
-  background-color: #27ae60;
-  transform: scale(1.05);
-}
-
-.button-cancel-tm {
-  background-color: #7f8c8d;
-  color: white;
-}
-
-.button-cancel-tm:hover {
-  background-color: #5d6d7e;
-  transform: scale(1.05);
-}
-
-.button-delete-tm {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.button-delete-tm:hover {
-  background-color: #c0392b;
-  transform: scale(1.05);
-}
-
+/* Lista de registros */
 .records-list1 {
   background-color: var(--card-background);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 1s ease-out forwards;
-}
-
-.records-list1 ul {
-  list-style-type: none;
-  padding: 0;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .records-list1 li {
@@ -153,34 +109,10 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 5px;
+  gap: 10px;
 }
 
 /* Último elemento sin borde */
 .records-list1 li:last-child {
   border-bottom: none;
-}
-
-/* Texto en registros */
-.records-list1 p {
-  margin: 5px 0;
-  color: var(--text-secondary);
-}
-
-.records-list1 p strong {
-  color: var(--text-secondary);
-}
-
-/* Botones dentro de los registros */
-.records-list1 li button {
-  margin-right: 10px;
-  margin-top: 5px;
-}
-
-/* Mensaje cuando no hay registros */
-.records-list1 .empty-message {
-  color: #e74c3c;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
 }
