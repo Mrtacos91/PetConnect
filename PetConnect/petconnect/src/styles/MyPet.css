@@ -12,6 +12,7 @@
   margin-bottom: 20px;
   padding: 10px;
   cursor: pointer;
+ 
 }
 
 /* 📌 Título */
@@ -31,7 +32,7 @@
   flex-direction: column;
   text-align: center;
   align-items: center;
-  background: var(--background-color);
+  background: var(--card-background);
   border-radius: 20px; /* Aumentado para más suavidad */
   box-shadow: 0px 4px 10px var(--shadow-default); /* Más destacada */
   padding: 16px;

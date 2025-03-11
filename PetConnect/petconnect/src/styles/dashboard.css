@@ -73,6 +73,12 @@ span:hover {
   cursor: pointer;
 }
 
+.actividad-section {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
 /* Panel Derecho */
 .right-panel {
   flex: 1;
@@ -83,11 +89,18 @@ span:hover {
   .content {
     grid-template-columns: 1fr;
   }
+  .actividad-section {
+    grid-template-columns: 1fr;
+  }
 }
 @media (max-width: 768px) {
   .content {
     flex-direction: column;
     align-items: center;
+    grid-template-columns: 1fr;
+  }
+  
+  .actividad-section {
     grid-template-columns: 1fr;
   }
 

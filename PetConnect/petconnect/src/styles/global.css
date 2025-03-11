@@ -33,7 +33,7 @@ body {
   /* Sombra sin opacidad */
   --skeleton-gradient-start: #f0f0f0;
   --skeleton-gradient-mid: #e0e0e0;
-  --logo: url("/images/Logo_black.png");
+  --logo: url("/images/Logo_gradient.png");
 }
 
 /* Variables para modo oscuro */

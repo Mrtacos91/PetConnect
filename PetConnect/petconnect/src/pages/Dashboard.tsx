@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
       )}
 
       {activeTab === "actividad" && (
-        <section className="right-panel">
+        <section className="actividad-section">
           <Actividades />
           <TrackingMedico />
         </section>
