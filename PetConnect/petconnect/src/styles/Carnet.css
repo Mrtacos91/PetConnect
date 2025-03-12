@@ -1,0 +1,71 @@
+.carnet-container {
+  background-color: var(--card-background);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 4px 8px var(--shadow-default);
+}
+
+.carnet-title {
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.carnet-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.carnet-table th, .carnet-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.carnet-table th {
+  background-color: var(--card-background);
+  font-weight: 600;
+}
+
+.carnet-table tr:hover {
+  background-color: var(--shadow-default);
+}
+
+.edit-button, .save-button {
+  background: var(--circle-animation);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 8px 16px;
+  margin: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.edit-button:hover, .save-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.status-completed {
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.status-pending {
+  color: #FFA726;
+  font-weight: 500;
+}
+
+.input-field {
+  background-color: var(--card-background);
+  border: 1px solid var(--text-secondary);
+  border-radius: 4px;
+  padding: 6px;
+  color: var(--text-primary);
+  width: 100%;
+}

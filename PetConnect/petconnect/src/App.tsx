@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Customise from "./pages/Customise";
-
+import CarnetPage from "./pages/CarnetPage";
 import "./styles/global.css";
 
 const App: React.FC = () => {
@@ -16,6 +16,7 @@ const App: React.FC = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/customise" element={<Customise />} />
+        <Route path="/carnet" element={<CarnetPage />} />
       </Routes>
     </Router>
   );
