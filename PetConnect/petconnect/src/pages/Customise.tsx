@@ -4,7 +4,7 @@ import supabase from "../supabase"; // Importa tu cliente de Supabase
 import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
 import "../styles/Customise.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Customise: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,9 +14,44 @@ const Customise: React.FC = () => {
   const [petAge, setPetAge] = useState("");
   const [petPhoto, setPetPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  // Cargar datos existentes al montar el componente
+  const loadExistingPetData = async () => {
+    const { data: sessionData } = await supabase.auth.getUser();
+    if (!sessionData?.user) return;
+
+    const { data: localUser } = await supabase
+      .from("Users")
+      .select("id")
+      .eq("email", sessionData.user.email)
+      .single();
+
+    if (!localUser?.id) return;
+
+    const { data: existingPet } = await supabase
+      .from("Pets")
+      .select("*")
+      .eq("user_id", localUser.id)
+      .single();
+
+    if (existingPet) {
+      setPetName(existingPet.pet_name || "");
+      setPetType(existingPet.pet_type || "");
+      setPetBreed(existingPet.pet_breed || "");
+      setPetAge(existingPet.pet_age?.toString() || "");
+      setCurrentImageUrl(existingPet.image_pet);
+      setPhotoPreview(existingPet.image_pet);
+    }
+  };
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    loadExistingPetData();
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -65,48 +100,76 @@ const Customise: React.FC = () => {
       return;
     }
 
-    let imageUrl = null;
+    let imageUrl = currentImageUrl; // Usar la imagen existente por defecto
 
-    // 3️⃣ SUBIR IMAGEN A SUPABASE STORAGE (Opcional, si hay imagen)
+    // 3️⃣ MANEJAR LA IMAGEN EN SUPABASE STORAGE
     if (petPhoto) {
-      const fileExt = petPhoto.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `pets/${fileName}`;
+      try {
+        // Si hay una imagen anterior, intentar borrarla primero
+        if (currentImageUrl) {
+          const oldPath = currentImageUrl.split('/').slice(-2).join('/'); // Obtener "userId/filename"
+          const { error: deleteError } = await supabase.storage
+            .from("petimage")
+            .remove([oldPath]);
+          
+          if (deleteError) {
+            console.error("Error borrando la imagen anterior:", deleteError);
+            // Continuamos con la subida aunque falle el borrado
+          }
+        }
 
-      // Subir al bucket "pet_images" (Crea y configura este bucket en Supabase)
-      const { error: uploadError } = await supabase.storage
-        .from("pet_images")
-        .upload(filePath, petPhoto);
+        // Preparar la nueva imagen
+        const fileExt = petPhoto.name.split(".").pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `${sessionData.user.id}/${fileName}`;
 
-      if (uploadError) {
-        console.error("Error subiendo la imagen:", uploadError);
-        alert("Error subiendo la imagen.");
+        // Subir la nueva imagen
+        const { error: uploadError } = await supabase.storage
+          .from("petimage")
+          .upload(filePath, petPhoto);
+
+        if (uploadError) {
+          throw new Error(`Error subiendo la imagen: ${uploadError.message}`);
+        }
+
+        // Obtener la URL pública
+        const { data: publicUrlData } = await supabase.storage
+          .from("petimage")
+          .getPublicUrl(filePath);
+
+        imageUrl = publicUrlData.publicUrl;
+      } catch (error) {
+        console.error("Error en el proceso de imagen:", error);
+        alert("Error procesando la imagen. Por favor, intenta de nuevo.");
         setLoading(false);
         return;
       }
-
-      // Obtener la URL pública
-      const { data: publicUrlData } = supabase.storage
-        .from("pet_images")
-        .getPublicUrl(filePath);
-
-      imageUrl = publicUrlData.publicUrl;
     }
 
-    // 4️⃣ INSERTAR DATOS EN LA TABLA "pets"
-    const { error: insertError } = await supabase.from("Pets").insert([
-      {
-        user_id: localUser.id, // El ID local de la tabla "users"
-        pet_name: petName,
-        pet_type: petType,
-        pet_breed: petBreed,
-        pet_age: parseInt(petAge),
-        image_pet: imageUrl,
-      },
-    ]);
+    // 4️⃣ BUSCAR SI YA EXISTE UNA MASCOTA PARA ESTE USUARIO
+    const { data: existingPet } = await supabase
+      .from("Pets")
+      .select("id")
+      .eq("user_id", localUser.id)
+      .single();
 
-    if (insertError) {
-      console.error("Error insertando datos en Supabase:", insertError);
+    // INSERTAR O ACTUALIZAR DATOS EN LA TABLA "pets"
+    const { error: upsertError } = await supabase
+      .from("Pets")
+      .upsert([
+        {
+          id: existingPet?.id, // Si existe, actualizará el registro existente
+          user_id: localUser.id,
+          pet_name: petName,
+          pet_type: petType,
+          pet_breed: petBreed,
+          pet_age: parseInt(petAge),
+          image_pet: imageUrl,
+        },
+      ]);
+
+    if (upsertError) {
+      console.error("Error actualizando datos en Supabase:", upsertError);
       alert("Error guardando los datos.");
     } else {
       alert("¡Mascota guardada con éxito!");

@@ -21,21 +21,84 @@ const Register: React.FC = () => {
     confirmPassword: "",
   });
 
+  const [errors, setErrors] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const navigate = useNavigate(); // Hook de navegación
 
-  // Manejo de cambios en los inputs
+  // Validación en tiempo real
+  const validateField = (name: string, value: string) => {
+    let error = "";
+    switch (name) {
+      case "fullName":
+        if (value.length < 3) {
+          error = "El nombre debe tener al menos 3 caracteres";
+        }
+        break;
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          error = "Ingresa un correo electrónico válido";
+        }
+        break;
+      case "phone":
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(value)) {
+          error = "Ingresa un número de teléfono válido (10 dígitos)";
+        }
+        break;
+      case "password":
+        if (value.length < 6) {
+          error = "La contraseña debe tener al menos 6 caracteres";
+        }
+        break;
+      case "confirmPassword":
+        if (value !== formData.password) {
+          error = "Las contraseñas no coinciden";
+        }
+        break;
+    }
+    return error;
+  };
+
+  // Manejo de cambios en los inputs con validación
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Validación en tiempo real
+    const error = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: error }));
+
+    // Validar confirmPassword cuando cambia password
+    if (name === "password") {
+      const confirmError = validateField("confirmPassword", formData.confirmPassword);
+      setErrors(prev => ({ ...prev, confirmPassword: confirmError }));
+    }
   };
 
   // Manejo del envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Verificar que las contraseñas coincidan
-    if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden");
+    // Validar todos los campos antes de enviar
+    const newErrors = {
+      fullName: validateField("fullName", formData.fullName),
+      email: validateField("email", formData.email),
+      phone: validateField("phone", formData.phone),
+      password: validateField("password", formData.password),
+      confirmPassword: validateField("confirmPassword", formData.confirmPassword),
+    };
+
+    setErrors(newErrors);
+
+    // Verificar si hay errores
+    if (Object.values(newErrors).some(error => error !== "")) {
       return;
     }
 
@@ -105,8 +168,10 @@ const Register: React.FC = () => {
             value={formData.fullName}
             onChange={handleChange}
             placeholder=""
+            className={errors.fullName ? "error" : ""}
           />
           <label>Nombre</label>
+          {errors.fullName && <span className="error-message">{errors.fullName}</span>}
         </div>
 
         <div className="input-container">
@@ -117,8 +182,10 @@ const Register: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
             placeholder=""
+            className={errors.email ? "error" : ""}
           />
           <label>Correo electrónico</label>
+          {errors.email && <span className="error-message">{errors.email}</span>}
         </div>
 
         <div className="input-container">
@@ -129,8 +196,10 @@ const Register: React.FC = () => {
             value={formData.phone}
             onChange={handleChange}
             placeholder=""
+            className={errors.phone ? "error" : ""}
           />
           <label>Teléfono</label>
+          {errors.phone && <span className="error-message">{errors.phone}</span>}
         </div>
 
         <div className="input-container">
@@ -141,8 +210,10 @@ const Register: React.FC = () => {
             value={formData.password}
             onChange={handleChange}
             placeholder=""
+            className={errors.password ? "error" : ""}
           />
           <label>Contraseña</label>
+          {errors.password && <span className="error-message">{errors.password}</span>}
         </div>
 
         <div className="input-container">
@@ -153,8 +224,10 @@ const Register: React.FC = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
             placeholder=""
+            className={errors.confirmPassword ? "error" : ""}
           />
           <label>Confirma tu contraseña</label>
+          {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
         </div>
 
         <button type="submit">Crear cuenta</button>

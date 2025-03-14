@@ -65,7 +65,7 @@ h2 {
 
 .input-container {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
 }
 
 .input-container input {
@@ -101,6 +101,44 @@ h2 {
   top: -10px;
   font-size: 12px;
   color: #fff;
+}
+
+.input-container input.error {
+  border-color: #ff3e3e;
+  background-color: rgba(255, 62, 62, 0.1);
+}
+
+.input-container input.error + label {
+  color: #ff3e3e;
+}
+
+.input-container input.error:hover,
+.input-container input.error:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 2px rgba(255, 62, 62, 0.2);
+}
+
+.error-message {
+  color: #ff3e3e;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  transition: all 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .options {
@@ -202,11 +240,208 @@ button:hover {
 }
 
 .google-login-button:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0c7;
 }
 
 .google-icon {
   width: 20px;
   height: 20px;
   margin-right: 10px;
+}
+
+/* Notification Styles */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  list-style-type: none;
+  font-family: sans-serif;
+  --content-color: black;
+  --background-color: #f3f3f3;
+  --font-size-content: 0.9em;
+  --icon-size: 1.2em;
+}
+
+.notification-item {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  gap: 1em;
+  overflow: hidden;
+  padding: 12px 15px;
+  border-radius: 8px;
+  box-shadow: rgba(111, 111, 111, 0.2) 0px 8px 24px;
+  background-color: var(--background-color);
+  transition: all 250ms ease;
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification-item svg {
+  transition: 250ms ease;
+}
+
+.notification-item:hover {
+  transform: scale(1.02);
+}
+
+.notification-item .notification-close:hover {
+  background-color: rgba(204, 204, 204, 0.45);
+}
+
+.notification-item .notification-close:hover svg {
+  color: rgb(0, 0, 0);
+}
+
+.notification-item .notification-close:active svg {
+  transform: scale(1.1);
+}
+
+.notification-item .notification-close {
+  padding: 4px;
+  border-radius: 5px;
+  transition: all 250ms;
+  cursor: pointer;
+}
+
+.notification-container svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--content-color);
+}
+
+.notification-icon {
+  display: flex;
+  align-items: center;
+}
+
+/* Success Notification */
+.notification-item.success {
+  color: #047857;
+  background-color: #7dffbc;
+  --grid-color: rgba(16, 185, 129, 0.25);
+  background-image: linear-gradient(0deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent),
+    linear-gradient(90deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent);
+  background-size: 55px 55px;
+}
+
+.notification-item.success svg {
+  color: #047857;
+}
+
+.notification-item.success .notification-progress-bar {
+  background-color: #047857;
+}
+
+.notification-item.success:hover {
+  background-color: #5bffaa;
+}
+
+/* Error Notification */
+.notification-item.error {
+  color: #7f1d1d;
+  background-color: #ff7e7e;
+  --grid-color: rgba(239, 68, 68, 0.25);
+  background-image: linear-gradient(0deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent),
+    linear-gradient(90deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent);
+  background-size: 55px 55px;
+}
+
+.notification-item.error svg {
+  color: #7f1d1d;
+}
+
+.notification-item.error .notification-progress-bar {
+  background-color: #7f1d1d;
+}
+
+.notification-item.error:hover {
+  background-color: #ff5f5f;
+}
+
+/* Notification Content */
+.notification-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.8em;
+}
+
+.notification-text {
+  font-size: var(--font-size-content);
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Progress Bar Animation */
+.notification-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform: translateX(100%);
+  animation: progressBar 5s linear forwards;
+}
+
+@keyframes progressBar {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }

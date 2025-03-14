@@ -8,10 +8,12 @@
 
 .customise-container {
   max-width: 600px;
+  width: 100%;
+  justify-content: center;
   margin: 0 auto;
   background: var(--card-background);
   border-radius: 16px;
-  padding: 20px;
+  padding: 5px;
   box-shadow: 0 4px 10px var(--shadow-default);
 }
 
@@ -22,7 +24,8 @@
 }
 
 .customise-form .form-group {
-  margin-bottom: 15px;
+  padding: 10px;
+  margin-bottom: 10px;
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
@@ -50,8 +53,7 @@
 
 .save-button {
   width: 100%;
-  padding: 12px;
-  background: #007bff;
+  padding: 12px;;
   border: none;
   border-radius: 8px;
   color: var(--text-primary);
@@ -61,7 +63,8 @@
 }
 
 .save-button:hover {
-  background: #0056b3;
+  transform: translateY(-3px);
+  background-image: var(--circle-animation);
 }
 
 /* Responsividad */
@@ -80,14 +83,15 @@
 
 /* Botón para volver a /dashboard */
 .back-button {
-  position: fixed;
-  top: 20px;
-  max-width: 500px;
-  left: 20px;
+  position: relative;
+  top: 30px;
+  max-width: 300px;
+  padding: 10px;
+  left: 70px;
   background: transparent;
   border: none;
   font-size: 1.5rem;
-  color: var(--text-primary); /* Ajusta el color según tu tema */
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb); /* Ajusta el color según tu tema */
   cursor: pointer;
   z-index: 50;
   transition: color 0.3s ease;
@@ -97,6 +101,9 @@
 
 .back-button:hover {
   transform: translateY(-3px);
+  transition: all 0.3s ease;
+  background-color: rgb(5, 6, 45);
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
 }
 
 /* Resto de estilos existentes para la página Customise */
@@ -106,18 +113,7 @@
   margin-bottom: 60px; /* Espacio para otros elementos fijos */
 }
 
-.customise-container {
-  max-width: 600px;
-  margin: 0 auto;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
 
-.customise-container h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
 
 .customise-form .form-group {
   margin-bottom: 15px;
@@ -143,7 +139,6 @@
 .save-button {
   width: 100%;
   padding: 12px;
-  background: #007bff;
   border: none;
   border-radius: 8px;
   color: white;
@@ -153,10 +148,6 @@
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.save-button:hover {
-  background: #0056b3;
-  transform: translateY(-3px);
-}
 
 /* Responsividad */
 @media (max-width: 768px) {

@@ -1,162 +1,343 @@
+/* Estilos base */
 .container-actividades {
-  background-color: var(--card-background);
-  border-radius: 8px;
-  padding: 20px;
-  width: 90%;
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  max-width: 1200px;
-  box-shadow: 0 4px 12px var(--shadow-default);
-  opacity: 0;
-  animation: slideUp 0.5s ease-out forwards;
-  overflow: hidden;
-  margin: 20px auto;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--background-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 6px var(--shadow-default);
 }
 
 .titulo {
-  width: 100%;
   font-size: 2rem;
-  padding: 15px 10px;
+  font-weight: bold;
   color: var(--text-primary);
   text-align: center;
-  margin-bottom: 20px;
-  opacity: 0;
-  animation: fadeIn 1s 0.5s ease-out forwards;
-  border-bottom: 2px solid var(--text-primary);
-}
-
-.subtitulo {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  color: var(--text-secondary);
+  margin-bottom: 2rem;
 }
 
 .seccion {
-  flex: 1;
-  min-width: 300px; /* Asegura que no se desborde en pantallas pequeñas */
-  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
+
+.subtitulo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+
 
 .input {
   width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: 2px solid #ddd;
-  border-radius: 6px;
+  display: flex;
+  max-width: 400px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(12px, 1.5vw, 15px);
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: var(--background-color);
+  color: var(--text-primary);
   font-size: 1rem;
-  transition: border-color 0.3s, transform 0.3s;
-  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .input:focus {
-  border-color: #3498db;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
   outline: none;
-  transform: scale(1.02);
 }
 
-/* Estilo para el campo de nombre de la cita */
+.input:hover {
+  border-color: #818cf8;
+}
+
+
+
 .input::placeholder {
-  color: var(--text-secondary);
-  font-style: italic;
+  color: #94a3b8;
 }
 
 .boton {
   width: 100%;
-  padding: 15px;
-  text-align: center;
+  padding: clamp(10px, 1.5vw, 12px);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: clamp(14px, 2vw, 16px);
+  margin-bottom: 10px;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+  color: white;
+  transition: transform 0.2s ease;
+}
+
+.boton:hover {
+  transform: scale(1.02);
   background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
 }
 
 .boton:disabled {
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+  background: #e5e7eb;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.boton:hover:enabled {
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
-  transform: translateY(-3px);
-}
-
-/* Mensajes de error o éxito */
-.mensajeError {
-  color: #e74c3c;
-  font-size: 1rem;
-  text-align: center;
-  margin-top: 15px;
-  animation: fadeIn 1s ease-out;
-}
-
-.mensajeExito {
-  color: #2ecc71;
-  font-size: 1rem;
-  text-align: center;
-  margin-top: 15px;
-  animation: fadeIn 1s ease-out;
-}
-
-/* Estilos para las citas agendadas */
 .citasAgendadas {
-  flex: 1;
-  min-width: 250px;
-  max-width: 350px;
-  animation: fadeIn 1s 1.5s ease-out forwards;
+  width: 100%;
+  margin-top: 2rem;
 }
 
 .citasAgendadas h3 {
   font-size: 1.5rem;
-  margin-bottom: 15px;
+  font-weight: 600;
   color: var(--text-primary);
-  animation: fadeIn 1s 1.5s ease-out forwards;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .citasAgendadas ul {
-  list-style-type: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .citasAgendadas li {
-  background-color: var(--card-background);
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 10px;
+  background: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px var(--shadow-default);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  animation: fadeIn 0.8s ease-out forwards;
-  animation-delay: 2s;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.citasAgendadas button {
-  background-color: var(--card-background);
-  color: var(--text-primary);
+.appointment-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.appointment-buttons button {
+  padding: 0.5rem 1rem;
   border: none;
-  padding: 8px 12px;
   border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  margin-left: 10px;
+  transition: all 0.2s;
 }
 
-.citasAgendadas button:hover {
-  background-color: #c0392b;
-  transform: translateY(-3px);
+.appointment-buttons button:first-child {
+  background: var(--primary-color-light);
+  color: var(--primary-color);
 }
 
-.citasAgendadas button:focus {
-  outline: none;
+.appointment-buttons button:last-child {
+  background: var(--danger-color-light);
+  color: var(--danger-color);
 }
 
-/* Botón Editar */
-.citasAgendadas button:first-of-type {
-  background-color: #3498db;
+.appointment-buttons button:hover {
+  filter: brightness(0.95);
 }
 
-.citasAgendadas button:first-of-type:hover {
-  background-color: #2980b9;
+.mensajeError,
+.mensajeExito {
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mensajeError {
+  background-color: var(--danger-color-light);
+  color: var(--danger-color);
+}
+
+.mensajeExito {
+  background-color: var(--success-color-light);
+  color: var(--success-color);
+}
+
+/* Skeleton Loader Styles */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Estructura del Skeleton */
+.actividades-skeleton {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.skeleton-form {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0px 4px 10px var(--shadow-default);
+}
+
+.skeleton-subtitle {
+  height: 24px;
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+.skeleton-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.skeleton-input {
+  height: 40px;
+  width: 100%;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 150px;
+  margin: 0 auto;
+}
+
+/* Skeleton Lista de Citas */
+.skeleton-list {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px var(--shadow-default);
+}
+
+.skeleton-appointments {
+  margin-top: 20px;
+}
+
+.skeleton-appointment {
+  padding: 16px;
+  margin: 12px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--background-color);
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 80%;
+  margin-bottom: 12px;
+}
+
+.skeleton-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.skeleton-button-small {
+  height: 32px;
+  width: 80px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .skeleton-form,
+  .skeleton-list {
+    padding: 16px;
+  }
+
+  .skeleton-subtitle {
+    width: 150px;
+  }
+
+  .skeleton-input {
+    height: 36px;
+  }
+
+  .skeleton-button {
+    width: 130px;
+  }
+
+  .skeleton-appointment {
+    padding: 12px;
+  }
+
+  .skeleton-text {
+    width: 90%;
+  }
+
+  .skeleton-button-small {
+    width: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeleton-form,
+  .skeleton-list {
+    padding: 12px;
+  }
+
+  .skeleton-subtitle {
+    width: 120px;
+    height: 20px;
+  }
+
+  .skeleton-input {
+    height: 32px;
+  }
+
+  .skeleton-button {
+    width: 110px;
+    height: 36px;
+  }
+
+  .skeleton-appointment {
+    padding: 10px;
+  }
+
+  .skeleton-text {
+    height: 14px;
+  }
+
+  .skeleton-button-small {
+    width: 60px;
+    height: 28px;
+  }
 }
 
 /* Animaciones */

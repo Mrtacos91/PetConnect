@@ -6,8 +6,16 @@ import AlertMessage from "../components/AlertMessage";
 import "../styles/style.css";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [alert, setAlert] = useState<{
     type: "success" | "error";
@@ -77,17 +85,63 @@ const Login: React.FC = () => {
     }
   };
 
+  // Validación en tiempo real
+  const validateField = (name: string, value: string) => {
+    let error = "";
+    switch (name) {
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) {
+          error = "El correo electrónico es requerido";
+        } else if (!emailRegex.test(value)) {
+          error = "Ingresa un correo electrónico válido";
+        }
+        break;
+      case "password":
+        if (!value) {
+          error = "La contraseña es requerida";
+        } else if (value.length < 6) {
+          error = "La contraseña debe tener al menos 6 caracteres";
+        }
+        break;
+    }
+    return error;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Validación en tiempo real
+    const error = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const normalizedEmail = email.toLowerCase();
+
+    // Validar todos los campos antes de enviar
+    const newErrors = {
+      email: validateField("email", formData.email),
+      password: validateField("password", formData.password),
+    };
+
+    setErrors(newErrors);
+
+    // Verificar si hay errores
+    if (Object.values(newErrors).some(error => error !== "")) {
+      return;
+    }
+
+    const normalizedEmail = formData.email.toLowerCase();
 
     const { error } = await supabase.auth.signInWithPassword({
       email: normalizedEmail,
-      password,
+      password: formData.password,
     });
 
     if (error) {
-      setAlert({ type: "error", message: error.message });
+      setAlert({ type: "error", message: "Credenciales inválidas. Por favor, verifica tu correo y contraseña." });
       return;
     }
 
@@ -124,10 +178,12 @@ const Login: React.FC = () => {
             name="email"
             placeholder=""
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleChange}
+            className={errors.email ? "error" : ""}
           />
           <label>Ingresa tu email</label>
+          {errors.email && <span className="error-message">{errors.email}</span>}
         </div>
 
         <div className="input-container password-container">
@@ -136,10 +192,12 @@ const Login: React.FC = () => {
             name="password"
             placeholder=""
             required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={handleChange}
+            className={errors.password ? "error" : ""}
           />
           <label>Ingresa tu contraseña</label>
+          {errors.password && <span className="error-message">{errors.password}</span>}
           <span
             className="toggle-password"
             onClick={() => setShowPassword(!showPassword)}

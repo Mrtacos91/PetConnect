@@ -23,9 +23,9 @@ body {
   --text-primary: #333333;
   --text-bottomnav: #ffffff;
   --text-secondary: #555555;
-  --shadow-default: rgba(0, 0, 0, 0.3);
+  --shadow-default: rgba(0, 0, 0, 0.5);
   /* Sombra sin opacidad */
-  --shadow-hover: rgba(0, 0, 0, 0.4);
+  --shadow-hover: rgba(0, 0, 0, 0.6);
   --circle-animation: linear-gradient(144deg,
       #af40ff,
       #5b42f3 50%,
@@ -43,9 +43,9 @@ body {
   --text-primary: #eeeeee;
   --text-bottomnav: #eeeeee;
   --text-secondary: #cccccc;
-  --shadow-default: rgba(0, 0, 0, 0.3);
+  --shadow-default: rgba(0, 0, 0, 0.5);
   /* Sombra sin opacidad */
-  --shadow-hover: rgba(0, 0, 0, 0.4);
+  --shadow-hover: rgba(0, 0, 0, 0.6);
   /* Sombra sin opacidad */
   --skeleton-gradient-start: #363241;
   --skeleton-gradient-mid: #464053;

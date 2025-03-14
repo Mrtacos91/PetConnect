@@ -19,6 +19,8 @@
 .highlight-title-MyPet {
   font-size: 22px;
   font-weight: bold;
+  font-size: 22px;
+  font-weight: bold;
   text-align: center;
   color: var(--text-primary);
   margin-bottom: 15px;
@@ -29,13 +31,13 @@
 .highlight-card-MyPet {
   position: relative;
   display: flex;
-  flex-direction: column;
-  text-align: center;
+  flex-direction: row;
   align-items: center;
+  gap: 24px;
   background: var(--card-background);
-  border-radius: 20px; /* Aumentado para más suavidad */
-  box-shadow: 0px 4px 10px var(--shadow-default); /* Más destacada */
-  padding: 16px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 10px var(--shadow-default);
+  padding: 24px;
   width: 100%;
   max-width: 650px;
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -48,9 +50,8 @@
 
 /* 📌 Imagen de la mascota */
 .pet-image-MyPet {
-  width: 100px;
-  justify-content: center;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 100%;
   object-fit: cover;
   flex-shrink: 0;
@@ -62,17 +63,17 @@
   flex-direction: column;
   color: var(--text-primary);
   justify-content: center;
-  width: 100%;
+  flex: 1;
 }
 
 .pet-info-MyPet h3 {
-  text-align: center;
+  margin: 0 0 8px 0;
   font-size: 1.5rem;
   font-weight: bold;
 }
 
 .pet-info-MyPet p {
-  text-align: center;
+  margin: 4px 0;
   font-size: 1rem;
   color: var(--text-secondary);
 }
@@ -93,19 +94,18 @@
   }
   .highlight-card-MyPet {
     max-width: 100%;
-    flex-wrap: wrap;
-    padding: 12px;
+    padding: 20px;
+    gap: 20px;
   }
   .pet-image-MyPet {
     width: 100px;
-    height: 80px;
-    margin-right: 12px;
+    height: 100px;
   }
   .pet-info-MyPet h3 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   .pet-info-MyPet p {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -116,18 +116,16 @@
   }
   .highlight-card-MyPet {
     flex-direction: column;
-    align-items: center;
-    padding: 10px;
+    text-align: center;
+    padding: 16px;
+    gap: 16px;
   }
   .pet-image-MyPet {
-    width: 60px;
-    height: 60px;
-    margin-right: 0;
-    margin-bottom: 8px;
+    width: 90px;
+    height: 90px;
   }
   .pet-info-MyPet {
     align-items: center;
-    text-align: center;
   }
   .pet-info-MyPet h3 {
     font-size: 1.2rem;
@@ -200,56 +198,81 @@
 /* 📌 Botón Editar */
 .edit-button-MyPet {
   position: absolute;
-  top: -10px;
-  right: 0;
-  color: var(--text-primary);
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20);
   border: none;
-  padding: 4px 8px;
-  font-size: 12px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
-  border-radius: 4px;
-  box-shadow: none;
+  justify-content: center;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
   cursor: pointer;
-  transition: opacity 0.3s ease-in-out;
+  transition-duration: 0.3s;
+  overflow: hidden;
   z-index: 50;
 }
-.edit-button-MyPet:hover {
-  box-shadow: none;
-}
 
-/* 📌 Icono de lápiz */
 .edit-icon {
-  font-size: 16px;
+  width: 17px;
+  transition-duration: 0.3s;
+  color: white;
 }
 
-/* 📌 Mostrar el botón al pasar el mouse */
-.highlight-container-MyPet:hover .edit-button-MyPet {
-  visibility: visible;
+.edit-button-MyPet:hover {
+  width: 120px;
+  border-radius: 50px;
+  transition-duration: 0.3s;
+  background-color: rgb(255, 69, 69);
+}
+
+.edit-button-MyPet:hover .edit-icon {
+  transform: rotate(360deg);
+  transition-duration: 0.3s;
+}
+
+.edit-button-MyPet::before {
+  display: none;
+  content: "Editar";
+  color: white;
+  transition-duration: 0.3s;
+  font-size: 2px;
+}
+
+.edit-button-MyPet:hover::before {
+  display: block;
+  padding-right: 10px;
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(0px);
+  transition-duration: 0.3s;
 }
 
 /* Responsividad para el botón Editar */
 @media (max-width: 768px) {
   .edit-button-MyPet {
-    top: 5px;
-    right: 10px;
-    font-size: 12px;
-    padding: 4px 8px;
+    width: 35px;
+    height: 35px;
   }
   .edit-icon {
-    font-size: 14px;
+    width: 15px;
   }
 }
 
 @media (max-width: 480px) {
   .edit-button-MyPet {
-    top: 5px;
-    right: 5px;
-    font-size: 12px;
-    padding: 4px 8px;
+    width: 32px;
+    height: 32px;
   }
   .edit-icon {
-    font-size: 12px;
+    width: 14px;
   }
+}
+
+/* 📌 Mostrar el botón al pasar el mouse */
+.highlight-container-MyPet:hover .edit-button-MyPet {
+  visibility: visible;
 }

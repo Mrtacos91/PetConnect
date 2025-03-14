@@ -124,6 +124,131 @@ select:focus {
   border-bottom: none;
 }
 
+/* Skeleton Loader Styles */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Skeleton Form */
+.skeleton-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px var(--shadow-default);
+  margin-bottom: 24px;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 200px;
+}
+
+.skeleton-input {
+  height: 40px;
+  width: 100%;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 150px;
+  margin-top: 8px;
+}
+
+/* Skeleton List */
+.skeleton-list {
+  padding: 20px;
+  background: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px var(--shadow-default);
+}
+
+.skeleton-record {
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 80%;
+  margin: 8px 0;
+}
+
+.skeleton-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.skeleton-button-small {
+  height: 32px;
+  width: 80px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .skeleton-form,
+  .skeleton-list {
+    padding: 16px;
+  }
+
+  .skeleton-title {
+    width: 150px;
+  }
+
+  .skeleton-text {
+    width: 90%;
+  }
+
+  .skeleton-button-small {
+    width: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeleton-form,
+  .skeleton-list {
+    padding: 12px;
+  }
+
+  .skeleton-record {
+    padding: 12px;
+  }
+
+  .skeleton-title {
+    width: 120px;
+  }
+
+  .skeleton-button {
+    width: 120px;
+  }
+
+  .skeleton-button-small {
+    width: 60px;
+  }
+}
+
 /* Media queries para diferentes tamaños de pantalla */
 @media screen and (min-width: 820px) {
   .tracking-container {

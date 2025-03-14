@@ -17,7 +17,6 @@ const HighlightCard: React.FC<MyPetCardProps> = ({
   breed,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isHovered, setIsHovered] = useState(false); // Estado para mostrar "Editar"
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,11 +24,7 @@ const HighlightCard: React.FC<MyPetCardProps> = ({
   }, []);
 
   return (
-    <div
-      className="highlight-container-MyPet"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="highlight-container-MyPet">
       <h2 className="highlight-title-MyPet">Mi mascota</h2>
 
       {isLoading ? (
@@ -45,15 +40,12 @@ const HighlightCard: React.FC<MyPetCardProps> = ({
       ) : (
         // 🔹 Contenido real
         <div className="highlight-card-MyPet">
-          {/* Botón "Editar" posicionado dentro de la tarjeta */}
-          {isHovered && (
-            <button
-              className="edit-button-MyPet"
-              onClick={() => navigate("/customise")}
-            >
-              <FaEdit className="edit-icon" /> Editar
-            </button>
-          )}
+          <button
+            className="edit-button-MyPet"
+            onClick={() => navigate("/customise")}
+          >
+            <FaEdit className="edit-icon" />
+          </button>
           <img src={imageUrl} alt={name} className="pet-image-MyPet" />
           <aside className="pet-info-MyPet">
             <h3>{name}</h3>

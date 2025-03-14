@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import "../styles/AlertMessage.css";
+import { FaCheckCircle, FaTimesCircle, FaTimes } from "react-icons/fa";
+import "../styles/style.css";
 
 interface AlertMessageProps {
   message: string;
@@ -22,20 +22,35 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
       setVisible(false);
       setTimeout(() => {
         if (onClose) onClose();
-      }, 300); // Tiempo para la animación de fade-out
-    }, 3000); // El mensaje se oculta después de 3 segundos
+      }, 300);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [onClose]);
 
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(() => {
+      if (onClose) onClose();
+    }, 300);
+  };
+
+  if (!visible) return null;
+
   return (
-    <div className={`alert-message ${type} ${visible ? "show" : "hide"}`}>
-      {type === "success" ? (
-        <FaCheckCircle className="alert-icon" />
-      ) : (
-        <FaTimesCircle className="alert-icon" />
-      )}
-      <span>{message}</span>
+    <div className="notification-container">
+      <div className={`notification-item ${type}`}>
+        <div className="notification-content">
+          <span className="notification-icon">
+            {type === "success" ? <FaCheckCircle /> : <FaTimesCircle />}
+          </span>
+          <span className="notification-text">{message}</span>
+        </div>
+        <div className="notification-close" onClick={handleClose}>
+          <FaTimes />
+        </div>
+        <div className="notification-progress-bar"></div>
+      </div>
     </div>
   );
 };
