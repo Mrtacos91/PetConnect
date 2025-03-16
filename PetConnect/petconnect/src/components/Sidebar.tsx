@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
       <nav className="sidebar">
         <div className="logo">
-          <img src="/images/Logo.png" alt="PetConnect Logo" />
+          <img src="/images/Logo_gradient.png" alt="PetConnect Logo" />
         </div>
         <ul>
           <li>
