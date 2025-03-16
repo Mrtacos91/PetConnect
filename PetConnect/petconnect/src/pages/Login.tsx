@@ -149,20 +149,31 @@ const Login: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin + "/dashboard"
+        }
+      });
 
-    if (error) {
+      if (error) {
+        setAlert({
+          type: "error",
+          message: "Error al iniciar sesión con Google"
+        });
+        return;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Error en la autenticación con Google:", error);
       setAlert({
         type: "error",
-        message: "Error al iniciar sesión con Google",
+        message: "Error al conectar con Google"
       });
-      return;
-    }
-
-    if (data?.url) {
-      window.location.href = data.url;
     }
   };
 
