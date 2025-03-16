@@ -12,6 +12,7 @@ import WelcomeCard from "../components/WelcomeCard";
 import ActivitiesCard from "../components/ActivitiesCard";
 import AssistantCard from "../components/AssistantCard";
 import Location from "../components/Location";
+import Paseos from "../components/Paseos";
 import "../styles/dashboard.css";
 import "../styles/Actividades.css";
 import "../styles/TrackingMedico.css";
@@ -96,6 +97,7 @@ const Dashboard: React.FC = () => {
         <section className="actividad-section">
           <Actividades />
           <TrackingMedico />
+          <Paseos />
         </section>
       )}
 
