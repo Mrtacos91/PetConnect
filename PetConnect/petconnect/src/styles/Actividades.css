@@ -4,9 +4,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: min(95%, 600px);
+  margin: 2rem auto 4rem;
+  padding: clamp(1.5rem, 4vw, 2rem);
   background: var(--background-color);
   border-radius: 20px;
   box-shadow: 0 4px 6px var(--shadow-default);
@@ -36,8 +36,6 @@
   margin-bottom: 1.5rem;
 }
 
-
-
 .input {
   width: 100%;
   display: flex;
@@ -63,8 +61,6 @@
 .input:hover {
   border-color: #818cf8;
 }
-
-
 
 .input::placeholder {
   color: #94a3b8;
@@ -276,67 +272,92 @@
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .skeleton-form,
-  .skeleton-list {
-    padding: 16px;
+  .container-actividades {
+    width: min(98%, 550px);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin: 1.5rem auto 3rem;
   }
 
-  .skeleton-subtitle {
-    width: 150px;
+  .titulo {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
   }
 
-  .skeleton-input {
-    height: 36px;
+  .subtitulo {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
   }
 
-  .skeleton-button {
-    width: 130px;
+  .input {
+    padding: clamp(10px, 1.2vw, 12px);
+    font-size: 0.95rem;
   }
 
-  .skeleton-appointment {
-    padding: 12px;
-  }
-
-  .skeleton-text {
-    width: 90%;
-  }
-
-  .skeleton-button-small {
-    width: 70px;
+  .boton {
+    padding: clamp(8px, 1.2vw, 10px);
+    font-size: clamp(13px, 1.8vw, 15px);
   }
 }
 
 @media (max-width: 480px) {
-  .skeleton-form,
-  .skeleton-list {
-    padding: 12px;
+  .container-actividades {
+    width: min(98%, 450px);
+    padding: 1rem;
+    margin: 1rem auto 2.5rem;
   }
 
-  .skeleton-subtitle {
-    width: 120px;
-    height: 20px;
+  .titulo {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
-  .skeleton-input {
-    height: 32px;
+  .subtitulo {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
   }
 
-  .skeleton-button {
-    width: 110px;
-    height: 36px;
-  }
-
-  .skeleton-appointment {
+  .input {
     padding: 10px;
+    font-size: 0.9rem;
   }
 
-  .skeleton-text {
-    height: 14px;
+  .boton {
+    padding: 8px;
+    font-size: 0.9rem;
   }
 
-  .skeleton-button-small {
-    width: 60px;
-    height: 28px;
+  .citasAgendadas h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .citasAgendadas li {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .container-actividades {
+    width: 98%;
+    padding: 0.875rem;
+    margin: 0.875rem auto 2rem;
+  }
+
+  .titulo {
+    font-size: 1.35rem;
+  }
+
+  .subtitulo {
+    font-size: 1rem;
+  }
+
+  .input {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .citasAgendadas li {
+    padding: 1rem;
   }
 }
 

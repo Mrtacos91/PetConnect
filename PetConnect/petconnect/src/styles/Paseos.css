@@ -7,7 +7,7 @@
   border-radius: clamp(12px, 3vw, 16px);
   box-shadow: 0 4px 12px var(--shadow-default);
   width: min(95%, 500px);
-  margin: 20px auto;
+  margin: 2rem auto 4rem;
 }
 
 .paseos-title {
@@ -112,15 +112,127 @@
   transform: translateY(0);
 }
 
-@media (max-width: 320px) {
+@media (max-width: 768px) {
+  .paseos-container {
+    width: min(98%, 450px);
+    padding: clamp(14px, 3vw, 20px);
+    margin: 1.5rem auto 3rem;
+  }
+
+  .paseos-title {
+    font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+    margin-bottom: clamp(14px, 3.5vw, 20px);
+  }
+
   .days-container {
-    gap: 2px;
+    gap: clamp(3px, 1.2vw, 6px);
+    margin-bottom: clamp(14px, 3.5vw, 20px);
+    padding: clamp(5px, 1.8vw, 7px);
+  }
+
+  .day-button {
+    width: clamp(30px, 7vw, 36px);
+    height: clamp(30px, 7vw, 36px);
+    font-size: clamp(0.75rem, 2.2vw, 0.85rem);
+  }
+
+  .time-container {
+    margin-bottom: clamp(14px, 3.5vw, 20px);
+  }
+
+  .time-picker {
+    height: clamp(36px, 9vw, 40px);
+    font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+  }
+
+  .save-button {
+    padding: clamp(9px, 2.5vw, 11px) clamp(20px, 5vw, 32px);
+    font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .paseos-container {
+    width: min(98%, 400px);
+    padding: clamp(12px, 3vw, 16px);
+    margin: 1.25rem auto 2.5rem;
+  }
+
+  .paseos-title {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    margin-bottom: clamp(12px, 3vw, 16px);
+  }
+
+  .days-container {
+    gap: 3px;
+    margin-bottom: clamp(12px, 3vw, 16px);
     padding: 4px;
   }
-  
+
   .day-button {
-    width: 28px;
-    height: 28px;
+    width: clamp(28px, 6vw, 32px);
+    height: clamp(28px, 6vw, 32px);
     font-size: 0.75rem;
+    border-width: 1.5px;
+  }
+
+  .time-container {
+    margin-bottom: clamp(12px, 3vw, 16px);
+    width: min(100%, 180px);
+  }
+
+  .time-picker {
+    height: 36px;
+    font-size: 0.85rem;
+    border-width: 1.5px;
+  }
+
+  .save-button {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    width: min(100%, 180px);
+  }
+}
+
+@media (max-width: 360px) {
+  .paseos-container {
+    width: 98%;
+    padding: 10px;
+    margin: 1rem auto 2rem;
+  }
+
+  .paseos-title {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+
+  .days-container {
+    gap: 2px;
+    margin-bottom: 10px;
+    padding: 3px;
+  }
+
+  .day-button {
+    width: 26px;
+    height: 26px;
+    font-size: 0.7rem;
+    border-width: 1px;
+  }
+
+  .time-container {
+    margin-bottom: 10px;
+    width: min(100%, 160px);
+  }
+
+  .time-picker {
+    height: 32px;
+    font-size: 0.8rem;
+    border-width: 1px;
+  }
+
+  .save-button {
+    padding: 7px 16px;
+    font-size: 0.8rem;
+    width: min(100%, 160px);
   }
 }
