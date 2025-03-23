@@ -79,15 +79,19 @@
   font-size: clamp(0.9rem, 2.5vw, 1rem);
 }
 
+.time-picker::placeholder {
+  color: var(--text-primary);
+}
+
 @media (hover: hover) {
   .time-picker:hover {
-    border-color: #FF8BA7;
+    border-color: #ff8ba7;
     background: var(--card-background);
   }
 }
 
 .save-button {
-  background: linear-gradient(135deg, #FF8BA7 0%, #FFC6C7 100%);
+  background: linear-gradient(135deg, #ff8ba7 0%, #ffc6c7 100%);
   color: var(--text-primary);
   border: none;
   padding: clamp(10px, 3vw, 12px) clamp(24px, 6vw, 36px);
@@ -153,7 +157,7 @@
 
 @media (max-width: 480px) {
   .paseos-container {
-    width: min(98%, 400px);
+    width: min(80%, 400px);
     padding: clamp(12px, 3vw, 16px);
     margin: 1.25rem auto 2.5rem;
   }
@@ -207,12 +211,14 @@
   }
 
   .days-container {
+    color: var(--text-primary);
     gap: 2px;
     margin-bottom: 10px;
     padding: 3px;
   }
 
   .day-button {
+    color: var(--text-primary);
     width: 26px;
     height: 26px;
     font-size: 0.7rem;
@@ -225,6 +231,7 @@
   }
 
   .time-picker {
+    color: var(--text-primary);
     height: 32px;
     font-size: 0.8rem;
     border-width: 1px;

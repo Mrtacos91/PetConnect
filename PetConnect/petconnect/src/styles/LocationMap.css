@@ -4,8 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%; /* Permite que el mapa crezca en pantallas grandes */
+  width: 100%;
   margin: 0 auto;
   padding: 16px;
   margin-bottom: 20px;
@@ -22,12 +21,82 @@
 /* Estilo para el mapa */
 .map {
   width: 200%;
-  max-width: 900px; /* Permite que sea más grande en pantallas anchas */
-  min-height: 450px; /* Asegura que tenga una altura mínima */
-  height: 50vh; /* Hace que el mapa sea proporcional a la pantalla */
+  max-width: 900px;
+  min-height: 450px;
+  height: 50vh;
   border-radius: 16px;
   overflow: hidden;
+  display: flex;
+  flex-direction: row;
   z-index: 10;
+}
+
+/* Estilo para el panel de control */
+.control-panel {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px 0;
+  padding: 15px;
+  background: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-default);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+  z-index: 10;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.control-panel h3 {
+  font-size: 18px;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.radius-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-basis: 45%;
+}
+
+.radius-control label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.radius-control input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid var(--text-secondary);
+  border-radius: 8px;
+  background: var(--card-background);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.radius-control span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Estilo para los botones */
+.edit-button {
+  background: var(--circle-animation);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.edit-button:hover {
+  background: var(--circle-animation);
+  transform: translateY(-2px);
 }
 
 /* Skeleton Loader para el mapa */
@@ -97,4 +166,19 @@
 
 .pet-location-info strong {
   color: var(--text-primary);
+}
+
+/* House marker styles */
+.leaflet-marker-icon.house {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23FFA500' d='M12 2L2 12h3v8h10v-8h3z'/%3E%3C/svg%3E");
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.leaflet-marker-icon.house:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s;
 }

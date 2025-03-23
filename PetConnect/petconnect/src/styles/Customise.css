@@ -1,20 +1,41 @@
 /* Estilos globales para la página de personalización */
 .customise-page .content {
   color: var(--text-primary);
-  padding: 20px;
-  margin-top: 60px; /* Espacio para el menú y sidebar */
-  margin-bottom: 60px; /* Espacio para el BottomNav */
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: relative;
 }
 
 .customise-container {
   max-width: 600px;
   width: 100%;
-  justify-content: center;
   margin: 0 auto;
   background: var(--card-background);
   border-radius: 16px;
-  padding: 5px;
+  padding: 20px;
   box-shadow: 0 4px 10px var(--shadow-default);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.3s ease;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.customise-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px var(--shadow-default);
+}
+
+.customise-container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .customise-container h1 {
@@ -53,7 +74,7 @@
 
 .save-button {
   width: 100%;
-  padding: 12px;;
+  padding: 12px;
   border: none;
   border-radius: 8px;
   color: var(--text-primary);
@@ -67,8 +88,64 @@
   background-image: var(--circle-animation);
 }
 
+/* Botón de volver */
+.back-button {
+  position: relative;
+  width: fit-content;
+  top: 50px;
+  left: 400px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--circle-animation);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.back-button:hover {
+  background: var(--card-background-hover);
+  transform: translateX(-2px);
+}
+
+/* Responsive design para el botón de volver */
+@media (max-width: 768px) {
+  .back-button {
+    top: 8px;
+    left: 8px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button {
+    top: 6px;
+    left: 6px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+}
+
 /* Responsividad */
 @media (max-width: 768px) {
+  .customise-page .content {
+    padding: 15px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  .customise-container {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .customise-container h1 {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+
   .customise-container {
     padding: 15px;
     margin: 0 10px;
@@ -81,29 +158,50 @@
   }
 }
 
-/* Botón para volver a /dashboard */
-.back-button {
-  position: relative;
-  top: 30px;
-  max-width: 300px;
-  padding: 10px;
-  left: 70px;
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb); /* Ajusta el color según tu tema */
-  cursor: pointer;
-  z-index: 50;
-  transition: color 0.3s ease;
-  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
-  box-shadow: none !important;
-}
+@media (max-width: 480px) {
+  .customise-page .content {
+    padding: 12px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
 
-.back-button:hover {
-  transform: translateY(-3px);
-  transition: all 0.3s ease;
-  background-color: rgb(5, 6, 45);
-  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  .customise-container {
+    padding: 12px;
+    margin: 8px;
+  }
+
+  .customise-container h1 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .customise-container {
+    font-size: 0.95rem;
+  }
+
+  .pet-photo-circle {
+    width: 120px;
+    height: 120px;
+  }
+
+  .edit-icon {
+    color: #333;
+    font-size: 10px;
+    bottom: 3px;
+    right: 3px;
+    padding: 4px;
+    cursor: pointer;
+  }
+
+  .upload-text {
+    font-size: 18px;
+  }
+  .back-button {
+    top: 50px;
+    left: 180px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
 }
 
 /* Resto de estilos existentes para la página Customise */
@@ -112,8 +210,6 @@
   margin-top: 60px; /* Espacio para el menú y sidebar */
   margin-bottom: 60px; /* Espacio para otros elementos fijos */
 }
-
-
 
 .customise-form .form-group {
   margin-bottom: 15px;
@@ -146,21 +242,6 @@
   cursor: pointer;
   transition: background 0.3s ease;
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-
-/* Responsividad */
-@media (max-width: 768px) {
-  .customise-container {
-    padding: 15px;
-    margin: 0 10px;
-  }
-  .customise-form input {
-    font-size: 0.9rem;
-  }
-  .save-button {
-    font-size: 0.9rem;
-  }
 }
 
 /* 📸 Contenedor de la foto centrado debajo del título */
@@ -228,26 +309,6 @@
 }
 
 /* 📱 Responsividad */
-@media (max-width: 768px) {
-  .pet-photo-circle {
-    width: 120px;
-    height: 120px;
-  }
-
-  .edit-icon {
-    color: #333;
-    font-size: 10px;
-    bottom: 3px;
-    right: 3px;
-    padding: 4px;
-    cursor: pointer;
-  }
-
-  .upload-text {
-    font-size: 18px;
-  }
-}
-
 @media (max-width: 480px) {
   .pet-photo-circle {
     width: 100px;

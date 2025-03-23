@@ -69,7 +69,9 @@ const TrackingMedico = () => {
   };
 
   const deleteRecord = (id: number) => {
-    const confirmDelete = window.confirm("¿Seguro que quieres eliminar este registro?");
+    const confirmDelete = window.confirm(
+      "¿Seguro que quieres eliminar este registro?"
+    );
     if (confirmDelete) {
       setMedicalRecords(medicalRecords.filter((record) => record.id !== id));
     }
@@ -83,7 +85,7 @@ const TrackingMedico = () => {
   return (
     <div className="tracking-medico1">
       <h2 className="h2-tracking">Seguimiento Médico</h2>
-      
+
       {isLoading ? (
         // Skeleton loader para el formulario y la lista
         <div className="tracking-skeleton">
@@ -136,7 +138,12 @@ const TrackingMedico = () => {
               onChange={handleInputChange}
               placeholder="Fecha"
             />
-            <select name="type" value={newRecord.type} onChange={handleInputChange}>
+            <select
+              className="Tracking-select"
+              name="type"
+              value={newRecord.type}
+              onChange={handleInputChange}
+            >
               <option value="">Selecciona el tipo</option>
               <option value="vacuna">Vacuna</option>
               <option value="medicamento">Medicamento</option>
@@ -151,6 +158,7 @@ const TrackingMedico = () => {
               placeholder="Descripción"
             />
             <input
+              className="Tracking-input"
               type="text"
               name="veterinarian"
               value={newRecord.veterinarian}
@@ -191,8 +199,12 @@ const TrackingMedico = () => {
                       <strong>Veterinario:</strong> {record.veterinarian}
                     </p>
                     <div className="record-buttons">
-                      <button onClick={() => editRecord(record.id)}>Editar</button>
-                      <button onClick={() => deleteRecord(record.id)}>Eliminar</button>
+                      <button onClick={() => editRecord(record.id)}>
+                        Editar
+                      </button>
+                      <button onClick={() => deleteRecord(record.id)}>
+                        Eliminar
+                      </button>
                     </div>
                   </li>
                 ))}

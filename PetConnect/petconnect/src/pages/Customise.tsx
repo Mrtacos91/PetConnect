@@ -3,6 +3,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import supabase from "../supabase"; // Importa tu cliente de Supabase
 import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
+import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Customise.css";
 import { useState, useEffect } from "react";
 
@@ -57,6 +58,10 @@ const Customise: React.FC = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleBack = () => {
+    navigate("/dashboard");
+  };
+
   // Manejo de la imagen seleccionada
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -107,11 +112,11 @@ const Customise: React.FC = () => {
       try {
         // Si hay una imagen anterior, intentar borrarla primero
         if (currentImageUrl) {
-          const oldPath = currentImageUrl.split('/').slice(-2).join('/'); // Obtener "userId/filename"
+          const oldPath = currentImageUrl.split("/").slice(-2).join("/"); // Obtener "userId/filename"
           const { error: deleteError } = await supabase.storage
             .from("petimage")
             .remove([oldPath]);
-          
+
           if (deleteError) {
             console.error("Error borrando la imagen anterior:", deleteError);
             // Continuamos con la subida aunque falle el borrado
@@ -154,19 +159,17 @@ const Customise: React.FC = () => {
       .single();
 
     // INSERTAR O ACTUALIZAR DATOS EN LA TABLA "pets"
-    const { error: upsertError } = await supabase
-      .from("Pets")
-      .upsert([
-        {
-          id: existingPet?.id, // Si existe, actualizará el registro existente
-          user_id: localUser.id,
-          pet_name: petName,
-          pet_type: petType,
-          pet_breed: petBreed,
-          pet_age: parseInt(petAge),
-          image_pet: imageUrl,
-        },
-      ]);
+    const { error: upsertError } = await supabase.from("Pets").upsert([
+      {
+        id: existingPet?.id, // Si existe, actualizará el registro existente
+        user_id: localUser.id,
+        pet_name: petName,
+        pet_type: petType,
+        pet_breed: petBreed,
+        pet_age: parseInt(petAge),
+        image_pet: imageUrl,
+      },
+    ]);
 
     if (upsertError) {
       console.error("Error actualizando datos en Supabase:", upsertError);
@@ -181,11 +184,16 @@ const Customise: React.FC = () => {
 
   return (
     <div className="customise-page">
+      <ThemeToggle />
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} />
 
-      <button className="back-button" onClick={() => navigate("/dashboard")}>
-        &#8592; Volver
+      <button
+        className="back-button"
+        onClick={handleBack}
+        aria-label="Volver al dashboard"
+      >
+        ←
       </button>
 
       <main className="dashboard">

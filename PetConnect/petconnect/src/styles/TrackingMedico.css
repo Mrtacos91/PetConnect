@@ -6,126 +6,231 @@
   width: min(95%, 500px);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 4px 12px var(--shadow-default);
   opacity: 0;
   animation: slideUp 0.5s ease-out forwards;
   overflow: hidden;
   margin: 2rem auto 4rem;
-  align-items: center;
 }
 
 /* Estilo general del formulario */
 .tracking-medico1 {
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  background-color: var(--card-background);
-  padding: clamp(16px, 3vw, 20px);
-  border-radius: 15px;
-  box-shadow: 0 6px 12px var(--shadow-default);
-  animation: fadeIn 0.8s ease-out forwards;
-  text-align: center;
-  margin-bottom: 2rem;
+  width: min(95%, 600px);
+  margin: 2rem auto 4rem;
+  padding: clamp(1.5rem, 4vw, 2rem);
+  background: var(--card-background);
+  border-radius: clamp(12px, 2vw, 16px);
+  box-shadow: 0 4px 12px var(--shadow-default);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Nueva columna para agregar más componentes */
 .extra-content {
-  width: 100%;
+  justify-content: center;
+  width: min(95%, 600px);
   background-color: var(--card-background);
   padding: clamp(16px, 3vw, 20px);
   border-radius: 15px;
   box-shadow: 0 6px 12px var(--shadow-default);
   animation: fadeIn 0.8s ease-out forwards;
   text-align: center;
-  margin-bottom: 2rem;
+  margin: 2rem auto;
 }
 
 /* Títulos */
 .h2-tracking {
-  width: 100%;
   color: var(--text-primary);
+  font-size: clamp(1.5rem, 3vw, 1.8rem);
+  font-weight: 600;
   text-align: center;
-  margin-bottom: 25px;
-  font-size: clamp(20px, 2.5vw, 24px);
-  border-bottom: 2px solid var(--text-primary);
-  padding-bottom: 5px;
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--circle-animation);
 }
 
 .h3-tracking {
   color: var(--text-secondary);
-  margin-bottom: 15px;
-  font-size: clamp(16px, 2vw, 18px);
+  font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+  font-weight: 500;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
   text-align: center;
 }
 
 /* Inputs y Select mejorados */
-input,
-select {
+.add-record1 input,
+.add-record1 select {
+  position: relative;
+  justify-content: center;
+  margin: 0.5rem auto;
+  margin-left: 5rem;
   width: 100%;
-  padding: clamp(8px, 1.5vw, 12px);
-  margin-bottom: 15px;
+  padding: clamp(0.8rem, 2vw, 1rem);
+  border: 2px solid var(--text-secondary);
   border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: var(--card-background);
+  background: var(--card-background);
   color: var(--text-primary);
-  box-sizing: border-box;
-  font-size: clamp(14px, 1.8vw, 15px);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  transition: all 0.3s ease;
 }
 
-input:focus,
-select:focus {
+.add-record1 input:focus,
+.add-record1 select:focus {
   border-color: #5b42f3;
-  box-shadow: 0 0 8px rgba(91, 66, 243, 0.5);
+  box-shadow: 0 0 0 2px rgba(91, 66, 243, 0.2);
   outline: none;
+}
+
+.add-record1 input:hover,
+.add-record1 select:hover {
+  border-color: #5b42f3;
+  box-shadow: 0 0 0 2px rgba(91, 66, 243, 0.2);
+  outline: none;
+}
+
+.add-record1 input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
 }
 
 /* Botón */
 .button-add-tm {
-  width: 100%;
-  padding: clamp(10px, 1.5vw, 12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem auto;
+  width: fit-content;
+  padding: clamp(0.8rem, 2vw, 1rem);
   border: none;
   border-radius: 8px;
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  font-weight: 500;
   cursor: pointer;
-  font-size: clamp(14px, 2vw, 16px);
-  margin-bottom: 10px;
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+  transition: all 0.3s ease;
+  background-image: var(--circle-animation);
   color: white;
-  transition: transform 0.2s ease;
 }
 
-.button-add-tm:hover {
-  transform: scale(1.02);
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+.button-edit-tm,
+.button-cancel-tm {
+  position: relative;
+  margin: 0.5rem auto;
+  justify-content: center;
+  padding: clamp(0.8rem, 2vw, 1rem);
+  border: none;
+  border-radius: 8px;
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-edit-tm {
+  background-image: var(--circle-animation);
+  color: white;
+}
+
+.button-cancel-tm {
+  background: var(--text-secondary);
+  color: white;
+  margin-top: 0.5rem;
+}
+
+.button-add-tm:hover,
+.button-edit-tm:hover,
+.button-cancel-tm:hover {
+  transform: translateY(-2px);
+  background: var(--circle-animation);
+  box-shadow: 0 4px 12px var(--shadow-hover);
 }
 
 /* Lista de registros */
 .records-list1 {
-  width: 100%;
-  background-color: var(--card-background);
-  padding: clamp(15px, 2vw, 20px);
+  box-shadow: 0 2px 8px var(--shadow-default);
+  display: flex;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 400px;
+  padding: 1rem;
+}
+
+.records-list1 h3 {
+  color: var(--text-primary);
+  font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
   text-align: center;
 }
 
-.records-list1 li {
-  padding: clamp(12px, 1.5vw, 15px);
-  border-bottom: 1px solid #ccc;
+.records-list1 ul {
+  list-style: none;
+  padding: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: clamp(14px, 1.8vw, 15px);
+  flex-direction: column;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
 }
 
-.records-list1 li:last-child {
-  border-bottom: none;
+.records-list1 li {
+  background: var(--card-background);
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-default);
+}
+
+.records-list1 p {
+  color: var(--text-primary);
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  margin-bottom: 0.5rem;
+}
+
+.records-list1 strong {
+  color: var(--text-secondary);
+}
+
+/* Botones de Registro */
+.record-buttons {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.record-buttons button {
+  padding: clamp(0.5rem, 1.5vw, 0.8rem) clamp(1rem, 2vw, 1.5rem);
+  border: none;
+  border-radius: 6px;
+  font-size: clamp(0.8rem, 1.6vw, 0.9rem);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.record-buttons button:first-child {
+  background: #5b42f3;
+  color: white;
+}
+
+.record-buttons button:last-child {
+  background: #ff4757;
+  color: white;
+}
+
+.record-buttons button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
 }
 
 /* Skeleton Loader Styles */
+.tracking-skeleton {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -138,6 +243,56 @@ select:focus {
   border-radius: 8px;
 }
 
+.skeleton-form,
+.skeleton-list {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  background: var(--card-background);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 200px;
+  margin: 0 auto 1rem;
+}
+
+.skeleton-input {
+  height: 40px;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 150px;
+  margin: 0 auto;
+}
+
+.skeleton-record {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid var(--text-secondary);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 80%;
+  margin-bottom: 0.8rem;
+}
+
+.skeleton-buttons {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.skeleton-button-small {
+  height: 32px;
+  width: 80px;
+}
+
 @keyframes loadingAnimation {
   0% {
     background-position: 200% 0;
@@ -147,181 +302,103 @@ select:focus {
   }
 }
 
-/* Skeleton Form */
-.skeleton-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  background: var(--card-background);
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px var(--shadow-default);
-  margin-bottom: 24px;
-}
-
-.skeleton-title {
-  height: 24px;
-  width: 200px;
-}
-
-.skeleton-input {
-  height: 40px;
-  width: 100%;
-}
-
-.skeleton-button {
-  height: 40px;
-  width: 150px;
-  margin-top: 8px;
-}
-
-/* Skeleton List */
-.skeleton-list {
-  padding: 20px;
-  background: var(--card-background);
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px var(--shadow-default);
-}
-
-.skeleton-record {
-  padding: 16px;
-  margin: 16px 0;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-}
-
-.skeleton-text {
-  height: 16px;
-  width: 80%;
-  margin: 8px 0;
-}
-
-.skeleton-buttons {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.skeleton-button-small {
-  height: 32px;
-  width: 80px;
-}
-
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
-  .tracking-container {
-    width: min(98%, 450px);
-    padding: clamp(14px, 3vw, 16px);
+  .tracking-medico1 {
+    width: min(98%, 700px);
     margin: 1.5rem auto 3rem;
-    gap: 16px;
+    padding: clamp(1.2rem, 3vw, 1.5rem);
   }
 
-  .tracking-medico1,
-  .extra-content {
-    padding: clamp(14px, 2.5vw, 16px);
-    margin-bottom: 1.5rem;
+  .add-record1,
+  .records-list1 {
+    max-width: 500px;
   }
 
-  .h2-tracking {
-    font-size: clamp(18px, 2.2vw, 22px);
-    margin-bottom: 20px;
-  }
-
-  .h3-tracking {
-    font-size: clamp(15px, 1.8vw, 17px);
-    margin-bottom: 12px;
-  }
-
-  input,
-  select {
-    padding: clamp(7px, 1.2vw, 10px);
-    margin-bottom: 12px;
-    font-size: clamp(13px, 1.6vw, 14px);
-  }
-
-  .button-add-tm {
-    padding: clamp(8px, 1.2vw, 10px);
-    font-size: clamp(13px, 1.8vw, 15px);
+  .records-list1 li {
+    padding: clamp(0.8rem, 2vw, 1.2rem);
   }
 }
 
 @media screen and (max-width: 480px) {
-  .tracking-container {
-    width: min(98%, 400px);
-    padding: 12px;
-    margin: 1.25rem auto 2.5rem;
-    gap: 14px;
-  }
-
-  .tracking-medico1,
-  .extra-content {
-    padding: 12px;
-    margin-bottom: 1.25rem;
+  .tracking-medico1 {
+    width: 98%;
+    margin: 1rem auto 2.5rem;
+    padding: 1rem;
   }
 
   .h2-tracking {
-    font-size: 1.2rem;
-    margin-bottom: 16px;
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
   }
 
   .h3-tracking {
-    font-size: 1rem;
-    margin-bottom: 10px;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
   }
 
-  input,
-  select {
-    padding: 8px;
-    margin-bottom: 10px;
+  .add-record1 input,
+  .add-record1 select {
+    padding: 0.7rem;
     font-size: 0.9rem;
   }
 
-  .button-add-tm {
-    padding: 8px;
+  .button-add-tm,
+  .button-edit-tm,
+  .button-cancel-tm {
+    padding: 0.7rem;
     font-size: 0.9rem;
+  }
+
+  .records-list1 p {
+    font-size: 0.85rem;
+  }
+
+  .record-buttons button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
   }
 }
 
 @media screen and (max-width: 360px) {
-  .tracking-container {
-    width: 98%;
-    padding: 10px;
-    margin: 1rem auto 2rem;
-    gap: 12px;
-  }
-
-  .tracking-medico1,
-  .extra-content {
-    padding: 10px;
-    margin-bottom: 1rem;
+  .tracking-medico1 {
+    margin: 0.8rem auto 2rem;
+    padding: 0.8rem;
   }
 
   .h2-tracking {
-    font-size: 1.1rem;
-    margin-bottom: 14px;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
   }
 
-  .h3-tracking {
-    font-size: 0.95rem;
-  }
-
-  input,
-  select {
-    padding: 7px;
-    margin-bottom: 8px;
+  .add-record1 input,
+  .add-record1 select,
+  .button-add-tm,
+  .button-edit-tm,
+  .button-cancel-tm {
+    padding: 0.6rem;
     font-size: 0.85rem;
   }
 
-  .button-add-tm {
-    padding: 7px;
-    font-size: 0.85rem;
+  .records-list1 p {
+    font-size: 0.8rem;
+  }
+
+  .record-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .record-buttons button {
+    width: 100%;
+    padding: 0.5rem;
   }
 }
 
 /* Media queries para diferentes tamaños de pantalla */
 @media screen and (min-width: 820px) {
   .tracking-container {
-    max-width: 700px;
+    max-width: 500px;
     padding: 25px;
   }
 
@@ -354,6 +431,7 @@ select:focus {
   .tracking-medico1,
   .extra-content {
     padding: 15px;
+    width: 80%;
   }
 
   .h2-tracking {
@@ -367,8 +445,12 @@ select:focus {
 
 /* Animaciones */
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {

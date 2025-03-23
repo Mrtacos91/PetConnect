@@ -2,9 +2,10 @@
 .container-actividades {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  width: min(95%, 600px);
+  width: min(95%, 500px);
   margin: 2rem auto 4rem;
   padding: clamp(1.5rem, 4vw, 2rem);
   background: var(--background-color);
@@ -273,7 +274,7 @@
 /* Responsive Styles */
 @media (max-width: 768px) {
   .container-actividades {
-    width: min(98%, 550px);
+    width: min(98%, 400px);
     padding: clamp(1rem, 3vw, 1.5rem);
     margin: 1.5rem auto 3rem;
   }
@@ -301,7 +302,7 @@
 
 @media (max-width: 480px) {
   .container-actividades {
-    width: min(98%, 450px);
+    width: min(80%, 400px);
     padding: 1rem;
     margin: 1rem auto 2.5rem;
   }

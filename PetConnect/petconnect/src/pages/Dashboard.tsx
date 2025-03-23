@@ -113,7 +113,7 @@ const Dashboard: React.FC = () => {
       {activeTab === "localizar" && (
         <section className="right-panel">
           <Location
-            latitude={19.5575302}
+            latitude={29.5575302}
             longitude={-99.3174041}
             name={petData?.pet_name || "Fido"}
           />

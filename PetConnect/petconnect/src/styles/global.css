@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
 
-
 * {
   position: relative;
   margin: 0;
@@ -26,10 +25,7 @@ body {
   --shadow-default: rgba(0, 0, 0, 0.5);
   /* Sombra sin opacidad */
   --shadow-hover: rgba(0, 0, 0, 0.6);
-  --circle-animation: linear-gradient(144deg,
-      #af40ff,
-      #5b42f3 50%,
-      #00ddeb);
+  --circle-animation: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   /* Sombra sin opacidad */
   --skeleton-gradient-start: #f0f0f0;
   --skeleton-gradient-mid: #e0e0e0;
