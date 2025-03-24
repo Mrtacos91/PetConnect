@@ -3,43 +3,49 @@
   background-color: var(--card-background);
   border-radius: 8px;
   padding: clamp(16px, 4vw, 20px);
-  width: min(95%, 500px);
+  width: 100%;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   box-shadow: 0 4px 12px var(--shadow-default);
   opacity: 0;
   animation: slideUp 0.5s ease-out forwards;
   overflow: hidden;
   margin: 2rem auto 4rem;
+  gap: 1rem;
 }
 
 /* Estilo general del formulario */
 .tracking-medico1 {
-  width: min(95%, 600px);
-  margin: 2rem auto 4rem;
+  width: 100%;
+  margin: 0 auto;
   padding: clamp(1.5rem, 4vw, 2rem);
   background: var(--card-background);
   border-radius: clamp(12px, 2vw, 16px);
   box-shadow: 0 4px 12px var(--shadow-default);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 1rem;
 }
 
 /* Nueva columna para agregar más componentes */
 .extra-content {
-  justify-content: center;
-  width: min(95%, 600px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
   background-color: var(--card-background);
   padding: clamp(16px, 3vw, 20px);
   border-radius: 15px;
   box-shadow: 0 6px 12px var(--shadow-default);
   animation: fadeIn 0.8s ease-out forwards;
   text-align: center;
-  margin: 2rem auto;
+  gap: 1rem;
 }
 
 /* Títulos */
@@ -62,12 +68,18 @@
 }
 
 /* Inputs y Select mejorados */
+.add-record1 {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .add-record1 input,
 .add-record1 select {
-  position: relative;
-  justify-content: center;
-  margin: 0.5rem auto;
-  margin-left: 5rem;
+  flex: 1;
+  margin: 0;
   width: 100%;
   padding: clamp(0.8rem, 2vw, 1rem);
   border: 2px solid var(--text-secondary);
@@ -150,15 +162,15 @@
 
 /* Lista de registros */
 .records-list1 {
-  box-shadow: 0 2px 8px var(--shadow-default);
   display: flex;
-  border-radius: 12px;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
+  justify-content: flex-start;
   width: 100%;
-  margin: 0 auto;
-  max-width: 400px;
-  padding: 1rem;
+  box-shadow: 0 2px 8px var(--shadow-default);
+  border-radius: 12px;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  gap: 0.5rem;
 }
 
 .records-list1 h3 {
@@ -169,18 +181,24 @@
 }
 
 .records-list1 ul {
-  list-style: none;
-  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2.5vw, 1.5rem);
+  align-items: stretch;
+  gap: clamp(0.8rem, 2vw, 1rem);
+  padding: 0;
+  margin: 0;
 }
 
 .records-list1 li {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   background: var(--card-background);
-  padding: clamp(1rem, 2.5vw, 1.5rem);
+  padding: clamp(1rem, 2vw, 1.5rem);
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--shadow-default);
+  gap: 0.5rem;
 }
 
 .records-list1 p {
@@ -196,7 +214,10 @@
 /* Botones de Registro */
 .record-buttons {
   display: flex;
+  flex-direction: row;
+  justify-content: center;
   gap: 0.8rem;
+  width: 100%;
   margin-top: 1rem;
 }
 
@@ -302,144 +323,86 @@
   }
 }
 
-/* Responsive Styles */
+/* Responsive adjustments */
 @media screen and (max-width: 768px) {
-  .tracking-medico1 {
-    width: min(98%, 700px);
-    margin: 1.5rem auto 3rem;
-    padding: clamp(1.2rem, 3vw, 1.5rem);
+  .tracking-container {
+    gap: 0.8rem;
+    padding: 1rem;
   }
 
-  .add-record1,
+  .tracking-medico1 {
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  .extra-content {
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  .add-record1 {
+    gap: 0.4rem;
+  }
+
   .records-list1 {
-    max-width: 500px;
+    gap: 0.4rem;
+    padding: 0.8rem;
   }
 
   .records-list1 li {
-    padding: clamp(0.8rem, 2vw, 1.2rem);
+    gap: 0.4rem;
+    padding: 0.8rem;
   }
 }
 
 @media screen and (max-width: 480px) {
-  .tracking-medico1 {
-    width: 98%;
-    margin: 1rem auto 2.5rem;
-    padding: 1rem;
-  }
-
-  .h2-tracking {
-    font-size: 1.3rem;
-    margin-bottom: 1.2rem;
-  }
-
-  .h3-tracking {
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-  }
-
-  .add-record1 input,
-  .add-record1 select {
-    padding: 0.7rem;
-    font-size: 0.9rem;
-  }
-
-  .button-add-tm,
-  .button-edit-tm,
-  .button-cancel-tm {
-    padding: 0.7rem;
-    font-size: 0.9rem;
-  }
-
-  .records-list1 p {
-    font-size: 0.85rem;
-  }
-
-  .record-buttons button {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-  }
-}
-
-@media screen and (max-width: 360px) {
-  .tracking-medico1 {
-    margin: 0.8rem auto 2rem;
+  .tracking-container {
+    gap: 0.5rem;
     padding: 0.8rem;
   }
 
-  .h2-tracking {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+  .tracking-medico1 {
+    gap: 0.5rem;
+    padding: 0.8rem;
   }
 
-  .add-record1 input,
-  .add-record1 select,
-  .button-add-tm,
-  .button-edit-tm,
-  .button-cancel-tm {
-    padding: 0.6rem;
-    font-size: 0.85rem;
+  .extra-content {
+    gap: 0.5rem;
+    padding: 0.8rem;
   }
 
-  .records-list1 p {
-    font-size: 0.8rem;
+  .add-record1 {
+    gap: 0.3rem;
+  }
+
+  .records-list1 {
+    gap: 0.3rem;
+    padding: 0.5rem;
+  }
+
+  .records-list1 li {
+    gap: 0.3rem;
+    padding: 0.5rem;
   }
 
   .record-buttons {
     flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .record-buttons button {
-    width: 100%;
-    padding: 0.5rem;
   }
 }
 
-/* Media queries para diferentes tamaños de pantalla */
-@media screen and (min-width: 820px) {
-  .tracking-container {
-    max-width: 500px;
-    padding: 25px;
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .add-record1 input,
+  .add-record1 select {
+    padding: 1rem;
+    font-size: 1rem;
   }
 
-  .tracking-medico1,
-  .extra-content {
-    padding: 25px;
-  }
-
-  input,
-  select,
-  .button-add-tm {
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .records-list1 {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-}
-
-/* Para pantallas más pequeñas */
-@media screen and (max-width: 480px) {
-  .tracking-container {
-    width: 95%;
-    padding: 15px;
-  }
-
-  .tracking-medico1,
-  .extra-content {
-    padding: 15px;
-    width: 80%;
-  }
-
-  .h2-tracking {
-    font-size: 20px;
-  }
-
-  .h3-tracking {
-    font-size: 16px;
+  .button-add-tm,
+  .button-edit-tm,
+  .button-cancel-tm {
+    padding: 1rem;
+    font-size: 1rem;
   }
 }
 
