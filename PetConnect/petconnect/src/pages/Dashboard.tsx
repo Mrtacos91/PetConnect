@@ -18,6 +18,7 @@ import "../styles/Actividades.css";
 import "../styles/TrackingMedico.css";
 import TrackingMedico from "../components/TrackingMedico";
 import ThemeToggle from "../components/ThemeToggle";
+import CalendarCard from "../components/CalendarCard";
 
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -81,7 +82,6 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
-      {/* Integración del toggle de modo claro/oscuro */}
       <ThemeToggle />
 
       <Sidebar isOpen={isSidebarOpen} />
@@ -98,6 +98,7 @@ const Dashboard: React.FC = () => {
           <Actividades />
           <TrackingMedico />
           <Paseos />
+          <CalendarCard />
         </section>
       )}
 
@@ -111,10 +112,10 @@ const Dashboard: React.FC = () => {
 
       {/* Pestaña Localizar */}
       {activeTab === "localizar" && (
-        <section className="right-panel">
+        <section className="Location">
           <Location
-            latitude={29.5575302}
-            longitude={-99.3174041}
+            latitude={19.564559}
+            longitude={-99.255172}
             name={petData?.pet_name || "Fido"}
           />
         </section>

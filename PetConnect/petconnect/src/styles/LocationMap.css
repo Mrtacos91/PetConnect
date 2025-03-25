@@ -10,6 +10,13 @@
   margin-bottom: 20px;
 }
 
+.Location-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
 .location-map-title {
   font-size: 24px;
   font-weight: bold;
@@ -102,22 +109,114 @@
 /* Skeleton Loader para el mapa */
 .skeleton-location {
   width: 100%;
-  max-width: 900px;
-  min-height: 450px;
-  height: 50vh;
+  max-width: 800px;
+  min-height: 350px;
+  height: 40vh;
+  margin-bottom: 20px;
   border-radius: 16px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
   background-size: 200% 100%;
-  animation: loadingAnimation 1.5s infinite;
+  animation: shimmer 1.5s infinite linear;
 }
 
-@keyframes loadingAnimation {
+/* Unify animations to use the same keyframes */
+@keyframes shimmer {
   0% {
-    background-position: 200% 0;
-  }
-  100% {
     background-position: -200% 0;
   }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Skeleton loaders for cards */
+.skeleton-card {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 12px;
+  height: 100%;
+  min-height: 200px;
+  width: 100%;
+  box-shadow: 0px 4px 8px var(--shadow-default);
+}
+
+.skeleton-text {
+  height: 16px;
+  margin: 10px 0;
+  width: 80%;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-text:nth-child(even) {
+  width: 90%;
+}
+
+.skeleton-text:nth-child(3n) {
+  width: 65%;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 60%;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 120px;
+  border-radius: 20px;
+  margin-top: 15px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-slider {
+  height: 20px;
+  width: 100%;
+  border-radius: 10px;
+  margin: 15px 0;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
 }
 
 /* Responsividad */
@@ -145,6 +244,13 @@
     min-height: 300px;
     height: 35vh;
   }
+  .Location-info {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-card {
+    min-height: 180px;
+  }
 }
 
 .pet-location-info {
@@ -154,18 +260,37 @@
   max-width: 600px;
   background: var(--card-background);
   border-radius: 12px;
-  box-shadow: 0px 4px 8px var(--shadow-default);
-  text-align: left;
+  box-shadow: 0 2px 8px var(--shadow-default);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 10;
 }
 
 .pet-location-info p {
-  font-size: 16px;
-  color: var(--text-secondary);
-  margin: 6px 0;
+  margin: 5px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.5;
 }
 
 .pet-location-info strong {
+  font-weight: 600;
   color: var(--text-primary);
+}
+
+.coordinates-small {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.pet-location-info p strong + span:not(.coordinates-small) {
+  font-weight: 500;
 }
 
 /* House marker styles */

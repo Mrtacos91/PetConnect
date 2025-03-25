@@ -3,17 +3,29 @@ import "../styles/FoundHotelCard.css";
 
 interface FoundHotelCardProps {
   Info: string;
+  url?: string; // URL opcional para redirección
 }
 
-const FoundHotelCard: React.FC<FoundHotelCardProps> = ({ Info }) => {
+const FoundHotelCard: React.FC<FoundHotelCardProps> = ({
+  Info,
+  url = "https://www.google.com/maps/search/hoteles+pet+friendly+cerca+de+mi/@19.572349,-99.2405352,14z/data=!3m1!4b1?entry=ttu", // URL por defecto
+}) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 2000); // Simula la carga durante 2 segundos
   }, []);
 
+  const handleCardClick = () => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <div className="Container-FoundHotel">
+    <div
+      className="Container-FoundHotel"
+      onClick={handleCardClick}
+      style={{ cursor: "pointer" }}
+    >
       <h2 className="Container-Title-FoundHotel">Encuentra un hotel</h2>
 
       {isLoading ? (

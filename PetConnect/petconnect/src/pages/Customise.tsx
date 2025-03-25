@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { FaPencilAlt } from "react-icons/fa";
+import { FaPencilAlt, FaCheck, FaTimes } from "react-icons/fa";
 import supabase from "../supabase"; // Importa tu cliente de Supabase
 import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Customise.css";
+import "../styles/style.css"; // Importamos los estilos de notificación
 import { useState, useEffect } from "react";
 
 const Customise: React.FC = () => {
@@ -17,6 +18,13 @@ const Customise: React.FC = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState<
+    Array<{
+      id: string;
+      type: "success" | "error";
+      message: string;
+    }>
+  >([]);
 
   const navigate = useNavigate();
 
@@ -54,6 +62,26 @@ const Customise: React.FC = () => {
     loadExistingPetData();
   }, []);
 
+  // Función para mostrar notificaciones
+  const showNotification = (type: "success" | "error", message: string) => {
+    const id = Date.now().toString();
+    setNotifications((prev) => [...prev, { id, type, message }]);
+
+    // Eliminar la notificación después de 5 segundos
+    setTimeout(() => {
+      setNotifications((prev) =>
+        prev.filter((notification) => notification.id !== id)
+      );
+    }, 5000);
+  };
+
+  // Función para cerrar una notificación específica
+  const closeNotification = (id: string) => {
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id)
+    );
+  };
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -76,7 +104,7 @@ const Customise: React.FC = () => {
     e.preventDefault();
 
     if (!petName || !petType || !petBreed || !petAge) {
-      alert("Por favor, completa todos los campos.");
+      showNotification("error", "Por favor, completa todos los campos.");
       return;
     }
 
@@ -86,7 +114,10 @@ const Customise: React.FC = () => {
     const { data: sessionData, error: sessionError } =
       await supabase.auth.getUser();
     if (sessionError || !sessionData?.user) {
-      alert("Debes iniciar sesión antes de agregar una mascota.");
+      showNotification(
+        "error",
+        "Debes iniciar sesión antes de agregar una mascota."
+      );
       setLoading(false);
       return;
     }
@@ -100,7 +131,10 @@ const Customise: React.FC = () => {
       .single();
 
     if (localUserError || !localUser?.id) {
-      alert("No se encontró tu usuario local. Verifica la tabla 'users'.");
+      showNotification(
+        "error",
+        "No se encontró tu usuario local. Verifica la tabla 'users'."
+      );
       setLoading(false);
       return;
     }
@@ -145,7 +179,10 @@ const Customise: React.FC = () => {
         imageUrl = publicUrlData.publicUrl;
       } catch (error) {
         console.error("Error en el proceso de imagen:", error);
-        alert("Error procesando la imagen. Por favor, intenta de nuevo.");
+        showNotification(
+          "error",
+          "Error procesando la imagen. Por favor, intenta de nuevo."
+        );
         setLoading(false);
         return;
       }
@@ -173,10 +210,13 @@ const Customise: React.FC = () => {
 
     if (upsertError) {
       console.error("Error actualizando datos en Supabase:", upsertError);
-      alert("Error guardando los datos.");
+      showNotification("error", "Error guardando los datos.");
     } else {
-      alert("¡Mascota guardada con éxito!");
-      navigate("/dashboard");
+      showNotification("success", "¡Mascota guardada con éxito!");
+      // Redirigir después de mostrar la notificación
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
     }
 
     setLoading(false);
@@ -187,6 +227,30 @@ const Customise: React.FC = () => {
       <ThemeToggle />
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} />
+
+      {/* Contenedor de notificaciones */}
+      <div className="notification-container">
+        {notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className={`notification-item ${notification.type}`}
+          >
+            <div className="notification-content">
+              <div className="notification-icon">
+                {notification.type === "success" ? <FaCheck /> : <FaTimes />}
+              </div>
+              <div className="notification-text">{notification.message}</div>
+            </div>
+            <div
+              className="notification-close"
+              onClick={() => closeNotification(notification.id)}
+            >
+              <FaTimes />
+            </div>
+            <div className="notification-progress-bar"></div>
+          </div>
+        ))}
+      </div>
 
       <button
         className="back-button"
@@ -236,7 +300,7 @@ const Customise: React.FC = () => {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group-type">
               <label htmlFor="petType">Tipo de Mascota</label>
               <select
                 id="petType"

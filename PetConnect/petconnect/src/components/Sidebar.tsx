@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaUser, FaCog, FaSignOutAlt } from "react-icons/fa";
 import supabase from "../supabase";
 import "../styles/Sidebar.css";
+import SocialMedia from "../components/SocialMedia";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
           </li>
         </ul>
       </nav>
+      <SocialMedia />
     </div>
   );
 };

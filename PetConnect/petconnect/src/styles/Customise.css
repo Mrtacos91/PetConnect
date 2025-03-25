@@ -204,6 +204,78 @@
   }
 }
 
+/* Estilos específicos para el selector de tipo de mascota */
+.form-group-type {
+  padding: 15px;
+  margin-bottom: 15px;
+  font-size: 5rem;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  background: var(--card-background);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-group-type:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-group-type label {
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.form-group-type select {
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-group-type select:focus {
+  outline: none;
+  border-color: #ff7e36;
+  box-shadow: 0 0 0 3px rgba(255, 126, 54, 0.25);
+}
+
+.form-group-type select option {
+  padding: 10px;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+}
+
+/* Animación para el selector */
+@keyframes selectPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 126, 54, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 126, 54, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 126, 54, 0);
+  }
+}
+
+.form-group-type select:hover {
+  border-color: #ff7e36;
+  animation: selectPulse 1.5s infinite;
+}
+
 /* Resto de estilos existentes para la página Customise */
 .customise-page .content {
   padding: 20px;
@@ -244,7 +316,7 @@
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* 📸 Contenedor de la foto centrado debajo del título */
+/* Contenedor de la foto centrado debajo del título */
 .pet-photo-wrapper {
   display: flex;
   justify-content: center;
@@ -252,9 +324,9 @@
   margin: 20px 0;
 }
 
-/* 🟠 Foto de la mascota en un círculo más grande */
+/* Foto de la mascota en un círculo más grande */
 .pet-photo-circle {
-  width: 150px; /* 🔺 Tamaño más grande */
+  width: 150px; /* Tamaño más grande */
   height: 150px;
   border-radius: 50%;
   background-color: #f0f0f0;
@@ -266,14 +338,14 @@
   position: relative;
 }
 
-/* 📷 Imagen dentro del círculo */
+/* Imagen dentro del círculo */
 .pet-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* 📌 Icono de lápiz en la esquina inferior derecha */
+/* Icono de lápiz en la esquina inferior derecha */
 .edit-icon-customise {
   position: absolute;
   bottom: 5px;
@@ -297,7 +369,7 @@
   transform: translateY(-3px);
 }
 
-/* 🔽 Texto inicial de carga */
+/* Texto inicial de carga */
 .upload-text {
   font-size: 24px;
   color: #666;
@@ -308,7 +380,7 @@
   display: none;
 }
 
-/* 📱 Responsividad */
+/* Responsividad */
 @media (max-width: 480px) {
   .pet-photo-circle {
     width: 100px;

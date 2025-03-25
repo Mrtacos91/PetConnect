@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@huggingface/agents": "^0.0.5",
+    "@huggingface/hub": "^1.1.2",
+    "@huggingface/inference": "^3.6.1",
     "@supabase/supabase-js": "^2.49.1",
     "animate.css": "^4.1.1",
     "antd": "^5.24.3",

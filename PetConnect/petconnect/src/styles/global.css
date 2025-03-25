@@ -34,7 +34,7 @@ body {
 
 /* Variables para modo oscuro */
 .dark-mode {
-  --bg-default: #181818;
+  --bg-default: #1e1e2e;
   --card-background: #1e1e2e;
   --text-primary: #eeeeee;
   --text-bottomnav: #eeeeee;
