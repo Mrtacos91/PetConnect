@@ -19,6 +19,8 @@ import "../styles/TrackingMedico.css";
 import TrackingMedico from "../components/TrackingMedico";
 import ThemeToggle from "../components/ThemeToggle";
 import CalendarCard from "../components/CalendarCard";
+import LinkDevice from "../components/LinkDevice";
+import CarnetCard from "../components/CarnetCard";
 
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -99,6 +101,7 @@ const Dashboard: React.FC = () => {
           <TrackingMedico />
           <Paseos />
           <CalendarCard />
+          <CarnetCard />
         </section>
       )}
 
@@ -150,13 +153,13 @@ const Dashboard: React.FC = () => {
             </section>
             <section className="right-panel">
               <LocationCard
-                location="Calle 123, Colonia Ejemplo, CDMX"
-                hour="10:00 AM"
-                lastLocation="Última actualización hace 5 minutos"
                 name={petData?.pet_name || "Fido"}
-                viewMap={() => console.log("Ver en el mapa")}
+                viewMap={() => setActiveTab("localizar")}
                 setActiveTab={setActiveTab}
               />
+            </section>
+            <section className="right-panel">
+              <LinkDevice />
             </section>
             <section className="right-panel">
               <FoundDoctorCard Info="Encuentra un veterinario cerca de ti aquí" />

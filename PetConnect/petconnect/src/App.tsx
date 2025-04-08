@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Customise from "./pages/Customise";
 import CarnetPage from "./pages/CarnetPage";
 import Calendar from "./pages/Calendar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/global.css";
 
 const App: React.FC = () => {
@@ -14,11 +15,15 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/calendar" element={<Calendar />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/customise" element={<Customise />} />
-        <Route path="/carnet" element={<CarnetPage />} />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/customise" element={<Customise />} />
+          <Route path="/carnet" element={<CarnetPage />} />
+        </Route>
       </Routes>
     </Router>
   );

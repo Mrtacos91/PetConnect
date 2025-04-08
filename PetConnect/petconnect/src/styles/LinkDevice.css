@@ -1,5 +1,5 @@
 /* 🔹 Contenedor Principal */
-.highlight-container-location {
+.highlight-container-linkdevice {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,15 +7,14 @@
   width: 100%;
   height: 100%;
   max-width: 500px;
-  padding: 40px;
   background-color: var(--background-card);
   border-radius: 12px;
   margin: 0 auto;
-  margin-bottom: 20px;
+  margin-bottom: 100px;
 }
 
 /* 🔹 Título */
-.highlight-title-location {
+.highlight-title-linkdevice {
   font-size: 1.5rem;
   font-weight: bold;
   color: var(--text-primary);
@@ -23,8 +22,8 @@
   text-align: center;
 }
 
-/* 🔹 Tarjeta de Ubicación */
-.location-card {
+/* 🔹 Tarjeta de Dispositivo */
+.linkdevice-card {
   width: 100%;
   padding: 16px;
   background-color: var(--card-background);
@@ -38,20 +37,19 @@
 }
 
 /* 🔹 Efecto Hover */
-.location-card:hover {
+.linkdevice-card:hover {
   transform: translateY(-3px);
   box-shadow: 0px 5px 12px var(--shadow-hover);
 }
 
-/* 🔹 Botón "Ver en el mapa" */
-.location-card__button {
+/* 🔹 Botón "Configurar dispositivo" */
+.linkdevice-card__button {
   text-align: center;
   justify-content: center;
   display: flex;
   align-items: center;
   gap: 8px;
   background: var(--button-bg);
-  box-sizing: border-box; /* Color rojo fijo */
   color: white;
   font-size: 1rem;
   font-weight: bold;
@@ -63,43 +61,46 @@
 }
 
 /* 🔹 Hover del Botón */
-.location-card__button:hover {
+.linkdevice-card__button:hover {
   transition: all 0.3s ease;
   background-color: rgb(5, 6, 45);
   box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
   transform: translateY(-3px);
 }
 
-/* 🔹 Información de Ubicación */
-.location-card__info {
+/* 🔹 Información del Dispositivo */
+.linkdevice-card__info {
   font-size: 1rem;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
-.location-card__info p {
+.linkdevice-card__info p {
   margin: 5px 0;
 }
 
-/* Estilo para el mensaje de error */
-.location-error {
-  color: #ff6b6b;
-  font-weight: bold;
-  margin-left: 5px;
-  cursor: help;
+/* 🔹 ID del Dispositivo */
+.device-id {
+  font-family: monospace;
+  font-size: 1.1rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+  display: inline-block;
 }
 
 /* 📌 Responsividad */
 @media (max-width: 768px) {
-  .highlight-container-location {
+  .highlight-container-linkdevice {
     max-width: 90%;
   }
 
-  .location-card {
+  .linkdevice-card {
     padding: 12px;
   }
 
-  .location-card__button {
+  .linkdevice-card__button {
     width: 100%;
     justify-content: center;
     font-size: 0.9rem;
@@ -107,44 +108,25 @@
 }
 
 @media (max-width: 480px) {
-  .highlight-title-location {
+  .highlight-title-linkdevice {
     font-size: 1.2rem;
   }
 
-  .location-card__info {
+  .linkdevice-card__info {
     font-size: 0.9rem;
   }
 
-  .location-card__button {
+  .linkdevice-card__button {
     font-size: 0.85rem;
+  }
+
+  .device-id {
+    font-size: 0.9rem;
   }
 }
 
 /* 📌 Skeleton Loader */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200% 100%;
-  animation: loadingAnimation 1.5s infinite;
-  border-radius: 8px;
-}
-
-/* 📌 Animación del Skeleton */
-@keyframes loadingAnimation {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* 📌 Contenedor del Skeleton */
-.skeleton-container-location {
+.skeleton-container-linkdevice {
   display: flex;
   flex-direction: column;
   background: var(--background-card);
@@ -156,13 +138,13 @@
 }
 
 /* 📌 Estructura del Skeleton */
-.skeleton-button-location {
+.skeleton-button-linkdevice {
   width: 60%;
   height: 30px;
   margin-bottom: 12px;
 }
 
-.skeleton-text-location {
+.skeleton-text-linkdevice {
   width: 90%;
   height: 14px;
   margin-bottom: 8px;

@@ -5,6 +5,10 @@ import { FaCheck, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import "../styles/LocationMap.css";
 import "../styles/style.css";
+import supabase from "../supabase";
+
+// Caché para almacenar direcciones por coordenadas
+const addressCache: Record<string, string> = {};
 
 interface LocationMapProps {
   latitude: number;
@@ -44,13 +48,98 @@ const LocationMap: React.FC<LocationMapProps> = ({
   >([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setLastUpdated(new Date().toLocaleString());
-    }, 2000);
+    const fetchLocationData = async () => {
+      setIsLoading(true);
 
-    return () => clearTimeout(timer);
-  }, []);
+      try {
+        // Obtener el usuario actual
+        const { data: sessionData } = await supabase.auth.getUser();
+        if (!sessionData?.user?.email) {
+          console.error("Usuario no autenticado");
+          setIsLoading(false);
+          return;
+        }
+
+        // Obtener el usuario local con su device_id
+        const { data: userData, error: userError } = await supabase
+          .from("Users")
+          .select("id, device")
+          .eq("email", sessionData.user.email)
+          .single();
+
+        if (userError || !userData) {
+          console.error("Error obteniendo datos del usuario:", userError);
+          setIsLoading(false);
+          return;
+        }
+
+        // Si el usuario tiene un dispositivo asociado
+        if (userData.device) {
+          // Obtener los datos de ubicación más recientes para ese dispositivo
+          const { data: locationData, error: locationError } = await supabase
+            .from("LocationGps")
+            .select("Latitude, Longitude, Time, Date")
+            .eq("device_id", userData.device)
+            .order("Date", { ascending: false })
+            .order("Time", { ascending: false })
+            .limit(1)
+            .single();
+
+          if (!locationError && locationData) {
+            console.log("Datos GPS recibidos:", locationData);
+
+            // Asegurarse de que los valores sean números
+            const lat =
+              typeof locationData.Latitude === "string"
+                ? parseFloat(locationData.Latitude)
+                : locationData.Latitude;
+
+            const lng =
+              typeof locationData.Longitude === "string"
+                ? parseFloat(locationData.Longitude)
+                : locationData.Longitude;
+
+            // Verificar que los valores sean válidos antes de actualizar
+            if (!isNaN(lat) && !isNaN(lng)) {
+              console.log(`Actualizando ubicación a: lat=${lat}, lng=${lng}`);
+              setPetLocation({
+                lat: lat,
+                lng: lng,
+              });
+
+              // Centrar el mapa en la nueva ubicación si está disponible
+              if (mapRef.current) {
+                mapRef.current.setView([lat, lng], mapRef.current.getZoom());
+              }
+            } else {
+              console.error("Valores de latitud/longitud inválidos:", {
+                lat,
+                lng,
+              });
+            }
+
+            setLastUpdated(`${locationData.Date} ${locationData.Time}`);
+          } else {
+            console.error(
+              "Error obteniendo datos de ubicación:",
+              locationError
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error en la obtención de datos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLocationData();
+
+    // Actualizar datos cada 30 segundos
+    const intervalId = setInterval(fetchLocationData, 30000);
+
+    return () => clearInterval(intervalId);
+  }, [latitude, longitude]);
 
   const showNotification = (
     type: "success" | "error" | "warning",
@@ -78,70 +167,209 @@ const LocationMap: React.FC<LocationMapProps> = ({
   ): Promise<string> => {
     try {
       setIsAddressLoading(true);
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
-        {
-          headers: {
-            "Accept-Language": "es",
-            "User-Agent": "PetConnect/1.0",
-          },
+
+      // Crear una clave única para la caché basada en las coordenadas
+      // Redondeamos a 6 decimales para evitar llamadas repetidas por pequeñas variaciones
+      const roundedLat = parseFloat(lat.toFixed(6));
+      const roundedLng = parseFloat(lng.toFixed(6));
+      const cacheKey = `${roundedLat},${roundedLng}`;
+
+      // Verificar si ya tenemos esta dirección en caché
+      if (addressCache[cacheKey]) {
+        console.log("Usando dirección en caché:", addressCache[cacheKey]);
+        return addressCache[cacheKey];
+      }
+
+      // Establecer inmediatamente un valor de respaldo (coordenadas) en caso de fallo
+      const fallbackAddress = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+      // Si no está en caché, hacer la solicitud a la API
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout de 5 segundos
+
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+          {
+            headers: {
+              "Accept-Language": "es",
+              "User-Agent": "PetConnect/1.0",
+            },
+            signal: controller.signal,
+          }
+        );
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          console.warn(
+            `Error HTTP: ${response.status}, usando coordenadas como respaldo`
+          );
+          addressCache[cacheKey] = fallbackAddress;
+          return fallbackAddress;
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("No se pudo obtener la dirección");
+        const data = await response.json();
+        let address = "";
+
+        if (data.address) {
+          const parts = [];
+
+          if (data.address.road) parts.push(data.address.road);
+          if (data.address.house_number) parts.push(data.address.house_number);
+          if (data.address.suburb) parts.push(data.address.suburb);
+          if (data.address.city || data.address.town)
+            parts.push(data.address.city || data.address.town);
+          if (data.address.state) parts.push(data.address.state);
+
+          address = parts.join(", ");
+
+          // Si no se pudo construir una dirección con las partes, usar display_name como respaldo
+          if (!address && data.display_name) {
+            address = data.display_name;
+          }
+        } else if (data.display_name) {
+          address = data.display_name;
+        }
+
+        // Si después de todo no tenemos dirección, usar las coordenadas
+        if (!address) {
+          console.warn(
+            "No se pudo obtener una dirección válida, usando coordenadas"
+          );
+          address = fallbackAddress;
+        }
+
+        // Guardar en caché
+        console.log("Guardando nueva dirección en caché:", address);
+        addressCache[cacheKey] = address;
+        return address;
+      } catch (fetchError: any) {
+        // Tipado explícito para el error
+        clearTimeout(timeoutId);
+        if (fetchError && fetchError.name === "AbortError") {
+          console.error(
+            "Timeout al obtener la dirección, manteniendo última dirección válida"
+          );
+          // No guardamos en caché las coordenadas para permitir futuros intentos
+          // Si no hay una dirección previa válida, usar coordenadas como último recurso
+          return fallbackAddress;
+        }
+        console.error("Error en la solicitud de dirección:", fetchError);
+        // No guardamos en caché las coordenadas para permitir futuros intentos
+        return fallbackAddress;
       }
-
-      const data = await response.json();
-
-      let address = "";
-
-      if (data.address) {
-        const parts = [];
-
-        if (data.address.road) parts.push(data.address.road);
-        if (data.address.house_number) parts.push(data.address.house_number);
-        if (data.address.suburb) parts.push(data.address.suburb);
-        if (data.address.city || data.address.town)
-          parts.push(data.address.city || data.address.town);
-        if (data.address.state) parts.push(data.address.state);
-
-        address = parts.join(", ");
-      } else {
-        address = data.display_name || "Dirección desconocida";
-      }
-
-      return address;
     } catch (error) {
-      console.error("Error al obtener la dirección:", error);
-      return "No se pudo obtener la dirección";
+      console.error("Error general al obtener la dirección:", error);
+      // No guardamos en caché las coordenadas para permitir futuros intentos
+      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     } finally {
       setIsAddressLoading(false);
     }
   };
 
-  useEffect(() => {
-    const updateHouseAddress = async () => {
-      const address = await getAddressFromCoordinates(
-        houseLocation.lat,
-        houseLocation.lng
-      );
-      setHouseAddress(address);
-    };
+  // Referencias para almacenar las coordenadas y direcciones previas
+  const prevHouseLat = useRef<number | null>(null);
+  const prevHouseLng = useRef<number | null>(null);
+  const prevHouseAddress = useRef<string | null>(null);
 
-    updateHouseAddress();
+  useEffect(() => {
+    // Verificar si las coordenadas han cambiado significativamente (más de 0.0001 grados)
+    const hasLocationChanged =
+      prevHouseLat.current === null ||
+      prevHouseLng.current === null ||
+      Math.abs(houseLocation.lat - prevHouseLat.current) > 0.0001 ||
+      Math.abs(houseLocation.lng - prevHouseLng.current) > 0.0001;
+
+    if (hasLocationChanged) {
+      const updateHouseAddress = async () => {
+        try {
+          const address = await getAddressFromCoordinates(
+            houseLocation.lat,
+            houseLocation.lng
+          );
+
+          // Verificar si la dirección obtenida es solo coordenadas (fallback)
+          const isCoordinateFormat = /^-?\d+\.\d+, -?\d+\.\d+$/.test(address);
+          
+          // Solo actualizar si es una dirección real (no coordenadas) y diferente a la anterior
+          if (!isCoordinateFormat && address !== prevHouseAddress.current) {
+            console.log("Actualizando dirección de casa:", address);
+            setHouseAddress(address);
+            prevHouseAddress.current = address;
+          } else if (isCoordinateFormat && !prevHouseAddress.current) {
+            // Solo usar coordenadas si no tenemos una dirección previa
+            console.log("Usando coordenadas como dirección inicial de casa");
+            setHouseAddress(address);
+          }
+
+          // Actualizar las referencias de coordenadas
+          prevHouseLat.current = houseLocation.lat;
+          prevHouseLng.current = houseLocation.lng;
+        } catch (error) {
+          console.error("Error al actualizar dirección de casa:", error);
+          // En caso de error, mostrar las coordenadas
+          const fallbackAddress = `${houseLocation.lat.toFixed(
+            6
+          )}, ${houseLocation.lng.toFixed(6)}`;
+          setHouseAddress(fallbackAddress);
+        }
+      };
+
+      updateHouseAddress();
+    }
   }, [houseLocation]);
 
-  useEffect(() => {
-    const updatePetAddress = async () => {
-      const address = await getAddressFromCoordinates(
-        petLocation.lat,
-        petLocation.lng
-      );
-      setPetAddress(address);
-    };
+  // Referencias para almacenar las coordenadas y direcciones previas de la mascota
+  const prevPetLat = useRef<number | null>(null);
+  const prevPetLng = useRef<number | null>(null);
+  const prevPetAddress = useRef<string | null>(null);
 
-    updatePetAddress();
+  useEffect(() => {
+    // Verificar si las coordenadas han cambiado significativamente (más de 0.0001 grados)
+    const hasLocationChanged =
+      prevPetLat.current === null ||
+      prevPetLng.current === null ||
+      Math.abs(petLocation.lat - prevPetLat.current) > 0.0001 ||
+      Math.abs(petLocation.lng - prevPetLng.current) > 0.0001;
+
+    if (hasLocationChanged) {
+      const updatePetAddress = async () => {
+        try {
+          const address = await getAddressFromCoordinates(
+            petLocation.lat,
+            petLocation.lng
+          );
+
+          // Verificar si la dirección obtenida es solo coordenadas (fallback)
+          const isCoordinateFormat = /^-?\d+\.\d+, -?\d+\.\d+$/.test(address);
+          
+          // Solo actualizar si es una dirección real (no coordenadas) y diferente a la anterior
+          if (!isCoordinateFormat && address !== prevPetAddress.current) {
+            console.log("Actualizando dirección de mascota:", address);
+            setPetAddress(address);
+            prevPetAddress.current = address;
+          } else if (isCoordinateFormat && !prevPetAddress.current) {
+            // Solo usar coordenadas si no tenemos una dirección previa
+            console.log("Usando coordenadas como dirección inicial de mascota");
+            setPetAddress(address);
+          }
+
+          // Actualizar las referencias de coordenadas
+          prevPetLat.current = petLocation.lat;
+          prevPetLng.current = petLocation.lng;
+        } catch (error) {
+          console.error("Error al actualizar dirección de mascota:", error);
+          // En caso de error, mostrar las coordenadas
+          const fallbackAddress = `${petLocation.lat.toFixed(
+            6
+          )}, ${petLocation.lng.toFixed(6)}`;
+          setPetAddress(fallbackAddress);
+        }
+      };
+
+      updatePetAddress();
+    }
   }, [petLocation]);
 
   const customIcon = new Icon({
@@ -178,37 +406,56 @@ const LocationMap: React.FC<LocationMapProps> = ({
     return R * c;
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isEditMode) {
-        return;
-      }
-
-      const newLatitude = latitude + (Math.random() - 0.5) * 0.0005;
-      const newLongitude = longitude + (Math.random() - 0.5) * 0.0005;
-      setPetLocation({ lat: newLatitude, lng: newLongitude });
-
-      const distance = getDistance(
-        houseLocation.lat,
-        houseLocation.lng,
-        newLatitude,
-        newLongitude
+  // Función para actualizar la ubicación del mapa
+  const updateMapView = () => {
+    if (mapRef.current && petLocation.lat && petLocation.lng) {
+      mapRef.current.setView(
+        [petLocation.lat, petLocation.lng],
+        mapRef.current.getZoom()
       );
-      if (distance > safeZoneRadius) {
-        setIsOutsideSafeZone(true);
-        showNotification(
-          "warning",
-          `¡${name} ha salido de la zona segura! Está a ${Math.round(
-            distance
-          )} metros de casa.`
-        );
-      } else {
-        setIsOutsideSafeZone(false);
-      }
-    }, 30000);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, [latitude, longitude, safeZoneRadius, isEditMode, houseLocation, name]);
+  // Actualizar la vista del mapa cuando cambie la ubicación de la mascota
+  useEffect(() => {
+    updateMapView();
+  }, [petLocation]);
+
+  // Verificar si la mascota está fuera de la zona segura cuando cambia la ubicación
+  useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
+    // Solo verificar si hay coordenadas válidas
+    if (
+      !petLocation.lat ||
+      !petLocation.lng ||
+      !houseLocation.lat ||
+      !houseLocation.lng
+    ) {
+      return;
+    }
+
+    const distance = getDistance(
+      houseLocation.lat,
+      houseLocation.lng,
+      petLocation.lat,
+      petLocation.lng
+    );
+
+    if (distance > safeZoneRadius) {
+      setIsOutsideSafeZone(true);
+      showNotification(
+        "warning",
+        `¡${name} ha salido de la zona segura! Está a ${Math.round(
+          distance
+        )} metros de casa.`
+      );
+    } else {
+      setIsOutsideSafeZone(false);
+    }
+  }, [petLocation, safeZoneRadius, isEditMode, houseLocation, name]);
 
   const handleRadiusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSafeZoneRadius(Number(event.target.value));
@@ -282,7 +529,28 @@ const LocationMap: React.FC<LocationMapProps> = ({
 
       {isLoading ? (
         <>
-          <div className="skeleton-location"></div>
+          <div className="skeleton-location">
+            <div
+              className="skeleton-text"
+              style={{ width: "40%", height: "20px" }}
+            ></div>
+            <div
+              className="skeleton-text"
+              style={{ width: "70%", height: "20px" }}
+            ></div>
+            <div
+              className="skeleton-text"
+              style={{ width: "60%", height: "20px" }}
+            ></div>
+            <div
+              className="skeleton-text"
+              style={{ width: "80%", height: "20px" }}
+            ></div>
+            <div
+              className="skeleton-text"
+              style={{ width: "50%", height: "20px" }}
+            ></div>
+          </div>
           <div className="Location-info">
             <div className="skeleton-card">
               <div className="skeleton-title"></div>
@@ -303,7 +571,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
       ) : (
         <>
           <MapContainer
-            center={[latitude, longitude]}
+            center={[petLocation.lat, petLocation.lng]}
             zoom={15}
             scrollWheelZoom={false}
             className="map"

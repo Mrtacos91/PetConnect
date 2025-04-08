@@ -14,6 +14,6 @@ while True:
     try:
         line = ser.readline().decode("utf-8", errors="ignore").strip()
         if line:
-            print(f"📡 Datos recibidos: {line}")  
+            print(f"📡 Datos recibidos: {line}")
     except Exception as e:
         print(f"⚠️ Error al leer datos: {e}")

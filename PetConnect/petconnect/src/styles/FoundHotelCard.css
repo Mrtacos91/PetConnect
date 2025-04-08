@@ -7,9 +7,9 @@
   width: 100%; /* Se ajusta al 100% en lugar de 150% */
   max-width: 500px;
   padding: 10px;
-  background-color: var(--card-background);
+  background-color: var(--background-color);
   border-radius: 12px;
-  margin: 0 auto 100px auto;
+  margin: 0 auto;
 }
 
 /* 🔹 Título */

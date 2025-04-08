@@ -1,27 +1,74 @@
+/* Estilos para la página de Carnet */
 .carnet-container {
   background-color: var(--card-background);
   border-radius: 15px;
   padding: 20px;
   margin: 20px;
   box-shadow: 0 4px 8px var(--shadow-default);
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Header del Carnet */
+.carnet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  gap: 10px;
 }
 
 .carnet-title {
   color: var(--text-primary);
-  margin-bottom: 20px;
   font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.carnet-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Información de la mascota */
+.carnet-pet-info {
+  background-color: var(--background-secondary);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.carnet-pet-info p {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* Contenedor de la tabla para scroll horizontal en móviles */
+.carnet-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 15px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .carnet-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
+  min-width: 600px; /* Asegura que en móviles se pueda hacer scroll */
 }
 
-.carnet-table th, .carnet-table td {
+.carnet-table th,
+.carnet-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
 }
 
@@ -34,7 +81,8 @@
   background-color: var(--shadow-default);
 }
 
-.edit-button, .save-button {
+.edit-button,
+.save-button {
   background: var(--circle-animation);
   border: none;
   border-radius: 8px;
@@ -46,18 +94,19 @@
   transition: all 0.3s ease;
 }
 
-.edit-button:hover, .save-button:hover {
+.edit-button:hover,
+.save-button:hover {
   opacity: 0.9;
   transform: translateY(-2px);
 }
 
 .status-completed {
-  color: #4CAF50;
+  color: #4caf50;
   font-weight: 500;
 }
 
 .status-pending {
-  color: #FFA726;
+  color: #ffa726;
   font-weight: 500;
 }
 
@@ -68,4 +117,538 @@
   padding: 6px;
   color: var(--text-primary);
   width: 100%;
+}
+
+/* Estilos para el componente CarnetCard */
+.carnetcard-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 15px auto;
+  margin-bottom: 50px;
+  box-shadow: 0 4px 10px var(--shadow-default);
+  max-width: 450px;
+  width: 100%;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.carnetcard-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px var(--shadow-hover);
+}
+
+.carnetcard-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.carnetcard-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  background: var(--circle-animation);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.carnetcard-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.carnetcard-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.carnetcard-button {
+  background: var(--button-bg);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 12px 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.carnetcard-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  background: var(--button-bg);
+}
+
+/* Skeleton Loaders */
+.skeleton-carnet {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Skeleton para CarnetCard */
+.skeleton-container {
+  pointer-events: none;
+}
+
+.carnetcard-icon-skeleton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+}
+
+.carnetcard-title-skeleton {
+  width: 70%;
+  height: 24px;
+  margin: 0 auto 10px;
+}
+
+.carnetcard-description-skeleton {
+  width: 90%;
+  height: 40px;
+  margin: 0 auto 15px;
+}
+
+.carnetcard-button-skeleton {
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+}
+
+/* Skeleton para Carnet */
+.carnet-title-skeleton {
+  width: 60%;
+  height: 30px;
+  margin-bottom: 20px;
+}
+
+.carnet-button-skeleton {
+  width: 100px;
+  height: 38px;
+  margin-bottom: 20px;
+}
+
+.carnet-table-skeleton {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.carnet-table-header-skeleton {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.carnet-table-header-skeleton .skeleton {
+  height: 24px;
+  width: 23%;
+}
+
+.carnet-table-row-skeleton {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.carnet-table-row-skeleton .skeleton {
+  height: 20px;
+  width: 23%;
+}
+
+/* Botones de acción */
+.carnet-action-button {
+  background-color: var(--button-bg);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carnet-action-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.preview-button {
+  background-color: #9c27b0;
+}
+
+.add-button {
+  background-color: #2196f3;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+  transform: scale(1.1);
+}
+
+.action-cell {
+  text-align: center;
+}
+
+/* Mensaje cuando no hay registros */
+.no-records {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Modal de vista previa del PDF */
+.pdf-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.pdf-preview-container {
+  background-color: var(--card-background);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.pdf-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pdf-preview-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.pdf-preview-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: white;
+  color: black;
+}
+
+.pdf-preview-actions {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Estilos para el PDF */
+.pdf-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.pdf-header h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.pdf-pet-info {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.pdf-pet-info p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.pdf-table th,
+.pdf-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.pdf-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.pdf-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+  color: #666;
+  font-style: italic;
+}
+
+.close-preview-button {
+  background-color: transparent;
+  color: var(--text-primary);
+  padding: 8px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-preview-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.download-pdf-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-pdf-button:hover {
+  background-color: #45a049;
+}
+
+/* Diseño Responsivo para Carnet */
+@media (max-width: 768px) {
+  .carnet-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .carnet-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .carnet-title {
+    margin-bottom: 10px;
+  }
+
+  .button-text {
+    display: none;
+  }
+
+  .carnet-pet-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .carnet-table th,
+  .carnet-table td {
+    padding: 10px 8px;
+  }
+
+  .pdf-preview-container {
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 600px) {
+  .carnet-table {
+    display: block;
+  }
+
+  .carnet-table thead {
+    display: none;
+  }
+
+  .carnet-table tbody,
+  .carnet-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .carnet-table td {
+    display: flex;
+    padding: 10px;
+    text-align: right;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .carnet-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    margin-right: auto;
+    text-align: left;
+  }
+
+  .carnet-table tr {
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .action-cell {
+    justify-content: flex-end;
+  }
+}
+
+/* Diseño Responsivo para CarnetCard */
+@media (max-width: 768px) {
+  .carnetcard-container {
+    max-width: 90%;
+    padding: 18px;
+  }
+
+  .carnetcard-icon {
+    font-size: 2.2rem;
+  }
+
+  .carnetcard-title {
+    font-size: 1.3rem;
+  }
+
+  .carnetcard-description {
+    font-size: 0.9rem;
+  }
+
+  .carnetcard-button {
+    padding: 10px 18px;
+  }
+
+  .carnetcard-icon-skeleton {
+    width: 50px;
+    height: 50px;
+  }
+
+  .carnetcard-title-skeleton {
+    height: 22px;
+  }
+
+  .carnetcard-description-skeleton {
+    height: 36px;
+  }
+
+  .carnetcard-button-skeleton {
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .carnetcard-container {
+    max-width: 95%;
+    padding: 15px;
+  }
+
+  .carnetcard-icon {
+    font-size: 2rem;
+  }
+
+  .carnetcard-title {
+    font-size: 1.2rem;
+  }
+
+  .carnetcard-description {
+    font-size: 0.85rem;
+  }
+
+  .carnetcard-button {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  .carnetcard-icon-skeleton {
+    width: 45px;
+    height: 45px;
+  }
+
+  .carnetcard-title-skeleton {
+    height: 20px;
+  }
+
+  .carnetcard-description-skeleton {
+    height: 32px;
+  }
+
+  .carnetcard-button-skeleton {
+    height: 38px;
+  }
+
+  .carnet-title-skeleton {
+    height: 26px;
+  }
+
+  .carnet-button-skeleton {
+    height: 34px;
+  }
+
+  .carnet-table-header-skeleton .skeleton,
+  .carnet-table-row-skeleton .skeleton {
+    height: 18px;
+  }
 }

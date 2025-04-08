@@ -1,0 +1,430 @@
+/* Estilos para el componente ConfigureDevice */
+
+/* Overlay del modal */
+.confdevice-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(23, 23, 42, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+/* Modal principal */
+.confdevice-modal {
+  background-color: #1e1e2d;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Encabezado del modal */
+.confdevice-header {
+  background-color: #252537;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.confdevice-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.confdevice-close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confdevice-close-btn:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenido del modal */
+.confdevice-content {
+  padding: 20px;
+  color: white;
+}
+
+/* Notificaciones */
+.confdevice-notification {
+  position: relative;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  animation: notificationSlideIn 0.3s ease-out;
+}
+
+@keyframes notificationSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para los diferentes tipos de notificaciones */
+.confdevice-notification.success {
+  color: #047857;
+  background-color: #7dffbc;
+  --grid-color: rgba(16, 185, 129, 0.25);
+  background-image: linear-gradient(
+      0deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent
+    );
+  background-size: 55px 55px;
+}
+
+.confdevice-notification.error {
+  color: #7f1d1d;
+  background-color: #ff7e7e;
+  --grid-color: rgba(239, 68, 68, 0.25);
+  background-image: linear-gradient(
+      0deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent
+    );
+  background-size: 55px 55px;
+}
+
+.confdevice-notification.warning {
+  color: #854d0e;
+  background-color: #ffd166;
+  --grid-color: rgba(245, 158, 11, 0.25);
+  background-image: linear-gradient(
+      0deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 23%,
+      var(--grid-color) 24%,
+      var(--grid-color) 25%,
+      transparent 26%,
+      transparent 73%,
+      var(--grid-color) 74%,
+      var(--grid-color) 75%,
+      transparent 76%,
+      transparent
+    );
+  background-size: 55px 55px;
+}
+
+.confdevice-notification .notification-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.confdevice-notification .notification-text {
+  font-weight: 500;
+  flex: 1;
+}
+
+.confdevice-notification .notification-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform: translateX(100%);
+  animation: progressBar 5s linear forwards;
+}
+
+@keyframes progressBar {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.confdevice-notification.success .notification-progress-bar {
+  background-color: #047857;
+}
+
+.confdevice-notification.error .notification-progress-bar {
+  background-color: #7f1d1d;
+}
+
+.confdevice-notification.warning .notification-progress-bar {
+  background-color: #854d0e;
+}
+
+/* Opciones de configuración */
+.confdevice-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confdevice-divider {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+}
+
+.confdevice-option-container {
+  display: flex;
+  justify-content: center;
+}
+
+.confdevice-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  max-width: 300px;
+}
+
+.confdevice-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.confdevice-option.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.confdevice-qr-container {
+  width: 150px;
+  height: 150px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.confdevice-qr {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+}
+
+.confdevice-option p {
+  margin: 10px 0;
+  font-weight: 500;
+  color: white;
+}
+
+/* Separador */
+.confdevice-separator {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.confdevice-line {
+  flex: 1;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.confdevice-separator span {
+  padding: 0 15px;
+  font-weight: 500;
+}
+
+/* Botones */
+.confdevice-scan-btn,
+.confdevice-code-btn,
+.confdevice-submit-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.confdevice-scan-btn:hover,
+.confdevice-code-btn:hover,
+.confdevice-submit-btn:hover {
+  background-color: #2563eb;
+}
+
+.confdevice-scan-btn:active,
+.confdevice-code-btn:active,
+.confdevice-submit-btn:active {
+  transform: scale(0.98);
+}
+
+/* Formulario de código */
+.confdevice-code-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.confdevice-code-input {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.confdevice-code-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* Escáner de QR */
+.confdevice-scanner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1100;
+  justify-content: center;
+  align-items: center;
+}
+
+.confdevice-scanner.active {
+  display: flex;
+}
+
+.confdevice-video {
+  max-width: 100%;
+  max-height: 80vh;
+  border: 2px solid white;
+  border-radius: 8px;
+}
+
+.confdevice-canvas {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .confdevice-modal {
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .confdevice-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .confdevice-qr-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  .confdevice-qr {
+    width: 100px;
+    height: 100px;
+  }
+}

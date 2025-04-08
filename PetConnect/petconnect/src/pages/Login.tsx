@@ -110,11 +110,11 @@ const Login: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     // Validación en tiempo real
     const error = validateField(name, value);
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -129,7 +129,7 @@ const Login: React.FC = () => {
     setErrors(newErrors);
 
     // Verificar si hay errores
-    if (Object.values(newErrors).some(error => error !== "")) {
+    if (Object.values(newErrors).some((error) => error !== "")) {
       return;
     }
 
@@ -141,7 +141,11 @@ const Login: React.FC = () => {
     });
 
     if (error) {
-      setAlert({ type: "error", message: "Credenciales inválidas. Por favor, verifica tu correo y contraseña." });
+      setAlert({
+        type: "error",
+        message:
+          "Credenciales inválidas. Por favor, verifica tu correo y contraseña.",
+      });
       return;
     }
 
@@ -153,14 +157,14 @@ const Login: React.FC = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin + "/dashboard"
-        }
+          redirectTo: window.location.origin + "/dashboard",
+        },
       });
 
       if (error) {
         setAlert({
           type: "error",
-          message: "Error al iniciar sesión con Google"
+          message: "Error al iniciar sesión con Google",
         });
         return;
       }
@@ -172,7 +176,7 @@ const Login: React.FC = () => {
       console.error("Error en la autenticación con Google:", error);
       setAlert({
         type: "error",
-        message: "Error al conectar con Google"
+        message: "Error al conectar con Google",
       });
     }
   };
@@ -194,7 +198,9 @@ const Login: React.FC = () => {
             className={errors.email ? "error" : ""}
           />
           <label>Ingresa tu email</label>
-          {errors.email && <span className="error-message">{errors.email}</span>}
+          {errors.email && (
+            <span className="error-message">{errors.email}</span>
+          )}
         </div>
 
         <div className="input-container password-container">
@@ -208,7 +214,9 @@ const Login: React.FC = () => {
             className={errors.password ? "error" : ""}
           />
           <label>Ingresa tu contraseña</label>
-          {errors.password && <span className="error-message">{errors.password}</span>}
+          {errors.password && (
+            <span className="error-message">{errors.password}</span>
+          )}
           <span
             className="toggle-password"
             onClick={() => setShowPassword(!showPassword)}

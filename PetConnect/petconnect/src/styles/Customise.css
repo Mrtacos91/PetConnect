@@ -85,7 +85,7 @@
 
 .save-button:hover {
   transform: translateY(-3px);
-  background-image: var(--circle-animation);
+  background-color: var(--button-bg);
 }
 
 /* Botón de volver */
@@ -97,7 +97,7 @@
   padding: 8px 16px;
   border: none;
   border-radius: 8px;
-  background: var(--circle-animation);
+  background: var(--button-bg);
   color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;

@@ -38,7 +38,7 @@ const Paseos: React.FC = () => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -84,7 +84,10 @@ const Paseos: React.FC = () => {
   const scheduleNotification = () => {
     const selectedDays = days.filter((day) => day.selected);
     if (selectedDays.length === 0 || !selectedTime) {
-      showNotification("error", "Por favor selecciona al menos un día y una hora");
+      showNotification(
+        "error",
+        "Por favor selecciona al menos un día y una hora"
+      );
       return;
     }
 
@@ -145,12 +148,14 @@ const Paseos: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="paseos-container skeleton">
+        <div className="paseos-container-skeleton">
           <div className="skeleton-title"></div>
           <div className="skeleton-days-container">
-            {Array(7).fill(0).map((_, index) => (
-              <div key={index} className="skeleton-day-button"></div>
-            ))}
+            {Array(7)
+              .fill(0)
+              .map((_, index) => (
+                <div key={index} className="skeleton-day-button"></div>
+              ))}
           </div>
           <div className="skeleton-time-picker"></div>
           <div className="skeleton-schedule-button"></div>

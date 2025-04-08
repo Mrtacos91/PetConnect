@@ -28,7 +28,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  background: var(--circle-animation);
+  background: var(--button-bg);
   font-family: "Montserrat", sans-serif;
   box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -40,7 +40,7 @@
   content: " ";
   width: 0%;
   height: 100%;
-  background: #ffd401;
+  background: var(--button-bg);
   position: absolute;
   transition: all 0.4s ease-in-out;
   right: 0;
@@ -205,8 +205,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  background: #183153;
-  font-family: "Montserrat", sans-serif;
+  background: var(--button-bg);
   box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   cursor: pointer;
@@ -219,7 +218,7 @@
   content: " ";
   width: 0%;
   height: 100%;
-  background: #ffd401;
+  background: var(--button-bg);
   position: absolute;
   transition: all 0.4s ease-in-out;
   right: 0;
@@ -245,7 +244,7 @@
 }
 
 .calendar-button:hover span {
-  color: #183153;
+  color: var(--text-primary);
   animation: scaleUp 0.3s ease-in-out;
 }
 
@@ -265,23 +264,23 @@
 
 /* Button Variants */
 .add-button {
-  background: #183153;
+  background: var(--button-bg);
 }
 
 .edit-button {
-  background: #183153;
+  background: var(--button-bg);
 }
 
 .delete-button {
-  background: #183153;
+  background: var(--button-bg);
 }
 
 .save-button {
-  background: #183153;
+  background: var(--button-bg);
 }
 
 .cancel-button {
-  background: #183153;
+  background: var(--button-bg);
 }
 
 /* Event Form Styles */

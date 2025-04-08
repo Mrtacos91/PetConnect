@@ -60,17 +60,16 @@ li {
 .indicator {
   position: absolute;
   bottom: -10px;
-  width: 75px;
-  height: 80px;
-  background: var(
-    --circle-animation
-  ); /* Fondo de la card en modo claro/oscuro */
+  width: 70px;
+  height: 70px;
+  background: var(--button-bg);
   border-radius: 50%;
-  transition: left 0.3s ease-in-out;
-  box-shadow: 0px 5px 15px rgb(65, 66, 66); /* Se mantiene */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Transición más suave con efecto bounce */
+  box-shadow: 0px 5px 15px rgba(65, 66, 66, 0.5); /* Sombra más sutil */
   z-index: 0;
-  left: 12px; /* Posición inicial */
-  transform: translateX(0%);
+  left: 12px;
+  top: 0px; /* Posición inicial, será sobrescrita por JS */
+  transform-origin: center;
 }
 
 /* 🌀 Curva inferior */
@@ -78,22 +77,27 @@ li {
   content: "";
   position: absolute;
   bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 60px;
   height: 15px;
   background: var(--bg-default); /* Se adapta al fondo */
   border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* ✨ Efecto del icono activo */
 .bottom-nav .list.active {
   color: var(--text-bottomnav); /* Color dinámico del activo */
   font-weight: bold;
+  transform: translateY(-5px); /* Ligero movimiento hacia arriba */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .bottom-nav .list.active svg {
   color: var(--text-bottomnav);
   transform: scale(1.2);
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* 📌 Responsividad */
@@ -101,6 +105,7 @@ li {
   .bottom-nav {
     width: 95%;
     bottom: 15px;
+    padding: 8px 0;
   }
 
   .bottom-nav li {
@@ -112,12 +117,30 @@ li {
   }
 
   .indicator {
-    width: 75px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
   }
 
   .indicator::before {
     width: 50px;
     height: 12px;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 320px) {
+  .bottom-nav {
+    width: 100%;
+    border-radius: 15px 15px 0 0;
+    bottom: 0;
+  }
+
+  .bottom-nav li span {
+    font-size: 10px;
+  }
+
+  .indicator {
+    width: 50px;
+    height: 50px;
   }
 }

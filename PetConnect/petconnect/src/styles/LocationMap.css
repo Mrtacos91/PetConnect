@@ -92,17 +92,17 @@
 
 /* Estilo para los botones */
 .edit-button {
-  background: var(--circle-animation);
+  background: var(--button-bg);
   color: white;
   border: none;
   padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
+  transition: transform 0.3s;
 }
 
 .edit-button:hover {
-  background: var(--circle-animation);
+  background: var(--button-bg);
   transform: translateY(-2px);
 }
 
@@ -114,18 +114,17 @@
   height: 40vh;
   margin-bottom: 20px;
   border-radius: 16px;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
+  background: var(--card-background);
+  box-shadow: 0 2px 8px var(--shadow-default);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow: hidden;
 }
 
 /* Unify animations to use the same keyframes */
-@keyframes shimmer {
+@keyframes animationLoading {
   0% {
     background-position: -200% 0;
   }
@@ -134,36 +133,40 @@
   }
 }
 
+@keyframes infinite-loading {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
 /* Skeleton loaders for cards */
 .skeleton-card {
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
+  background: var(--card-background);
   border-radius: 12px;
   height: 100%;
   min-height: 200px;
   width: 100%;
   box-shadow: 0px 4px 8px var(--shadow-default);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: infinite-loading 1.5s infinite ease-in-out;
 }
 
 .skeleton-text {
   height: 16px;
   margin: 10px 0;
   width: 80%;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
+  border-radius: 8px;
+  background: var(--card-background);
+  animation: infinite-loading 1.5s infinite ease-in-out;
 }
 
 .skeleton-text:nth-child(even) {
@@ -178,45 +181,27 @@
   height: 24px;
   width: 60%;
   margin-bottom: 20px;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
+  border-radius: 8px;
+  background: var(--card-background);
+  animation: infinite-loading 1.5s infinite ease-in-out;
 }
 
 .skeleton-button {
   height: 40px;
   width: 120px;
-  border-radius: 20px;
+  border-radius: 8px;
   margin-top: 15px;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
+  background: var(--card-background);
+  animation: infinite-loading 1.5s infinite ease-in-out;
 }
 
 .skeleton-slider {
   height: 20px;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 8px;
   margin: 15px 0;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
+  background: var(--card-background);
+  animation: infinite-loading 1.5s infinite ease-in-out;
 }
 
 /* Responsividad */
