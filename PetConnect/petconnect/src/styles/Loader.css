@@ -1,0 +1,117 @@
+:root {
+  --paw-color: #5b42f3;
+}
+
+.paw-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
+}
+
+.paw-loader {
+  position: relative;
+  animation: pawAnimation 1.5s infinite;
+}
+
+/* Tamaños del loader */
+.paw-loader-small {
+  width: 40px;
+  height: 40px;
+}
+
+.paw-loader-medium {
+  width: 60px;
+  height: 60px;
+}
+
+.paw-loader-large {
+  width: 80px;
+  height: 80px;
+}
+
+/* Almohadilla principal */
+.paw-main-pad {
+  position: absolute;
+  background-color: var(--paw-color);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  width: 65%;
+  height: 70%;
+  top: 15%;
+  left: 17.5%;
+  opacity: 0.8;
+}
+
+/* Almohadillas pequeñas */
+.paw-pad {
+  position: absolute;
+  background-color: var(--paw-color);
+  border-radius: 50%;
+  width: 25%;
+  height: 25%;
+  opacity: 0.8;
+}
+
+.paw-pad-1 {
+  top: 0;
+  left: 30%;
+}
+
+.paw-pad-2 {
+  top: 0;
+  right: 30%;
+}
+
+.paw-pad-3 {
+  bottom: 0;
+  left: 10%;
+}
+
+.paw-pad-4 {
+  bottom: 0;
+  right: 10%;
+}
+
+.paw-loader-text {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  animation: fadeInOut 1.5s infinite;
+}
+
+/* Animaciones */
+@keyframes pawAnimation {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: translateY(-10px) rotate(10deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-10px) rotate(-10deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInOut {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}

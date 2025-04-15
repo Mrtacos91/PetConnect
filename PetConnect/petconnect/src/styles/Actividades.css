@@ -5,7 +5,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  width: min(95%, 500px);
+  width: min(95%, 800px);
   margin: 2rem auto 4rem;
   padding: clamp(1.5rem, 4vw, 2rem);
   background: var(--background-color);
@@ -22,6 +22,7 @@
 }
 
 .seccion {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -37,35 +38,7 @@
   margin-bottom: 1.5rem;
 }
 
-.input {
-  width: 100%;
-  display: flex;
-  max-width: 400px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  padding: clamp(12px, 1.5vw, 15px);
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  background: var(--background-color);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
 
-.input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-  outline: none;
-}
-
-.input:hover {
-  border-color: #818cf8;
-}
-
-.input::placeholder {
-  color: #94a3b8;
-}
 
 .boton {
   width: 100%;
@@ -75,14 +48,14 @@
   cursor: pointer;
   font-size: clamp(14px, 2vw, 16px);
   margin-bottom: 10px;
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+  background: var(--button-bg);
   color: white;
   transition: transform 0.2s ease;
 }
 
 .boton:hover {
   transform: scale(1.02);
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+  background-color: var(--button-bg);
 }
 
 .boton:disabled {
@@ -92,6 +65,7 @@
   box-shadow: none;
 }
 
+/* Estilos para la sección de citas agendadas */
 .citasAgendadas {
   width: 100%;
   margin-top: 2rem;
@@ -103,55 +77,117 @@
   color: var(--text-primary);
   text-align: center;
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
-.citasAgendadas ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.citasAgendadas h3::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+  border-radius: 3px;
+}
+
+.lista-citas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.cita-item {
+  background: var(--background-color);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  position: relative;
 }
 
-.citasAgendadas li {
-  background: var(--card-background);
+.cita-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.cita-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
+}
+
+.cita-info {
   padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px var(--shadow-default);
+  flex: 1;
+}
+
+.cita-info h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.cita-info h3::after {
+  display: none;
+}
+
+.cita-info p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.appointment-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-  margin-top: 1rem;
+.cita-info p:last-child {
+  margin-bottom: 0;
 }
 
-.appointment-buttons button {
-  padding: 0.5rem 1rem;
+.cita-actions {
+  display: flex;
+  border-top: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.btn-editar,
+.btn-borrar {
+  flex: 1;
+  padding: 0.75rem;
   border: none;
-  border-radius: 6px;
   font-weight: 500;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s ease;
+  background-color: transparent;
 }
 
-.appointment-buttons button:first-child {
-  background: var(--primary-color-light);
-  color: var(--primary-color);
+.btn-editar {
+  color: #5b42f3;
+  border-right: 1px solid rgba(229, 231, 235, 0.5);
 }
 
-.appointment-buttons button:last-child {
-  background: var(--danger-color-light);
-  color: var(--danger-color);
+.btn-borrar {
+  color: #e11d48;
 }
 
-.appointment-buttons button:hover {
-  filter: brightness(0.95);
+.btn-editar:hover {
+  background-color: rgba(91, 66, 243, 0.05);
+}
+
+.btn-borrar:hover {
+  background-color: rgba(225, 29, 72, 0.05);
 }
 
 .mensajeError,
@@ -162,6 +198,18 @@
   margin: 1rem 0;
   border-radius: 8px;
   text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .mensajeError {
@@ -175,6 +223,11 @@
 }
 
 /* Skeleton Loader Styles */
+:root {
+  --skeleton-gradient-start: rgba(229, 231, 235, 0.6);
+  --skeleton-gradient-mid: rgba(229, 231, 235, 0.3);
+  --skeleton-color: rgba(99, 102, 241, 0.1);
+}
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -185,6 +238,115 @@
   background-size: 200% 100%;
   animation: loadingAnimation 1.5s infinite;
   border-radius: 8px;
+}
+
+.skeleton-cita {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 150px;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: var(--background-color);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.skeleton-cita::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--button-bg);
+}
+
+.skeleton-header {
+  height: 70%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 70%;
+  border-radius: 6px;
+  background-color: var(--skeleton-color);
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 90%;
+  border-radius: 4px;
+  background-color: var(--skeleton-color);
+}
+
+.skeleton-text-sm {
+  height: 16px;
+  width: 50%;
+  border-radius: 4px;
+  background-color: var(--skeleton-color);
+}
+
+.skeleton-actions {
+  height: 30%;
+  display: flex;
+  border-top: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.skeleton-button {
+  flex: 1;
+  height: 100%;
+  opacity: 0.7;
+  background-color: var(--skeleton-color);
+}
+
+.skeleton-button:first-child {
+  border-right: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.loading-container {
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.skeleton-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Estilos para estados vacíos */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  background-color: rgba(229, 231, 235, 0.1);
+  border-radius: 12px;
+  border: 1px dashed rgba(229, 231, 235, 0.5);
+}
+
+.empty-state p {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.empty-state-subtitle {
+  font-size: 0.9rem !important;
+  opacity: 0.7;
+}
+
+/* Estilos para los iconos */
+.icon {
+  display: inline-block;
+  margin-right: 0.5rem;
 }
 
 @keyframes loadingAnimation {

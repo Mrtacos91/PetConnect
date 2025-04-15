@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { FaPencilAlt, FaCheck, FaTimes } from "react-icons/fa";
-import supabase from "../supabase"; // Importa tu cliente de Supabase
 import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Customise.css";
-import "../styles/style.css"; // Importamos los estilos de notificación
+import "../styles/style.css"; 
 import { useState, useEffect } from "react";
+import BackButton from "../components/BackButton";
+import { getCurrentUser, getLocalUserId, getPetByUserId, uploadPetImage, savePetData, PetData } from "../services/pet-service";
 
 const Customise: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -27,25 +28,15 @@ const Customise: React.FC = () => {
   >([]);
 
   const navigate = useNavigate();
-
-  // Cargar datos existentes al montar el componente
+  
   const loadExistingPetData = async () => {
-    const { data: sessionData } = await supabase.auth.getUser();
-    if (!sessionData?.user) return;
+    const user = await getCurrentUser();
+    if (!user) return;
 
-    const { data: localUser } = await supabase
-      .from("Users")
-      .select("id")
-      .eq("email", sessionData.user.email)
-      .single();
+    const userId = await getLocalUserId(user.email!);
+    if (!userId) return;
 
-    if (!localUser?.id) return;
-
-    const { data: existingPet } = await supabase
-      .from("Pets")
-      .select("*")
-      .eq("user_id", localUser.id)
-      .single();
+    const existingPet = await getPetByUserId(userId);
 
     if (existingPet) {
       setPetName(existingPet.pet_name || "");
@@ -86,9 +77,7 @@ const Customise: React.FC = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleBack = () => {
-    navigate("/dashboard");
-  };
+
 
   // Manejo de la imagen seleccionada
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,120 +99,86 @@ const Customise: React.FC = () => {
 
     setLoading(true);
 
-    // 1️⃣ OBTENER USUARIO DE SUPABASE AUTH
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getUser();
-    if (sessionError || !sessionData?.user) {
-      showNotification(
-        "error",
-        "Debes iniciar sesión antes de agregar una mascota."
-      );
-      setLoading(false);
-      return;
-    }
-    const supabaseEmail = sessionData.user.email;
-
-    // 2️⃣ BUSCAR ID LOCAL EN TABLA "users"
-    const { data: localUser, error: localUserError } = await supabase
-      .from("Users")
-      .select("id")
-      .eq("email", supabaseEmail)
-      .single();
-
-    if (localUserError || !localUser?.id) {
-      showNotification(
-        "error",
-        "No se encontró tu usuario local. Verifica la tabla 'users'."
-      );
-      setLoading(false);
-      return;
-    }
-
-    let imageUrl = currentImageUrl; // Usar la imagen existente por defecto
-
-    // 3️⃣ MANEJAR LA IMAGEN EN SUPABASE STORAGE
-    if (petPhoto) {
-      try {
-        // Si hay una imagen anterior, intentar borrarla primero
-        if (currentImageUrl) {
-          const oldPath = currentImageUrl.split("/").slice(-2).join("/"); // Obtener "userId/filename"
-          const { error: deleteError } = await supabase.storage
-            .from("petimage")
-            .remove([oldPath]);
-
-          if (deleteError) {
-            console.error("Error borrando la imagen anterior:", deleteError);
-            // Continuamos con la subida aunque falle el borrado
-          }
-        }
-
-        // Preparar la nueva imagen
-        const fileExt = petPhoto.name.split(".").pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${sessionData.user.id}/${fileName}`;
-
-        // Subir la nueva imagen
-        const { error: uploadError } = await supabase.storage
-          .from("petimage")
-          .upload(filePath, petPhoto);
-
-        if (uploadError) {
-          throw new Error(`Error subiendo la imagen: ${uploadError.message}`);
-        }
-
-        // Obtener la URL pública
-        const { data: publicUrlData } = await supabase.storage
-          .from("petimage")
-          .getPublicUrl(filePath);
-
-        imageUrl = publicUrlData.publicUrl;
-      } catch (error) {
-        console.error("Error en el proceso de imagen:", error);
+    try {
+      // 1️⃣ OBTENER USUARIO DE SUPABASE AUTH
+      const user = await getCurrentUser();
+      if (!user) {
         showNotification(
           "error",
-          "Error procesando la imagen. Por favor, intenta de nuevo."
+          "Debes iniciar sesión antes de agregar una mascota."
         );
         setLoading(false);
         return;
       }
-    }
 
-    // 4️⃣ BUSCAR SI YA EXISTE UNA MASCOTA PARA ESTE USUARIO
-    const { data: existingPet } = await supabase
-      .from("Pets")
-      .select("id")
-      .eq("user_id", localUser.id)
-      .single();
+      // 2️⃣ BUSCAR ID LOCAL EN TABLA "users"
+      const userId = await getLocalUserId(user.email!);
+      if (!userId) {
+        showNotification(
+          "error",
+          "No se encontró tu usuario local. Verifica la tabla 'users'."
+        );
+        setLoading(false);
+        return;
+      }
 
-    // INSERTAR O ACTUALIZAR DATOS EN LA TABLA "pets"
-    const { error: upsertError } = await supabase.from("Pets").upsert([
-      {
-        id: existingPet?.id, // Si existe, actualizará el registro existente
-        user_id: localUser.id,
+      let imageUrl = currentImageUrl; // Usar la imagen existente por defecto
+
+      // 3️⃣ MANEJAR LA IMAGEN EN SUPABASE STORAGE
+      if (petPhoto) {
+        imageUrl = await uploadPetImage(user.id, petPhoto, currentImageUrl);
+        if (!imageUrl) {
+          showNotification(
+            "error",
+            "Error procesando la imagen. Por favor, intenta de nuevo."
+          );
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 4️⃣ PREPARAR Y GUARDAR LOS DATOS DE LA MASCOTA
+      const petData: PetData = {
+        user_id: userId,
         pet_name: petName,
         pet_type: petType,
         pet_breed: petBreed,
         pet_age: parseInt(petAge),
         image_pet: imageUrl,
-      },
-    ]);
+      };
 
-    if (upsertError) {
-      console.error("Error actualizando datos en Supabase:", upsertError);
-      showNotification("error", "Error guardando los datos.");
-    } else {
-      showNotification("success", "¡Mascota guardada con éxito!");
-      // Redirigir después de mostrar la notificación
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
+      // Obtener el ID de la mascota existente si hay una
+      const existingPet = await getPetByUserId(userId);
+      if (existingPet?.id) {
+        petData.id = existingPet.id;
+      }
+
+      // Guardar los datos usando la función del servicio
+      const result = await savePetData(petData);
+
+      if (!result.success) {
+        console.error("Error guardando datos:", result.error);
+        showNotification("error", "Error guardando los datos.");
+      } else {
+        showNotification("success", "¡Mascota guardada con éxito!");
+        // Redirigir después de mostrar la notificación
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error en el proceso de guardado:", error);
+      showNotification("error", "Ocurrió un error inesperado.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="customise-page">
+      <div className="BackBt-CP">
+      <BackButton/>
+      </div>
       <ThemeToggle />
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} />
@@ -252,13 +207,7 @@ const Customise: React.FC = () => {
         ))}
       </div>
 
-      <button
-        className="back-button"
-        onClick={handleBack}
-        aria-label="Volver al dashboard"
-      >
-        ←
-      </button>
+      
 
       <main className="dashboard">
         <div className="customise-container">

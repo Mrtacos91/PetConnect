@@ -32,14 +32,31 @@ const Paseos: React.FC = () => {
     }>
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    // Registrar el tiempo de inicio para asegurar un mínimo de 2 segundos
+    const startTime = Date.now();
 
-    return () => clearTimeout(timer);
+    // Simulate loading data
+    const loadData = async () => {
+      // Simular carga de datos
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Calcular cuánto tiempo ha pasado
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, 2000 - elapsedTime);
+
+      // Si ha pasado menos de 2 segundos, esperar el tiempo restante
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowSkeleton(false);
+      }, remainingTime);
+    };
+
+    loadData();
+
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -147,7 +164,7 @@ const Paseos: React.FC = () => {
         ))}
       </div>
 
-      {isLoading ? (
+      {showSkeleton ? (
         <div className="paseos-container-skeleton">
           <div className="skeleton-title"></div>
           <div className="skeleton-days-container">

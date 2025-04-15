@@ -127,7 +127,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
   viewMap,
   setActiveTab,
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const [location, setLocation] = useState<string>("");
   const [hour, setHour] = useState<string>("");
   const [lastLocation, setLastLocation] = useState<string>("");
@@ -163,7 +163,23 @@ const LocationCard: React.FC<LocationCardProps> = ({
   // Cargar datos de ubicación cuando tengamos la sesión
   useEffect(() => {
     if (session) {
-      fetchLocationData();
+      // Registrar el tiempo de inicio para asegurar un mínimo de 2 segundos
+      const startTime = Date.now();
+
+      const loadLocationWithMinTime = async () => {
+        await fetchLocationData();
+
+        // Calcular cuánto tiempo ha pasado
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, 2000 - elapsedTime);
+
+        // Si ha pasado menos de 2 segundos, esperar el tiempo restante
+        setTimeout(() => {
+          setShowSkeleton(false);
+        }, remainingTime);
+      };
+
+      loadLocationWithMinTime();
 
       // Configurar un intervalo para actualizar los datos cada 60 segundos (aumentado para reducir llamadas)
       const interval = setInterval(fetchLocationData, 60000);
@@ -174,10 +190,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
   const fetchLocationData = async () => {
     try {
-      // Solo establecemos isLoading a true en la primera carga
-      if (location === "") {
-        setIsLoading(true);
-      }
+      // Ya no necesitamos establecer isLoading
 
       // Obtener el ID del dispositivo asociado al usuario
       const { data: userData, error: userError } = await supabase
@@ -188,7 +201,6 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
       if (userError || !userData) {
         console.error("Error obteniendo datos del usuario:", userError);
-        setIsLoading(false);
         return;
       }
 
@@ -320,7 +332,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
     } catch (error) {
       console.error("Error en fetchLocationData:", error);
     } finally {
-      setIsLoading(false);
+      // Ya no necesitamos actualizar isLoading aquí, ya que usamos showSkeleton para el renderizado
     }
   };
 
@@ -332,7 +344,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
     <div className="highlight-container-location" onClick={handleCardClick}>
       <h2 className="highlight-title-location">Ubicación actual</h2>
 
-      {isLoading ? (
+      {showSkeleton ? (
         // 🔹 Skeleton Loader
         <div className="skeleton-container-location">
           <div className="skeleton skeleton-button-location"></div>

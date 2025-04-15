@@ -10,27 +10,37 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [showConfigPopup, setShowConfigPopup] = useState(false);
+  const [artificialLoading, setArtificialLoading] = useState(true);
 
   // Referencia para almacenar el ID del dispositivo anterior
   const prevDeviceId = useRef<string | null>(null);
-  
+
   // Efecto para cargar el ID del dispositivo al montar el componente
   useEffect(() => {
     fetchDeviceId();
-    
+
     // Configurar un intervalo para verificar actualizaciones cada 5 minutos
     const interval = setInterval(fetchDeviceId, 300000); // 5 minutos
-    
+
     return () => clearInterval(interval);
   }, []);
+  
+  // Efecto para simular un tiempo de carga fijo de 2 segundos
+  useEffect(() => {
+    // Siempre mostrar el estado de carga por 2 segundos
+    setArtificialLoading(true);
+    const loadingTimer = setTimeout(() => {
+      setArtificialLoading(false);
+    }, 2000); // 2 segundos de carga fija
+    
+    return () => clearTimeout(loadingTimer);
+  }, [deviceId]); // Se ejecuta cuando cambia el deviceId
 
   // Función para obtener el ID del dispositivo del usuario actual
   const fetchDeviceId = async () => {
     try {
-      // Solo establecer isLoading a true en la primera carga
-      if (deviceId === null && isLoading === false) {
-        setIsLoading(true);
-      }
+      // Siempre establecer isLoading a true al iniciar la carga
+      setIsLoading(true);
 
       // Obtener la sesión del usuario
       const {
@@ -63,6 +73,8 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
     } catch (error) {
       console.error("Error en fetchDeviceId:", error);
     } finally {
+      // Solo actualizamos el estado real de carga
+      // El estado visual dependerá del temporizador artificial
       setIsLoading(false);
     }
   };
@@ -84,7 +96,7 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
     <div className="highlight-container-linkdevice">
       <h2 className="highlight-title-linkdevice">Dispositivo GPS</h2>
 
-      {isLoading ? (
+      {isLoading || artificialLoading ? (
         // Skeleton Loader
         <div className="skeleton-container-linkdevice">
           <div className="skeleton skeleton-button-linkdevice"></div>

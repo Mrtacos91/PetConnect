@@ -8,7 +8,12 @@
   gap: 20px;
   position: relative;
 }
-
+.BackBt-CP{
+  position: absolute;
+  top: 20px;
+  left: 200px;
+  z-index: 1000;
+}
 .customise-container {
   max-width: 600px;
   width: 100%;
@@ -90,41 +95,71 @@
 
 /* Botón de volver */
 .back-button {
+  --color: #560bad;
   position: relative;
   width: fit-content;
-  top: 50px;
-  left: 400px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  background: var(--button-bg);
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  margin: 20px auto 0;
+  display: inline-block;
+  width: 8em;
+  height: 2.6em;
+  line-height: 2.5em;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border: 2px solid var(--color);
+  transition: color 0.5s;
   z-index: 100;
+  font-size: 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  color: var(--color);
+  cursor: pointer;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.back-button:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: var(--color);
+  height: 150px;
+  width: 200px;
+  border-radius: 50%;
+  top: 100%;
+  left: 100%;
+  transition: all 0.7s;
 }
 
 .back-button:hover {
-  background: var(--card-background-hover);
-  transform: translateX(-2px);
+  color: #fff;
+}
+
+.back-button:hover:before {
+  top: -30px;
+  left: -30px;
+}
+
+.back-button:active:before {
+  background: #3a0ca3;
+  transition: background 0s;
 }
 
 /* Responsive design para el botón de volver */
 @media (max-width: 768px) {
   .back-button {
-    top: 8px;
-    left: 8px;
-    padding: 6px 12px;
+    margin: 15px auto 0;
+    padding: 8px 16px;
     font-size: 0.9rem;
+    border-radius: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .back-button {
-    top: 6px;
-    left: 6px;
-    padding: 4px 8px;
+    margin: 12px auto 0;
+    padding: 6px 14px;
     font-size: 0.8rem;
+    border-radius: 8px;
   }
 }
 
@@ -197,9 +232,8 @@
     font-size: 18px;
   }
   .back-button {
-    top: 50px;
-    left: 180px;
-    padding: 4px 8px;
+    margin: 10px auto 0;
+    padding: 6px 12px;
     font-size: 0.8rem;
   }
 }
