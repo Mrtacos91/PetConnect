@@ -1,6 +1,16 @@
 import { useState, ChangeEvent, useEffect } from "react";
+import supabase from "../supabase"; // Asegúrate que esta ruta sea correcta
 import "../styles/TrackingMedico.css";
 import "../styles/style.css";
+
+interface MedicalRecord {
+  id: number;
+  date: string;
+  type: string;
+  description: string;
+  veterinarian: string;
+  user_id?: string;
+}
 
 const TrackingMedico = () => {
   const [notification, setNotification] = useState<{
@@ -8,15 +18,7 @@ const TrackingMedico = () => {
     type: "success" | "error";
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [medicalRecords, setMedicalRecords] = useState<
-    {
-      id: number;
-      date: string;
-      type: string;
-      description: string;
-      veterinarian: string;
-    }[]
-  >([]);
+  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
 
   const [newRecord, setNewRecord] = useState({
     date: "",
@@ -32,8 +34,28 @@ const TrackingMedico = () => {
     setTimeout(() => setNotification(null), 5000);
   };
 
+  // Cargar registros desde Supabase
+  const fetchMedicalRecords = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("medical_records")
+        .select("*")
+        .order("date", { ascending: false });
+
+      if (error) throw error;
+
+      setMedicalRecords(data || []);
+    } catch (error) {
+      console.error("Error al cargar registros médicos:", error);
+      showNotification("Error al cargar los registros médicos", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000);
+    fetchMedicalRecords();
   }, []);
 
   const handleInputChange = (
@@ -46,17 +68,91 @@ const TrackingMedico = () => {
     }));
   };
 
-  const addRecord = () => {
-    if (newRecord.date && newRecord.type && newRecord.description) {
-      const newEntry = { id: Date.now(), ...newRecord };
-      setMedicalRecords([...medicalRecords, newEntry]);
-      resetForm();
-      showNotification("Registro médico añadido con éxito", "success");
-    } else {
+  // Añadir nuevo registro a Supabase
+  const addRecord = async () => {
+    if (!newRecord.date || !newRecord.type || !newRecord.description) {
       showNotification(
         "Por favor, completa todos los campos obligatorios",
         "error"
       );
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("medical_records")
+        .insert([{
+          date: newRecord.date,
+          type: newRecord.type,
+          description: newRecord.description,
+          veterinarian: newRecord.veterinarian || null // Maneja campo opcional
+        }])
+        .select();
+
+      if (error) {
+        console.error("Detalles del error Supabase:", error);
+        throw error;
+      }
+
+      if (data && data[0]) {
+        setMedicalRecords([data[0], ...medicalRecords]);
+        resetForm();
+        showNotification("Registro médico añadido con éxito", "success");
+      }
+    } catch (error) {
+      console.error("Error completo al añadir:", error);
+      const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+      showNotification(`Error al añadir registro: ${errorMessage}`, "error");
+    }
+  };
+  // Editar registro en Supabase
+  const saveEdit = async () => {
+    if (!editingRecord) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("medical_records")
+        .update({ ...newRecord })
+        .eq("id", editingRecord)
+        .select();
+
+      if (error) throw error;
+
+      if (data && data[0]) {
+        setMedicalRecords(
+          medicalRecords.map((record) =>
+            record.id === editingRecord ? data[0] : record
+          )
+        );
+        resetForm();
+        showNotification("Registro médico editado con éxito", "success");
+      }
+    } catch (error) {
+      console.error("Error al editar registro médico:", error);
+      showNotification("Error al editar el registro médico", "error");
+    }
+  };
+
+  // Eliminar registro de Supabase
+  const deleteRecord = async (id: number) => {
+    const confirmDelete = window.confirm(
+      "¿Seguro que quieres eliminar este registro?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("medical_records")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setMedicalRecords(medicalRecords.filter((record) => record.id !== id));
+      showNotification("Registro médico eliminado con éxito", "success");
+    } catch (error) {
+      console.error("Error al eliminar registro médico:", error);
+      showNotification("Error al eliminar el registro médico", "error");
     }
   };
 
@@ -68,28 +164,8 @@ const TrackingMedico = () => {
     }
   };
 
-  const saveEdit = () => {
-    setMedicalRecords(
-      medicalRecords.map((record) =>
-        record.id === editingRecord ? { ...record, ...newRecord } : record
-      )
-    );
-    resetForm();
-    showNotification("Registro médico editado con éxito", "success");
-  };
-
   const cancelEdit = () => {
     resetForm();
-  };
-
-  const deleteRecord = (id: number) => {
-    const confirmDelete = window.confirm(
-      "¿Seguro que quieres eliminar este registro?"
-    );
-    if (confirmDelete) {
-      setMedicalRecords(medicalRecords.filter((record) => record.id !== id));
-      showNotification("Registro médico eliminado con éxito", "success");
-    }
   };
 
   const resetForm = () => {
@@ -155,6 +231,7 @@ const TrackingMedico = () => {
                 name="date"
                 value={newRecord.date}
                 onChange={handleInputChange}
+                required
               />
             </div>
 
@@ -165,6 +242,7 @@ const TrackingMedico = () => {
                 name="type"
                 value={newRecord.type}
                 onChange={handleInputChange}
+                required
               >
                 <option value="">Selecciona el tipo</option>
                 <option value="vacuna">Vacuna</option>
@@ -184,6 +262,7 @@ const TrackingMedico = () => {
                 onChange={handleInputChange}
                 placeholder="Ej: Vacuna antirrábica"
                 autoComplete="off"
+                required
               />
             </div>
 
@@ -237,10 +316,12 @@ const TrackingMedico = () => {
                         <span className="icon">📝</span>
                         <strong>Descripción:</strong> {record.description}
                       </p>
-                      <p>
-                        <span className="icon">👨‍⚕️</span>
-                        <strong>Veterinario:</strong> {record.veterinarian}
-                      </p>
+                      {record.veterinarian && (
+                        <p>
+                          <span className="icon">👨‍⚕️</span>
+                          <strong>Veterinario:</strong> {record.veterinarian}
+                        </p>
+                      )}
                     </div>
                     <div className="record-actions">
                       <button
