@@ -58,7 +58,7 @@ const Customise: React.FC = () => {
     const id = Date.now().toString();
     setNotifications((prev) => [...prev, { id, type, message }]);
 
-    // Eliminar la notificación después de 5 segundos
+
     setTimeout(() => {
       setNotifications((prev) =>
         prev.filter((notification) => notification.id !== id)

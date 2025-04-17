@@ -31,7 +31,7 @@ const Paseos: React.FC = () => {
       message: string;
     }>
   >([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
