@@ -12,7 +12,6 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
   const [showConfigPopup, setShowConfigPopup] = useState(false);
   const [artificialLoading, setArtificialLoading] = useState(true);
 
-  // Referencia para almacenar el ID del dispositivo anterior
   const prevDeviceId = useRef<string | null>(null);
 
   // Efecto para cargar el ID del dispositivo al montar el componente
@@ -24,7 +23,7 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
 
     return () => clearInterval(interval);
   }, []);
-  
+
   // Efecto para simular un tiempo de carga fijo de 2 segundos
   useEffect(() => {
     // Siempre mostrar el estado de carga por 2 segundos
@@ -32,7 +31,7 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
     const loadingTimer = setTimeout(() => {
       setArtificialLoading(false);
     }, 2000); // 2 segundos de carga fija
-    
+
     return () => clearTimeout(loadingTimer);
   }, [deviceId]); // Se ejecuta cuando cambia el deviceId
 
