@@ -12,7 +12,7 @@
   scrollbar-width: none;
 }
 .dashboard::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none; /* Chrome, Safari, Opera. */
 }
 button {
   box-shadow: none !important;
