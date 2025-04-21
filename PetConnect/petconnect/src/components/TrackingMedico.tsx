@@ -2,6 +2,7 @@ import { useState, ChangeEvent, useEffect } from "react";
 import supabase from "../supabase"; // Asegúrate que esta ruta sea correcta
 import "../styles/TrackingMedico.css";
 import "../styles/style.css";
+import { useNavigate } from "react-router-dom";
 
 interface MedicalRecord {
   id: number;
@@ -9,16 +10,18 @@ interface MedicalRecord {
   type: string;
   description: string;
   veterinarian: string;
-  user_id?: string;
+  user_id: number;
 }
 
 const TrackingMedico = () => {
+  const navigate = useNavigate();
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
+  const [userId, setUserId] = useState<number | null>(null);
 
   const [newRecord, setNewRecord] = useState({
     date: "",
@@ -34,13 +37,56 @@ const TrackingMedico = () => {
     setTimeout(() => setNotification(null), 5000);
   };
 
+  // Obtener el user_id del usuario autenticado usando la misma estructura del checkUser
+  const checkUser = async () => {
+    // 1️⃣ OBTENER USUARIO DE SUPABASE AUTH
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
+
+    if (sessionError || !sessionData?.user) {
+      console.error("Error de sesión:", sessionError);
+      navigate("/login");
+      return null;
+    }
+
+    try {
+      // 2️⃣ BUSCAR ID LOCAL EN TABLA "Users"
+      const { data: localUser, error: localUserError } = await supabase
+        .from("Users")
+        .select("id")
+        .eq("email", sessionData.user.email)
+        .single();
+
+      if (localUserError || !localUser?.id) {
+        console.error("Error al obtener el usuario local:", localUserError);
+        showNotification(
+          "No se encontró tu usuario local. Verifica la tabla 'Users'.",
+          "error"
+        );
+        return null;
+      }
+
+      // Establecer el ID del usuario
+      const foundUserId = localUser.id;
+      setUserId(foundUserId);
+      console.log("ID del usuario local:", foundUserId);
+      return foundUserId;
+    } catch (e) {
+      console.error("Error al identificar el usuario:", e);
+      showNotification("Error al identificar el usuario", "error");
+      return null;
+    }
+  };
+
   // Cargar registros desde Supabase
-  const fetchMedicalRecords = async () => {
+  const fetchMedicalRecords = async (user_id: number) => {
     try {
       setIsLoading(true);
+
       const { data, error } = await supabase
         .from("medical_records")
         .select("*")
+        .eq("user_id", user_id) // Filtra por el user_id
         .order("date", { ascending: false });
 
       if (error) throw error;
@@ -55,8 +101,17 @@ const TrackingMedico = () => {
   };
 
   useEffect(() => {
-    fetchMedicalRecords();
-  }, []);
+    const initializeData = async () => {
+      const user_id = await checkUser();
+      if (user_id) {
+        fetchMedicalRecords(user_id);
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    initializeData();
+  }, [navigate]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -70,6 +125,11 @@ const TrackingMedico = () => {
 
   // Añadir nuevo registro a Supabase
   const addRecord = async () => {
+    if (!userId) {
+      showNotification("No se pudo identificar al usuario", "error");
+      return;
+    }
+
     if (!newRecord.date || !newRecord.type || !newRecord.description) {
       showNotification(
         "Por favor, completa todos los campos obligatorios",
@@ -85,7 +145,8 @@ const TrackingMedico = () => {
           date: newRecord.date,
           type: newRecord.type,
           description: newRecord.description,
-          veterinarian: newRecord.veterinarian || null // Maneja campo opcional
+          veterinarian: newRecord.veterinarian || null, // Maneja campo opcional
+          user_id: userId // Usamos el user_id obtenido del checkUser
         }])
         .select();
 
@@ -105,6 +166,7 @@ const TrackingMedico = () => {
       showNotification(`Error al añadir registro: ${errorMessage}`, "error");
     }
   };
+
   // Editar registro en Supabase
   const saveEdit = async () => {
     if (!editingRecord) return;
@@ -159,7 +221,12 @@ const TrackingMedico = () => {
   const editRecord = (id: number) => {
     const recordToEdit = medicalRecords.find((record) => record.id === id);
     if (recordToEdit) {
-      setNewRecord(recordToEdit);
+      setNewRecord({
+        date: recordToEdit.date,
+        type: recordToEdit.type,
+        description: recordToEdit.description,
+        veterinarian: recordToEdit.veterinarian || "",
+      });
       setEditingRecord(id);
     }
   };
