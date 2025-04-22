@@ -8,7 +8,7 @@ interface FoundHotelCardProps {
 
 const FoundHotelCard: React.FC<FoundHotelCardProps> = ({
   Info,
-  url = "https://www.google.com/maps/search/hoteles+pet+friendly+cerca+de+mi/@19.572349,-99.2405352,14z/data=!3m1!4b1?entry=ttu", // URL por defecto
+  url = "https://www.google.com/maps/search/hoteles+para+mascotas+cerca+de+mi/@19.555423,-99.252622,14z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoJLDEwMjExNjM5SAFQAw%3D%3D", // URL por defecto
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
