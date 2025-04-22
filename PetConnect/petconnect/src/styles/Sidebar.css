@@ -6,6 +6,55 @@
 
 /* Botón de cierre */
 /* From Uiverse.io by JulanDeAlb */
+
+.container-myaccount {
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  min-width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.938);
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.container-config {
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  min-width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.938);
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.container-pets {
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  min-width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.938);
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.container-logout {
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  min-width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.938);
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
 .hamburger {
   cursor: pointer;
   position: absolute;

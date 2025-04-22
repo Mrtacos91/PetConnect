@@ -12,7 +12,6 @@ import WelcomeCard from "../components/WelcomeCard";
 import ActivitiesCard from "../components/ActivitiesCard";
 import AssistantCard from "../components/AssistantCard";
 import Location from "../components/Location";
-import Paseos from "../components/Paseos";
 import "../styles/dashboard.css";
 import "../styles/Actividades.css";
 import "../styles/TrackingMedico.css";
@@ -21,6 +20,7 @@ import ThemeToggle from "../components/ThemeToggle";
 import CalendarCard from "../components/CalendarCard";
 import LinkDevice from "../components/LinkDevice";
 import CarnetCard from "../components/CarnetCard";
+import RecordatoriosCard from "../components/RecordatoriosCard";
 
 const Dashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -99,7 +99,7 @@ const Dashboard: React.FC = () => {
         <section className="actividad-section">
           <Actividades />
           <TrackingMedico />
-          <Paseos />
+          <RecordatoriosCard />
           <CalendarCard />
           <CarnetCard />
         </section>
@@ -108,7 +108,6 @@ const Dashboard: React.FC = () => {
       {/* Pestaña Asistente */}
       {activeTab === "asistente" && (
         <section className="right-panel">
-          <h2>Asistente Virtual</h2>
           <AssistantCard url="https://www.stack-ai.com/chat/67beadc6abbff18e8093f3d5-2e8W5L3shpTdxFCG4W53S5" />
         </section>
       )}

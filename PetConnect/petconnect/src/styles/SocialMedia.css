@@ -30,7 +30,7 @@
   cursor: pointer;
 }
 
-.icon svg {
+.icon {
   fill: #ffffff;
 }
 
@@ -57,6 +57,9 @@
 }
 .socialcontainer:hover .social-icon-1 {
   transform: translateY(-70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .socialcontainer:hover .social-icon-1 svg,
 .socialcontainer:hover .social-icon-2 svg,
@@ -76,6 +79,9 @@
 }
 .socialcontainer:hover .social-icon-2 {
   transform: translateY(-70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .social-icon-3 {
   transition-duration: 0.4s;
@@ -85,6 +91,9 @@
 
 .socialcontainer:hover .social-icon-3 {
   transform: translateY(-70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .social-icon-4 {
   transition-duration: 0.4s;
@@ -99,6 +108,9 @@
 
 .socialcontainer:hover .social-icon-4 {
   transform: translateY(-70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Container styling */

@@ -1,0 +1,130 @@
+.recordatorios-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 30px);
+  background: var(--card-background);
+  border-radius: 30px;
+  box-shadow: 0 4px 12px var(--shadow-default);
+  width: min(100%, 1500px);
+  margin: 2rem auto 4rem;
+  position: relative;
+}
+
+.recordatorios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.recordatorios-header-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.recordatorios-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.recordatorios-title {
+  color: var(--text-primary);
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  margin: clamp(16px, 4vw, 28px);
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
+
+/* Estilos para el skeleton loader */
+.recordatorios-skeleton {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 5vw, 30px);
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 1.2rem;
+  margin: 80px;
+  animation: fadeIn 0.5s ease;
+}
+
+.recordatorios-modules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 5vw, 30px);
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 1.2rem;
+  margin: 80px;
+}
+
+.recordatorios-skeleton-module {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 30px);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start, #f0f0f0) 25%,
+    var(--skeleton-gradient-mid, #e0e0e0) 50%,
+    var(--skeleton-gradient-start, #f0f0f0) 75%
+  );
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s infinite;
+  border-radius: 30px;
+  box-shadow: 0 4px 12px var(--shadow-default);
+  width: min(95%, 600px);
+  height: 400px;
+  margin: 2rem auto 4rem;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 768px) {
+  .recordatorios-skeleton {
+    grid-template-columns: 1fr;
+  }
+  
+  .recordatorios-skeleton-module {
+    height: 350px;
+  }
+}
+
+.Back-bt {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto;
+  max-width: none;
+  padding-left: 0.5rem;
+}

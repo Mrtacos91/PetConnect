@@ -3,6 +3,7 @@ import "../styles/Carnet.css";
 import { FaTrashAlt, FaEye, FaDownload, FaTimes } from "react-icons/fa";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import BackButton from "./BackButton";
 
 interface VaccinationRecord {
   id: number;
@@ -121,6 +122,9 @@ const Carnet: React.FC<CarnetProps> = ({
 
   return (
     <div className="carnet-container" ref={carnetRef}>
+      <div className="carnet-backbt">
+        <BackButton />
+      </div>
       <div className="carnet-header">
         <h2 className="carnet-title">Carnet de Vacunación</h2>
         <div className="carnet-actions">

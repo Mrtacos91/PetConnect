@@ -236,7 +236,7 @@ const Login: React.FC = () => {
           Iniciar sesión con Google
         </button>
 
-        <p className="parraf">
+        <p className="parrafo">
           ¿No tienes una cuenta?{" "}
           <button
             type="button"

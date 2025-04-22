@@ -36,7 +36,7 @@ body {
   --text-primary: #eeeeee;
   --text-bottomnav: #eeeeee;
   --text-secondary: #cccccc;
-  --shadow-default: rgba(0, 0, 0, 0.5);
+  --shadow-default: rgb(0, 0, 0.01);
   --shadow-hover: rgba(0, 0, 0, 0.6);
   --skeleton-gradient-start: #363241;
   --skeleton-gradient-mid: #464053;

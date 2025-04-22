@@ -1,0 +1,123 @@
+/* Estilos para RecordatoriosCard */
+.recordatorioscard-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  margin: 15px auto;
+  margin-bottom: 50px;
+  box-shadow: 0 4px 10px var(--shadow-default);
+  max-width: 450px;
+  width: 100%;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.recordatorioscard-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px var(--shadow-hover);
+}
+
+.recordatorioscard-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.recordatorioscard-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  background: var(--circle-animation);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.recordatorioscard-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.recordatorioscard-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.recordatorioscard-button {
+  background: var(--button-bg);
+  border-radius: 20px;
+  color: white;
+  padding: 12px 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.recordatorioscard-button:hover {
+  background: var(--button-bg);
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Skeleton placeholders */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start) 25%,
+    var(--skeleton-gradient-mid) 50%,
+    var(--skeleton-gradient-start) 75%
+  );
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-container {
+  pointer-events: none;
+}
+
+.recordatorioscard-icon-skeleton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+}
+
+.recordatorioscard-title-skeleton {
+  width: 70%;
+  height: 24px;
+  margin: 0 auto 10px;
+}
+
+.recordatorioscard-description-skeleton {
+  width: 80%;
+  height: 40px;
+  margin: 0 auto 15px;
+}
+
+.recordatorioscard-button-skeleton {
+  width: 100%;
+  height: 45px;
+  border-radius: 20px;
+  margin-bottom: 0;
+}

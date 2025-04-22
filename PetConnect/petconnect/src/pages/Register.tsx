@@ -70,15 +70,18 @@ const Register: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     // Validación en tiempo real
     const error = validateField(name, value);
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
 
     // Validar confirmPassword cuando cambia password
     if (name === "password") {
-      const confirmError = validateField("confirmPassword", formData.confirmPassword);
-      setErrors(prev => ({ ...prev, confirmPassword: confirmError }));
+      const confirmError = validateField(
+        "confirmPassword",
+        formData.confirmPassword
+      );
+      setErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
     }
   };
 
@@ -92,13 +95,16 @@ const Register: React.FC = () => {
       email: validateField("email", formData.email),
       phone: validateField("phone", formData.phone),
       password: validateField("password", formData.password),
-      confirmPassword: validateField("confirmPassword", formData.confirmPassword),
+      confirmPassword: validateField(
+        "confirmPassword",
+        formData.confirmPassword
+      ),
     };
 
     setErrors(newErrors);
 
     // Verificar si hay errores
-    if (Object.values(newErrors).some(error => error !== "")) {
+    if (Object.values(newErrors).some((error) => error !== "")) {
       return;
     }
 
@@ -147,7 +153,7 @@ const Register: React.FC = () => {
         alert(`Error al guardar el perfil: ${insertError.message}`);
       } else {
         alert("Registro exitoso! Revisa tu correo para verificar tu cuenta.");
-        navigate("/login"); 
+        navigate("/login");
       }
     } catch (error) {
       console.error("Error al registrar usuario:", error);
@@ -171,7 +177,9 @@ const Register: React.FC = () => {
             className={errors.fullName ? "error" : ""}
           />
           <label>Nombre</label>
-          {errors.fullName && <span className="error-message">{errors.fullName}</span>}
+          {errors.fullName && (
+            <span className="error-message">{errors.fullName}</span>
+          )}
         </div>
 
         <div className="input-container">
@@ -185,7 +193,9 @@ const Register: React.FC = () => {
             className={errors.email ? "error" : ""}
           />
           <label>Correo electrónico</label>
-          {errors.email && <span className="error-message">{errors.email}</span>}
+          {errors.email && (
+            <span className="error-message">{errors.email}</span>
+          )}
         </div>
 
         <div className="input-container">
@@ -199,7 +209,9 @@ const Register: React.FC = () => {
             className={errors.phone ? "error" : ""}
           />
           <label>Teléfono</label>
-          {errors.phone && <span className="error-message">{errors.phone}</span>}
+          {errors.phone && (
+            <span className="error-message">{errors.phone}</span>
+          )}
         </div>
 
         <div className="input-container">
@@ -213,7 +225,9 @@ const Register: React.FC = () => {
             className={errors.password ? "error" : ""}
           />
           <label>Contraseña</label>
-          {errors.password && <span className="error-message">{errors.password}</span>}
+          {errors.password && (
+            <span className="error-message">{errors.password}</span>
+          )}
         </div>
 
         <div className="input-container">
@@ -227,12 +241,14 @@ const Register: React.FC = () => {
             className={errors.confirmPassword ? "error" : ""}
           />
           <label>Confirma tu contraseña</label>
-          {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+          {errors.confirmPassword && (
+            <span className="error-message">{errors.confirmPassword}</span>
+          )}
         </div>
 
         <button type="submit">Crear cuenta</button>
 
-        <p>
+        <p className="parrafo">
           ¿Ya tienes una cuenta?{" "}
           <button
             type="button"

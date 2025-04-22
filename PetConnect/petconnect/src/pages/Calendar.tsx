@@ -376,9 +376,11 @@ const Calendar: React.FC = () => {
 
       {isLoading ? (
         <div className="skeleton-calendar-grid">
-          {Array(35).fill(0).map((_, index) => (
-            <div key={index} className="skeleton-day"></div>
-          ))}
+          {Array(35)
+            .fill(0)
+            .map((_, index) => (
+              <div key={index} className="skeleton-day"></div>
+            ))}
         </div>
       ) : (
         <div className="calendar-grid">
@@ -448,7 +450,7 @@ const Calendar: React.FC = () => {
             </div>
             <div className="form-actions">
               <button
-                className="calendar-button save-button"
+                className="calendar-button save-button-cl"
                 onClick={handleSaveEvent}
               >
                 <span>Guardar</span>

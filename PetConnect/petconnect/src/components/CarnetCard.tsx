@@ -15,16 +15,23 @@ const CarnetCard: React.FC<CarnetCardProps> = ({
   loading = false,
 }) => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(loading);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Simular carga para demostración
+  // Skeleton loader SIEMPRE dura al menos 2 segundos, independiente de loading
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (loading) {
-      const timer = setTimeout(() => {
+      setIsLoading(true);
+      timer = setTimeout(() => {
         setIsLoading(false);
       }, 2000);
-      return () => clearTimeout(timer);
+    } else {
+      // Si loading es false, igual mostrar skeleton por 2 segundos
+      timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     }
+    return () => clearTimeout(timer);
   }, [loading]);
 
   const handleNavigateToCarnet = () => {
@@ -33,13 +40,13 @@ const CarnetCard: React.FC<CarnetCardProps> = ({
 
   if (isLoading) {
     return (
-      <div className="carnetcard-container skeleton-container">
-        <div className="carnetcard-content">
-          <div className="carnetcard-icon-skeleton skeleton"></div>
-          <div className="carnetcard-title-skeleton skeleton"></div>
-          <div className="carnetcard-description-skeleton skeleton"></div>
+      <div className="carnetcard-container skeleton-container-carnet">
+        <div className="skeleton-carnet-card">
+          <div className="skeleton skeleton-carnet-icon"></div>
+          <div className="skeleton skeleton-carnet-title"></div>
+          <div className="skeleton skeleton-carnet-desc"></div>
         </div>
-        <div className="carnetcard-button-skeleton skeleton"></div>
+        <div className="skeleton skeleton-carnet-btn"></div>
       </div>
     );
   }

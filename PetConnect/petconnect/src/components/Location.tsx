@@ -21,6 +21,8 @@ const LocationMap: React.FC<LocationMapProps> = ({
   longitude,
   name,
 }) => {
+  // Track if GPS device is present
+  const [hasGpsDevice, setHasGpsDevice] = useState<boolean | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -74,7 +76,9 @@ const LocationMap: React.FC<LocationMapProps> = ({
         }
 
         // Si el usuario tiene un dispositivo asociado
-        if (userData.device) {
+        const hasGpsDevice = !!userData.device;
+        setHasGpsDevice(hasGpsDevice);
+        if (hasGpsDevice) {
           // Obtener los datos de ubicación más recientes para ese dispositivo
           const { data: locationData, error: locationError } = await supabase
             .from("LocationGps")
@@ -281,7 +285,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
       Math.abs(houseLocation.lat - prevHouseLat.current) > 0.0001 ||
       Math.abs(houseLocation.lng - prevHouseLng.current) > 0.0001;
 
-    if (hasLocationChanged) {
+    if (hasLocationChanged && hasGpsDevice) {
       const updateHouseAddress = async () => {
         try {
           const address = await getAddressFromCoordinates(
@@ -291,7 +295,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
 
           // Verificar si la dirección obtenida es solo coordenadas (fallback)
           const isCoordinateFormat = /^-?\d+\.\d+, -?\d+\.\d+$/.test(address);
-          
+
           // Solo actualizar si es una dirección real (no coordenadas) y diferente a la anterior
           if (!isCoordinateFormat && address !== prevHouseAddress.current) {
             console.log("Actualizando dirección de casa:", address);
@@ -317,6 +321,8 @@ const LocationMap: React.FC<LocationMapProps> = ({
       };
 
       updateHouseAddress();
+    } else if (!hasGpsDevice) {
+      setHouseAddress("");
     }
   }, [houseLocation]);
 
@@ -333,7 +339,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
       Math.abs(petLocation.lat - prevPetLat.current) > 0.0001 ||
       Math.abs(petLocation.lng - prevPetLng.current) > 0.0001;
 
-    if (hasLocationChanged) {
+    if (hasLocationChanged && hasGpsDevice) {
       const updatePetAddress = async () => {
         try {
           const address = await getAddressFromCoordinates(
@@ -343,7 +349,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
 
           // Verificar si la dirección obtenida es solo coordenadas (fallback)
           const isCoordinateFormat = /^-?\d+\.\d+, -?\d+\.\d+$/.test(address);
-          
+
           // Solo actualizar si es una dirección real (no coordenadas) y diferente a la anterior
           if (!isCoordinateFormat && address !== prevPetAddress.current) {
             console.log("Actualizando dirección de mascota:", address);
@@ -369,6 +375,8 @@ const LocationMap: React.FC<LocationMapProps> = ({
       };
 
       updatePetAddress();
+    } else if (!hasGpsDevice) {
+      setPetAddress("");
     }
   }, [petLocation]);
 
@@ -608,7 +616,45 @@ const LocationMap: React.FC<LocationMapProps> = ({
               <Popup>
                 Ubicación de la casa
                 <br />
-                {isAddressLoading ? "Cargando dirección..." : houseAddress}
+                {hasGpsDevice === false
+                  ? "No hay dispositivo GPS conectado"
+                  : isAddressLoading
+                  ? "Cargando dirección..."
+                  : houseAddress}
+              </Popup>
+            </Marker>
+
+            <Circle
+              center={[houseLocation.lat, houseLocation.lng]}
+              radius={safeZoneRadius}
+              color="blue"
+              fillColor="blue"
+              fillOpacity={0.2}
+            />
+
+            <Marker
+              position={[houseLocation.lat, houseLocation.lng]}
+              draggable={isEditMode}
+              icon={houseIcon}
+              eventHandlers={{
+                dragend: (e) => {
+                  if (isEditMode) {
+                    setHouseLocation({
+                      lat: e.target.getLatLng().lat,
+                      lng: e.target.getLatLng().lng,
+                    });
+                  }
+                },
+              }}
+            >
+              <Popup>
+                Ubicación de la casa
+                <br />
+                {hasGpsDevice === false
+                  ? "No hay dispositivo GPS conectado"
+                  : isAddressLoading
+                  ? "Cargando dirección..."
+                  : houseAddress}
               </Popup>
             </Marker>
 
@@ -618,7 +664,11 @@ const LocationMap: React.FC<LocationMapProps> = ({
             >
               <Popup>
                 {name} está aquí <br />
-                {isAddressLoading ? "Cargando dirección..." : petAddress}
+                {hasGpsDevice === false
+                  ? "No hay dispositivo GPS conectado"
+                  : isAddressLoading
+                  ? "Cargando dirección..."
+                  : petAddress}
                 <br />
                 {isOutsideSafeZone
                   ? "⚠️ Fuera de la zona segura"
@@ -628,35 +678,6 @@ const LocationMap: React.FC<LocationMapProps> = ({
           </MapContainer>
 
           <div className="Location-info">
-            <div className="pet-location-info">
-              <p>
-                <strong>Nombre de la mascota:</strong> {name}
-              </p>
-              <p>
-                <strong>Ubicación de la casa:</strong>{" "}
-                {isAddressLoading ? "Cargando dirección..." : houseAddress}
-                <span className="coordinates-small">
-                  ({houseLocation.lat.toFixed(6)},{" "}
-                  {houseLocation.lng.toFixed(6)})
-                </span>
-              </p>
-              <p>
-                <strong>Última ubicación:</strong>{" "}
-                {isAddressLoading ? "Cargando dirección..." : petAddress}
-                <span className="coordinates-small">
-                  ({petLocation.lat.toFixed(6)}, {petLocation.lng.toFixed(6)})
-                </span>
-              </p>
-              <p>
-                <strong>Última actualización:</strong> {lastUpdated}
-              </p>
-              <p>
-                <strong>Estado:</strong>{" "}
-                {isOutsideSafeZone
-                  ? "⚠️ Fuera de la zona segura"
-                  : "✅ Dentro de la zona segura"}
-              </p>
-            </div>
             <div className="control-panel">
               <h3>Configuración de la zona segura</h3>
               <div className="radius-control">
@@ -676,6 +697,49 @@ const LocationMap: React.FC<LocationMapProps> = ({
               <button onClick={handleEditModeToggle} className="edit-button">
                 {isEditMode ? "Guardar cambios" : "Editar ubicación"}
               </button>
+            </div>
+            <div className="pet-location-info">
+              <p>
+                <strong>Nombre de la mascota:</strong> {name}
+              </p>
+              {hasGpsDevice === false ? (
+                <p>
+                  <strong>Ubicación de la casa:</strong> No hay dispositivo GPS
+                  conectado
+                </p>
+              ) : (
+                <p>
+                  <strong>Ubicación de la casa:</strong>{" "}
+                  {isAddressLoading ? "Cargando dirección..." : houseAddress}
+                  <span className="coordinates-small">
+                    ({houseLocation.lat.toFixed(6)},{" "}
+                    {houseLocation.lng.toFixed(6)})
+                  </span>
+                </p>
+              )}
+              {hasGpsDevice === false ? (
+                <p>
+                  <strong>Última ubicación:</strong> No hay dispositivo GPS
+                  conectado
+                </p>
+              ) : (
+                <p>
+                  <strong>Última ubicación:</strong>{" "}
+                  {isAddressLoading ? "Cargando dirección..." : petAddress}
+                  <span className="coordinates-small">
+                    ({petLocation.lat.toFixed(6)}, {petLocation.lng.toFixed(6)})
+                  </span>
+                </p>
+              )}
+              <p>
+                <strong>Última actualización:</strong> {lastUpdated}
+              </p>
+              <p>
+                <strong>Estado:</strong>{" "}
+                {isOutsideSafeZone
+                  ? "⚠️ Fuera de la zona segura"
+                  : "✅ Dentro de la zona segura"}
+              </p>
             </div>
           </div>
         </>

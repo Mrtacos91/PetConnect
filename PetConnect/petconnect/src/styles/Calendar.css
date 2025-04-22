@@ -67,6 +67,23 @@
   align-items: center;
   gap: 8px;
 }
+.save-button-cl {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--button-bg);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .calendar-back-button:hover span {
   color: #183153;
@@ -343,6 +360,7 @@
 
 .form-actions {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-top: 30px;
 }
@@ -526,6 +544,151 @@
 }
 
 /* Responsive Styles */
+@media (max-width: 900px) {
+  .calendar-header,
+  .calendar-grid,
+  .calendar-actions {
+    max-width: 100vw;
+    width: 100vw;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .calendar-grid {
+    padding: 8px;
+    gap: 2px;
+  }
+  .calendar-title {
+    font-size: 2rem;
+  }
+  .current-month {
+    font-size: 1.2rem;
+  }
+  .calendar-day {
+    height: 36px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+  }
+  .form-actions button {
+    width: 100%;
+    min-width: 0;
+    border-radius: 8px;
+    font-size: 1em;
+    padding: 12px 0;
+    margin: 0;
+  }
+  .calendar-container {
+    padding: 7px;
+  }
+  .calendar-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .calendar-header {
+    margin-bottom: 10px;
+  }
+  .calendar-grid {
+    padding: 3px;
+    gap: 1px;
+    border-radius: 8px;
+  }
+  .calendar-day {
+    height: 27px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+  .calendar-weekday {
+    font-size: 0.7rem;
+    padding: 6px 0;
+    border-radius: 4px;
+  }
+  .calendar-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .calendar-button {
+    min-width: 120px;
+    min-height: 44px;
+    width: 100%;
+    font-size: 1em;
+    padding: 10px 0;
+  }
+  .calendar-button span {
+    padding: 10px 0;
+    font-size: 1em;
+    letter-spacing: 0.1em;
+  }
+  .delete-button {
+    min-height: 44px !important;
+  }
+  .month-nav-button {
+    font-size: 1.1rem;
+    padding: 2px 4px;
+  }
+}
+
+@media (max-width: 400px) {
+  .form-actions {
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .form-actions button {
+    font-size: 0.95em;
+    padding: 10px 0;
+    border-radius: 6px;
+  }
+  .calendar-header,
+  .calendar-grid,
+  .calendar-actions {
+    max-width: 100vw;
+    width: 100vw;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .calendar-title {
+    font-size: 0.9rem;
+  }
+  .calendar-day {
+    height: 18px;
+    font-size: 0.6rem;
+    border-radius: 2px;
+  }
+  .calendar-weekday {
+    font-size: 0.55rem;
+    padding: 3px 0;
+    border-radius: 2px;
+  }
+  .calendar-actions {
+    gap: 3px;
+    margin-top: 5px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .calendar-button {
+    min-width: 100px;
+    min-height: 40px;
+    font-size: 0.95em;
+    width: 100%;
+    padding: 8px 0;
+  }
+  .calendar-button span {
+    padding: 8px 0;
+    font-size: 0.95em;
+  }
+  .delete-button {
+    min-height: 40px !important;
+  }
+}
+
 @media (max-width: 768px) {
   .calendar-grid {
     gap: 3px;

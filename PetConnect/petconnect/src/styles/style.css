@@ -229,6 +229,7 @@ button:hover {
   background-color: #ffffff;
   color: #333;
   font-weight: bold;
+  font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;

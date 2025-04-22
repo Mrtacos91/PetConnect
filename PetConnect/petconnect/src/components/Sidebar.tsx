@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { FaUser, FaCog, FaSignOutAlt, FaPaw } from "react-icons/fa";
 import supabase from "../supabase";
 import "../styles/Sidebar.css";
 import SocialMedia from "../components/SocialMedia";
@@ -58,16 +58,29 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         </div>
         <ul>
           <li>
-            <FaUser className="icon-side" />
-            Mi cuenta
+            <div className="container-myaccount">
+              <FaUser className="icon-side" />
+              Mi cuenta
+            </div>
           </li>
           <li>
-            <FaCog className="icon-side" />
-            Configuración
+            <div className="container-pets">
+              <FaPaw className="icon-side" />
+              Mis mascotas
+            </div>
           </li>
+          <li>
+            <div className="container-config">
+              <FaCog className="icon-side" />
+              Configuración
+            </div>
+          </li>
+
           <li className="logout-btn" onClick={handleLogout}>
-            <FaSignOutAlt className="icon-side" />
-            Cerrar sesión
+            <div className="container-logout">
+              <FaSignOutAlt className="icon-side" />
+              Cerrar sesión
+            </div>
           </li>
         </ul>
       </nav>

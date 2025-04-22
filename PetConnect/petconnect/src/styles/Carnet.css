@@ -8,6 +8,20 @@
   max-width: 100%;
   overflow-x: hidden;
 }
+.carnet-backbt {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  max-width: 100px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carnet-backbt:hover {
+  transform: translateY(-2px);
+}
 
 /* Header del Carnet */
 .carnet-header {
@@ -174,7 +188,7 @@
 .carnetcard-button {
   background: var(--button-bg);
   border: none;
-  border-radius: 10px;
+  border-radius: 20px;
   color: white;
   padding: 12px 20px;
   font-weight: 500;
@@ -191,7 +205,8 @@
 }
 
 /* Skeleton Loaders */
-.skeleton-carnet {
+.skeleton-carnet,
+.skeleton-carnet-card .skeleton {
   background: linear-gradient(
     90deg,
     var(--skeleton-gradient-start) 25%,
@@ -212,31 +227,49 @@
   }
 }
 
-/* Skeleton para CarnetCard */
-.skeleton-container {
+/* Skeleton para CarnetCard adaptado */
+.skeleton-container-carnet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--card-background);
+  border-radius: 16px;
+  box-shadow: 0px 4px 10px var(--shadow-default);
+  padding: 20px;
+  width: 100%;
+  max-width: 450px;
+  margin: 15px auto 50px auto;
   pointer-events: none;
 }
 
-.carnetcard-icon-skeleton {
+.skeleton-carnet-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.skeleton-carnet-icon {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  margin: 0 auto 15px;
+  margin: 0 auto 15px auto;
 }
 
-.carnetcard-title-skeleton {
+.skeleton-carnet-title {
   width: 70%;
   height: 24px;
-  margin: 0 auto 10px;
+  margin: 0 auto 10px auto;
 }
 
-.carnetcard-description-skeleton {
+.skeleton-carnet-desc {
   width: 90%;
   height: 40px;
-  margin: 0 auto 15px;
+  margin: 0 auto 15px auto;
 }
 
-.carnetcard-button-skeleton {
+.skeleton-carnet-btn {
   width: 100%;
   height: 45px;
   border-radius: 10px;

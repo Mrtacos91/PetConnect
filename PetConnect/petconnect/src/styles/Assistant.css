@@ -3,17 +3,20 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80vh;
-  min-width: 1000px; /* Mantiene el tamaño en pantallas grandes */
-  max-width: 1200px;
-  margin: 0 auto;
+  /* Usando clamp para altura adaptativa */
+  height: clamp(500px, 80vh, 900px);
+  /* Usando clamp para que en pantallas grandes abarque 1500px de forma adaptativa */
+  min-width: clamp(350px, 90vw, 1500px);
+  max-width: 95%;
+  margin: 20px auto;
   overflow: hidden;
   position: relative;
-  top: -100px;
+  top: 0;
   box-shadow: 0px 5px 15px rgba(65, 66, 66, 0.5);
   border-radius: 20px;
-  background: white; /* Evita transparencias raras */
+  background: white; 
 }
+
 .assistant-iframe::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Edge */
 }
@@ -59,13 +62,39 @@
   }
 }
 
+/* 📱 Media queries para pantallas grandes */
+@media (min-width: 1440px) {
+  .assistant-card {
+    /* Ajuste para pantallas grandes manteniendo proporción */
+    max-width: clamp(1200px, 80%, 1800px);
+    height: clamp(600px, 85vh, 1000px);
+  }
+}
+
+/* 📱 Media queries para pantallas extra grandes */
+@media (min-width: 1920px) {
+  .assistant-card {
+    /* Ajuste para pantallas extra grandes */
+    max-width: clamp(1500px, 90%, 2000px);
+    height: clamp(700px, 85vh, 1100px);
+  }
+}
+
 /* 📱 Media queries para tablets */
 @media (max-width: 1024px) {
   .assistant-card {
-    width: 95%;
-    height: 75vh;
-    top: -50px;
+    width: clamp(300px, 95%, 1000px);
+    height: clamp(400px, 75vh, 800px);
     min-width: auto; /* Permite que se reduzca */
+    max-width: 100%;
+  }
+}
+
+/* 📱 Media queries para tablets pequeñas */
+@media (max-width: 900px) {
+  .assistant-card {
+    width: clamp(280px, 98%, 900px);
+    height: clamp(350px, 70vh, 700px);
   }
 }
 
@@ -74,17 +103,23 @@
   .assistant-card {
     width: 100%;
     min-width: auto; /* Elimina restricciones de tamaño */
-    min-height: 100vh; /* Ocupa toda la pantalla */
+    min-height: 90vh; /* Ajustado para mejor visualización */
     height: auto;
-    top: -100; /* Corrige posición */
+    top: -80px; /* Ajustado para mejor posicionamiento */
     box-shadow: 0px 3px 10px rgba(65, 66, 66, 0.3);
     border-radius: 15px;
+    max-width: 100%;
+    margin: 0;
   }
 
   .assistant-iframe {
     width: 100%;
     height: 100vh; /* Se asegura de llenar el espacio */
     overflow: hidden; /* Oculta la scrollbar */
+  }
+
+  .skeleton-loader {
+    border-radius: 15px; /* Coincide con el card */
   }
 }
 
@@ -97,11 +132,28 @@
     height: auto;
     box-shadow: none;
     border-radius: 10px;
+    top: -60px; /* Ajustado para mejor posicionamiento */
   }
 
   .assistant-iframe {
     width: 100%;
     height: 100vh;
     overflow: hidden; /* Oculta la scrollbar */
+  }
+  
+  .skeleton-loader {
+    border-radius: 10px; /* Coincide con el card */
+  }
+}
+
+/* 📱 Media queries para móviles muy pequeños */
+@media (max-width: 320px) {
+  .assistant-card {
+    top: -40px;
+    border-radius: 8px;
+  }
+  
+  .skeleton-loader {
+    border-radius: 8px;
   }
 }

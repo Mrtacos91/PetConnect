@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Customise from "./pages/Customise";
 import CarnetPage from "./pages/CarnetPage";
 import Calendar from "./pages/Calendar";
+import Recardatorios from "./pages/Recardatorios";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/global.css";
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/customise" element={<Customise />} />
           <Route path="/carnet" element={<CarnetPage />} />
+          <Route path="/recordatorios" element={<Recardatorios />} />
         </Route>
       </Routes>
     </Router>

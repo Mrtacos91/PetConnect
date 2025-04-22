@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import { FaCheck, FaTimes, FaPlus } from "react-icons/fa";
-import "../styles/Paseos.css";
-import "../styles/style.css"; // Importamos los estilos de notificación
+import "../styles/foods.css";
+import "../styles/style.css";
 
 const daysOfWeek = [
   { id: "L", label: "Lunes" },
@@ -15,15 +15,15 @@ const daysOfWeek = [
   { id: "D", label: "Domingo" },
 ];
 
-interface PaseoAlarm {
+interface FoodAlarm {
   id: string;
   name: string;
   days: string[];
   time: dayjs.Dayjs | null;
 }
 
-const Paseos: React.FC = () => {
-  const [alarms, setAlarms] = useState<PaseoAlarm[]>([
+const Foods: React.FC = () => {
+  const [alarms, setAlarms] = useState<FoodAlarm[]>([
     {
       id: Date.now().toString(),
       name: "",
@@ -67,13 +67,11 @@ const Paseos: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Request notification permission when component mounts
     if ("Notification" in window) {
       Notification.requestPermission();
     }
   }, []);
 
-  // Función para mostrar notificaciones
   const showNotification = (
     type: "success" | "error" | "warning",
     message: string
@@ -85,14 +83,13 @@ const Paseos: React.FC = () => {
     }, 5000);
   };
 
-  // Función para cerrar una notificación específica
   const closeNotification = (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const handleAlarmChange = (
     index: number,
-    field: keyof PaseoAlarm,
+    field: keyof FoodAlarm,
     value: any
   ) => {
     setAlarms((prev) => {
@@ -129,7 +126,7 @@ const Paseos: React.FC = () => {
     ]);
   };
 
-  const schedulePaseo = (index: number) => {
+  const scheduleFood = (index: number) => {
     const alarm = alarms[index];
     if (alarm.days.length === 0 || !alarm.time || !alarm.name.trim()) {
       showNotification(
@@ -139,7 +136,7 @@ const Paseos: React.FC = () => {
       return;
     }
     localStorage.setItem(
-      `paseoSchedule_${alarm.id}`,
+      `foodSchedule_${alarm.id}`,
       JSON.stringify({
         name: alarm.name,
         days: alarm.days,
@@ -148,13 +145,13 @@ const Paseos: React.FC = () => {
     );
     showNotification(
       "success",
-      `Paseo "${alarm.name}" programado para ${alarm.days.join(
+      `Comida "${alarm.name}" programada para ${alarm.days.join(
         ", "
       )} a las ${alarm.time.format("h:mm A")}`
     );
     if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("Paseo Programado", {
-        body: `Paseo "${alarm.name}" programado para ${alarm.days.join(
+      new Notification("Comida Programada", {
+        body: `Comida "${alarm.name}" programada para ${alarm.days.join(
           ", "
         )} a las ${alarm.time.format("HH:mm")}`,
         icon: "/images/Logo_gradient.png",
@@ -163,7 +160,7 @@ const Paseos: React.FC = () => {
   };
 
   return (
-    <div className="paseos-section">
+    <div className="foods-section">
       <div className="notification-container">
         {notifications.map((notification) => (
           <div
@@ -194,7 +191,7 @@ const Paseos: React.FC = () => {
       </div>
       
       {showSkeleton ? (
-        <div className="paseos-container-skeleton">
+        <div className="foods-container-skeleton">
           <div className="skeleton-title"></div>
           <div className="skeleton-days-container">
             {Array(7)
@@ -208,9 +205,9 @@ const Paseos: React.FC = () => {
         </div>
       ) : (
         <>
-          <h2 className="paseos-title">Paseos personalizados</h2>
+          <h2 className="foods-title">Comidas</h2>
           {alarms.map((alarm, idx) => (
-            <div key={alarm.id} className="paseos-alarm-card minimal">
+            <div key={alarm.id} className="foods-alarm-card minimal">
               <button
                 className="delete-alarm-btn"
                 aria-label="Eliminar alarma"
@@ -223,9 +220,9 @@ const Paseos: React.FC = () => {
                 <FaTimes />
               </button>
               <input
-                className="paseos-alarm-name"
+                className="foods-alarm-name"
                 type="text"
-                placeholder="Nombre del paseo"
+                placeholder="Nombre de la alarma"
                 value={alarm.name}
                 onChange={(e) => handleAlarmChange(idx, "name", e.target.value)}
               />
@@ -242,12 +239,12 @@ const Paseos: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <div className="paseos-time-display-wrapper">
+              <div className="foods-time-display-wrapper">
                 <div
-                  className="paseos-time-display"
+                  className="foods-time-display"
                   onClick={() => {
                     const input = document.getElementById(
-                      `paseos-time-input-${alarm.id}`
+                      `foods-time-input-${alarm.id}`
                     );
                     if (input) (input as HTMLElement).click();
                   }}
@@ -255,15 +252,15 @@ const Paseos: React.FC = () => {
                   role="button"
                   title="Cambiar hora"
                 >
-                  <span className="paseos-time-hour">
+                  <span className="foods-time-hour">
                     {alarm.time ? alarm.time.format("h:mm") : "--:--"}
                   </span>
-                  <span className="paseos-time-ampm">
+                  <span className="foods-time-ampm">
                     {alarm.time ? alarm.time.format("A") : ""}
                   </span>
                 </div>
                 <TimePicker
-                  id={`paseos-time-input-${alarm.id}`}
+                  id={`foods-time-input-${alarm.id}`}
                   use12Hours
                   format="h:mm A"
                   value={alarm.time}
@@ -276,18 +273,18 @@ const Paseos: React.FC = () => {
                     pointerEvents: "none",
                     position: "absolute",
                   }}
-                  popupClassName="paseos-time-popup"
+                  popupClassName="foods-time-popup"
                 />
               </div>
-              <button className="save-button" onClick={() => schedulePaseo(idx)}>
-                Programar Paseo
+              <button className="save-button" onClick={() => scheduleFood(idx)}>
+                Programar Comida
               </button>
             </div>
           ))}
           <button
             className="add-alarm-btn"
             onClick={addAlarm}
-            title="Agregar paseo"
+            title="Agregar alarma"
           >
             <FaPlus />
           </button>
@@ -297,4 +294,4 @@ const Paseos: React.FC = () => {
   );
 };
 
-export default Paseos;
+export default Foods;

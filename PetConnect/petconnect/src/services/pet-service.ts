@@ -13,7 +13,7 @@ export interface PetData {
   image_pet?: string | null;
 }
 
-/**
+/*
  * Obtiene el usuario autenticado de Supabase Auth
  * @returns Datos del usuario autenticado o null si no hay sesión
  */
