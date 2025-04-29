@@ -72,9 +72,12 @@
 .time-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   background: var(--card-background);
   gap: 16px;
   position: relative;
+  width: 100%;
+  margin: 10px auto;
 }
 
 .paseos-time-display-wrapper {
@@ -476,6 +479,20 @@
 
   .time-picker {
     font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+    border: 2px solid #af40ff33;
+    border-radius: 12px;
+    padding: 8px 12px;
+    background: var(--card-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .time-picker:hover,
+  .time-picker:focus {
+    border-color: #af40ff;
+    box-shadow: 0 4px 12px rgba(175, 64, 255, 0.2);
   }
 
   .save-button {
@@ -506,6 +523,18 @@
 
   .time-picker {
     font-size: clamp(1.2rem, 3vw, 1.5rem);
+    border: 2px solid #af40ff33;
+    border-radius: 12px;
+    padding: 8px 12px;
+    background: var(--card-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .time-picker:hover,
+  .time-picker:focus {
+    border-color: #af40ff;
+    box-shadow: 0 4px 12px rgba(175, 64, 255, 0.2);
   }
 
   .save-button {
@@ -550,9 +579,22 @@
 
   .time-picker {
     color: var(--text-primary);
-    height: 32px;
-    font-size: 0.8rem;
-    border-width: 1px;
+    height: 40px;
+    font-size: 1rem;
+    border: 2px solid #af40ff33;
+    border-radius: 12px;
+    padding: 8px 12px;
+    background: var(--card-background);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 180px;
+  }
+  
+  .time-picker:hover,
+  .time-picker:focus {
+    border-color: #af40ff;
+    box-shadow: 0 4px 12px rgba(175, 64, 255, 0.2);
   }
 
   .save-button {
@@ -560,6 +602,50 @@
     font-size: 0.8rem;
     width: min(100%, 160px);
   }
+}
+
+/* Estilos para el popup del TimePicker */
+.paseos-time-popup {
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.paseos-time-popup .ant-picker-panel-container {
+  background: var(--card-background);
+}
+
+.paseos-time-popup .ant-picker-header {
+  border-bottom: 1px solid #af40ff33;
+  padding: 12px;
+}
+
+.paseos-time-popup .ant-picker-header button {
+  color: #af40ff;
+}
+
+.paseos-time-popup .ant-picker-content th,
+.paseos-time-popup .ant-picker-content td {
+  color: var(--text-primary);
+}
+
+.paseos-time-popup .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  background: #af40ff;
+}
+
+.paseos-time-popup .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background: #af40ff33;
+  color: #af40ff;
+}
+
+.paseos-time-popup .ant-picker-ok button {
+  background: #af40ff;
+  border-color: #af40ff;
+}
+
+.paseos-time-popup .ant-picker-ok button:hover {
+  background: #9933cc;
+  border-color: #9933cc;
 }
 
 /* Skeleton Loading Styles */
@@ -671,4 +757,111 @@
     var(--skeleton-gradient-start) 75%
   );
   background-size: 200px 100%;
+}
+
+.paseos-button-group {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.paseos-button-group .save-button {
+  flex: 3;
+}
+
+.paseos-button-group .test-button {
+  flex: 1;
+  background-color: #f5f5f5;
+  color: #444;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.paseos-button-group .test-button:hover {
+  background-color: #e0e0e0;
+}
+
+.paseos-button-group .test-button:active {
+  background-color: #d0d0d0;
+  transform: scale(0.98);
+}
+
+/* Estilos para el switch de activación de alarma */
+.paseos-switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.paseos-switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 35px;
+}
+
+.paseos-switch input {
+  opacity: 1;
+  width: 0;
+  height: 0;
+}
+
+.paseos-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  background: #fff;
+  transition: .4s;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+}
+
+.paseos-slider:before {
+  position: absolute;
+  content: "";
+  height: 1.9em;
+  width: 1.9em;
+  border-radius: 16px;
+  left: 1.2px;
+  top: 0;
+  bottom: 0;
+  background-color: white;
+  box-shadow: 0 2px 5px #999999;
+  transition: .4s;
+}
+
+.paseos-switch input:checked + .paseos-slider {
+  background-color: #5fdd54;
+  border: 1px solid transparent;
+}
+
+.paseos-switch input:checked + .paseos-slider:before {
+  transform: translateX(1.5em);
+}
+
+/* Contenedor para el switch y su etiqueta */
+.paseos-switch-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.paseos-switch-label {
+  font-size: 0.9em;
+  color: #666;
 }

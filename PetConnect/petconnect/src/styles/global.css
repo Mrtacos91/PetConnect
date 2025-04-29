@@ -3,7 +3,7 @@
 * {
   position: relative;
   margin: 0;
-
+  outline: none;
   box-sizing: border-box;
   font-family: "Poppins", Arial, Helvetica, sans-serif, sans-serif;
   box-shadow: none;
@@ -12,6 +12,7 @@
 body {
   background-color: white;
   box-shadow: none;
+  outline: none;
 }
 
 :root {
@@ -20,6 +21,7 @@ body {
   --text-primary: #333333;
   --text-bottomnav: #ffffff;
   --text-secondary: #555555;
+  --border-color: #927e4d;
   --shadow-default: rgba(0, 0, 0, 0.5);
   --shadow-hover: rgba(0, 0, 0, 0.6);
   --circle-animation: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
@@ -27,6 +29,7 @@ body {
   --skeleton-gradient-start: #f0f0f0;
   --skeleton-gradient-mid: #e0e0e0;
   --logo: url("/images/Logo_gradient.png");
+  --border-color: linear-gradient(90deg, #ffd700 0%, #ffc300 50%, #b8860b 100%);
 }
 
 /* Variables para modo oscuro */
@@ -36,6 +39,7 @@ body {
   --text-primary: #eeeeee;
   --text-bottomnav: #eeeeee;
   --text-secondary: #cccccc;
+  --border-color: #927e4d;
   --shadow-default: rgb(0, 0, 0.01);
   --shadow-hover: rgba(0, 0, 0, 0.6);
   --skeleton-gradient-start: #363241;

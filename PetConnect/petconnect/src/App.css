@@ -1,5 +1,16 @@
 @import "leaflet/dist/leaflet.css";
 
+* {
+  outline: none;
+}
+
+button,
+a,
+input,
+textarea {
+  outline: none;
+}
+
 body {
   background-color: var(--bg-default);
   transition: background-color 0.3s ease;

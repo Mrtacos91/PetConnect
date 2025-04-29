@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
               Mis mascotas
             </div>
           </li>
-          <li>
+          <li onClick={() => navigate("/config")} style={{ cursor: "pointer" }}>
             <div className="container-config">
               <FaCog className="icon-side" />
               Configuración

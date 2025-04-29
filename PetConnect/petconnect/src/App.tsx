@@ -8,6 +8,7 @@ import CarnetPage from "./pages/CarnetPage";
 import Calendar from "./pages/Calendar";
 import Recardatorios from "./pages/Recardatorios";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Config from "./pages/Config";
 import "./styles/global.css";
 
 const App: React.FC = () => {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
           <Route path="/customise" element={<Customise />} />
           <Route path="/carnet" element={<CarnetPage />} />
           <Route path="/recordatorios" element={<Recardatorios />} />
+          <Route path="/config" element={<Config />} />
         </Route>
       </Routes>
     </Router>

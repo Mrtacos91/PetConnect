@@ -109,6 +109,9 @@
 
 /* Media query para pantallas pequeñas */
 @media (max-width: 768px) {
+  .recordatorios-modules {
+    grid-template-columns: 1fr;
+  }
   .recordatorios-skeleton {
     grid-template-columns: 1fr;
   }

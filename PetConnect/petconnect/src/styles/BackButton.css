@@ -1,22 +1,91 @@
-/* From Uiverse.io by cssbuttons-io */ 
+/* From Uiverse.io by cssbuttons-io */
 .backBT {
+  cursor: pointer;
+  position: relative;
   align-items: center;
-  background-image: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
-  border: 0;
-  border-radius: 8px;
-  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
-  box-sizing: border-box;
-  color: #ffffff;
-  display: flex;
-  font-size: 14px;
   justify-content: center;
+  display: flex;
+  font-family: inherit;
+  font-weight: 600;
+  padding: clamp(5px, 1vw, 16px) clamp(10px, 4vw, 40px);
+  font-size: clamp(0.95rem, 3vw, 1.2rem);
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+  border-radius: clamp(18px, 7vw, 40px);
+  background-color: transparent;
+  box-sizing: border-box;
   line-height: 1em;
   max-width: 100%;
-  min-width: 50px;
-  padding: 4px;
+  min-width: clamp(28px, 10vw, 100px);
   text-decoration: none;
   user-select: none;
-  -webkit-user-select: none;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+  z-index: 0;
+}
+
+@media (max-width: 480px) {
+  .backBT {
+    font-size: clamp(0.88rem, 4vw, 1.05rem);
+    padding: clamp(4px, 1vw, 10px) clamp(8px, 3vw, 18px);
+    border-radius: clamp(14px, 9vw, 32px);
+    min-width: clamp(20px, 20vw, 80px);
+  }
+}
+
+@media (min-width: 900px) {
+  .backBT {
+    font-size: clamp(1.15rem, 2vw, 1.3rem);
+    padding: clamp(8px, 2vw, 20px) clamp(20px, 4vw, 56px);
+    border-radius: clamp(20px, 5vw, 44px);
+    min-width: 110px;
+  }
+}
+
+.backBT::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  border-radius: inherit;
+  scale: 0;
+  z-index: -1;
+  background-color: var(--text-primary);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.backBT:hover::before {
+  scale: 3;
+}
+
+.backBT:hover {
+  color: var(--card-background);
+  background-color: var(--card-background);
+  scale: 1.1;
+  box-shadow: 0 0px 20px rgba(193, 163, 98, 0.4);
+}
+
+.backBT:active {
+  scale: 1;
+}
+
+@media (max-width: 540px) {
+  .backBT {
+    font-size: clamp(0.95rem, 4vw, 1.05rem);
+    padding: clamp(5px, 2vw, 10px) clamp(10px, 4vw, 18px);
+  }
+}
+
+@media (min-width: 900px) {
+  .backBT {
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    padding: clamp(8px, 2vw, 16px) clamp(20px, 4vw, 40px);
+  }
+}
+
+.backBT {
   touch-action: manipulation;
   white-space: nowrap;
   cursor: pointer;
@@ -29,7 +98,6 @@
 }
 
 .backBT-content {
-  background-color: rgb(5, 6, 45);
   padding: 8px 12px;
   border-radius: 4px;
   width: 100%;

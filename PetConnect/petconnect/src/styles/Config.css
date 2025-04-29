@@ -1,0 +1,268 @@
+.config {
+  width: 100%;
+  max-width: clamp(320px, 95vw, 700px);
+  margin: clamp(8px, 4vw, 40px) auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 3vw, 32px);
+  padding: 0 clamp(4px, 4vw, 40px);
+  box-sizing: border-box;
+}
+
+.config-bt {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100vw;
+  margin-bottom: clamp(8px, 2vw, 24px);
+  gap: clamp(8px, 3vw, 24px);
+}
+
+@media (max-width: 600px) {
+  .config {
+    max-width: 100vw;
+    padding: 0 clamp(2px, 2vw, 8px);
+    gap: clamp(4px, 2vw, 12px);
+  }
+  .config-bt {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: clamp(6px, 2vw, 14px);
+    margin-bottom: clamp(6px, 2vw, 14px);
+  }
+}
+
+@media (min-width: 900px) {
+  .config {
+    max-width: 900px;
+    padding: 0 clamp(24px, 4vw, 64px);
+    gap: clamp(16px, 3vw, 40px);
+  }
+  .config-bt {
+    max-width: 300px;
+    gap: clamp(12px, 2vw, 32px);
+  }
+}
+
+.config-page {
+  width: 100%;
+  max-width: clamp(320px, 90vw, 600px);
+  margin-bottom: clamp(8px, 2vw, 24px);
+  padding: clamp(16px, 5vw, 40px) clamp(8px, 4vw, 32px);
+  background: var(--card-background);
+  border-radius: clamp(10px, 3vw, 18px);
+  box-shadow: 0 4px 20px var(--shadow-default);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  /* 👇 Espacio entre cada elemento hijo de .config-page */
+  gap: clamp(16px, 4vw, 36px);
+}
+
+.config-page h1 {
+  color: var(--text-primary);
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  margin-bottom: clamp(16px, 5vw, 32px);
+  text-align: center;
+}
+
+.config-h2 {
+  padding: 0 clamp(4px, 2vw, 16px);
+  color: var(--text-primary);
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  margin-bottom: clamp(8px, 2vw, 16px);
+}
+
+.config-section {
+  color: var(--text-primary);
+  margin-bottom: clamp(20px, 6vw, 36px);
+  padding-bottom: clamp(12px, 4vw, 24px);
+  border-bottom: 1px solid var(--border-color, #b8860b);
+}
+.config-section:last-child {
+  border-bottom: none;
+}
+
+.config-section h2 {
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  margin-bottom: clamp(8px, 2vw, 16px);
+  margin: 30px;
+}
+
+.config-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2vw, 16px);
+}
+
+.config-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  gap: clamp(2px, 1vw, 8px);
+}
+
+.config-form input[type="text"],
+.config-form input[type="email"],
+.config-form select {
+  padding: clamp(6px, 2vw, 12px) clamp(8px, 3vw, 18px);
+  border: 1px solid #b8860b;
+  border-radius: clamp(6px, 2vw, 10px);
+  background: var(--bg-default);
+  color: var(--text-primary);
+  font-size: clamp(0.95rem, 3vw, 1.05rem);
+}
+
+.config-form button {
+  margin-top: clamp(8px, 2vw, 14px);
+  padding: clamp(8px, 2vw, 14px) 0;
+  background: linear-gradient(90deg, #ffd700 0%, #ffc300 50%, #b8860b 100%);
+  color: var(--text-primary);
+  border: none;
+  border-radius: clamp(6px, 2vw, 10px);
+  font-weight: bold;
+  cursor: pointer;
+  font-size: clamp(1rem, 3vw, 1.1rem);
+  transition: background 0.2s, color 0.2s;
+}
+.config-form button:hover {
+  filter: brightness(0.95);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: clamp(36px, 10vw, 46px);
+  height: clamp(20px, 6vw, 26px);
+  margin-right: clamp(6px, 2vw, 16px);
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ccc;
+  border-radius: 26px;
+  transition: 0.4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: clamp(14px, 5vw, 20px);
+  width: clamp(14px, 5vw, 20px);
+  left: clamp(2px, 1vw, 4px);
+  bottom: clamp(2px, 1vw, 4px);
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+input:checked + .slider {
+  background: #b8860b;
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.checkbox-label {
+  display: flex;
+  border-radius: 60px;
+  align-items: center;
+  margin: 30px;
+  font-weight: 500;
+}
+
+.danger {
+  border-bottom: none;
+}
+.Config-logout-btn,
+.Config-delete-btn {
+  display: inline-block;
+  margin-right: 0;
+  margin-bottom: clamp(6px, 2vw, 12px);
+  padding: clamp(8px, 2vw, 14px) 0;
+  background: #eee;
+  color: #b8860b;
+  border: 1px solid #b8860b;
+  border-radius: clamp(6px, 2vw, 10px);
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+  max-width: 340px;
+  font-size: clamp(1rem, 3vw, 1.1rem);
+  transition: background 0.2s, color 0.2s;
+  box-sizing: border-box;
+}
+
+.config-section.danger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 2vw, 16px);
+}
+
+@media (max-width: 540px) {
+  .config,
+  .config-page {
+    padding: 0 clamp(2px, 2vw, 8px);
+  }
+  .config-section {
+    padding-bottom: clamp(8px, 2vw, 16px);
+    margin-bottom: clamp(12px, 3vw, 20px);
+  }
+  .config-form input[type="text"],
+  .config-form input[type="email"],
+  .config-form select {
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    padding: clamp(5px, 1.5vw, 10px) clamp(6px, 2vw, 12px);
+  }
+  .config-form button {
+    font-size: clamp(0.95rem, 4vw, 1rem);
+    padding: clamp(7px, 1.5vw, 12px) 0;
+  }
+  .Config-logout-btn,
+  .Config-delete-btn {
+    max-width: 100%;
+    width: 100%;
+    font-size: clamp(0.95rem, 4vw, 1rem);
+    padding: clamp(7px, 1.5vw, 12px) 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .config,
+  .config-page {
+    max-width: 700px;
+    padding: clamp(16px, 3vw, 48px);
+  }
+  .Config-logout-btn,
+  .Config-delete-btn {
+    max-width: 400px;
+    font-size: clamp(1.05rem, 2vw, 1.15rem);
+  }
+}
+
+.Config-logout-btn:hover,
+.Config-delete-btn:hover {
+  background: #b8860b;
+  color: #fff;
+}
+.Config-delete-btn {
+  background: #fff0e6;
+  border-color: #c0392b;
+  color: #c0392b;
+}
+.Config-delete-btn:hover {
+  background: #c0392b;
+  color: #fff;
+}
