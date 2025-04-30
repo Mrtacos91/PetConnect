@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {  onMessage } from "firebase/messaging";
+import { onMessage } from "firebase/messaging";
 import {
-  
   VAPID_KEY,
   messaging,
   getOrCreateFCMToken,
@@ -83,7 +82,8 @@ const Paseos: React.FC = () => {
   // Función para mostrar notificación visual
   const showNotification = useCallback(
     (type: "success" | "error" | "warning", message: string) => {
-      const id = Date.now().toString() + Math.random().toString(36).substring(2, 7);
+      const id =
+        Date.now().toString() + Math.random().toString(36).substring(2, 7);
       setNotifications((prev) => [...prev, { id, type, message }]);
       setTimeout(() => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
@@ -99,7 +99,8 @@ const Paseos: React.FC = () => {
 
   // Obtener el user_id del usuario autenticado
   const checkUser = async () => {
-    const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
 
     if (sessionError || !sessionData?.user) {
       console.error("Error de sesión:", sessionError);
@@ -116,7 +117,10 @@ const Paseos: React.FC = () => {
 
       if (localUserError || !localUser?.id) {
         console.error("Error al obtener el usuario local:", localUserError);
-        showNotification("error", "No se encontró tu usuario local. Verifica la tabla 'Users'.");
+        showNotification(
+          "error",
+          "No se encontró tu usuario local. Verifica la tabla 'Users'."
+        );
         return null;
       }
 
@@ -144,14 +148,14 @@ const Paseos: React.FC = () => {
       if (error) throw error;
 
       if (data) {
-        const formattedAlarms = data.map(alarm => ({
+        const formattedAlarms = data.map((alarm) => ({
           id: alarm.id.toString(),
           name: alarm.title,
           days: alarm.days || [],
           time: dayjs(alarm.hour, "HH:mm"),
           lastNotification: "",
           user_id: alarm.user_id,
-          active: alarm.active
+          active: alarm.active,
         }));
         setAlarms(formattedAlarms);
       }
@@ -172,16 +176,19 @@ const Paseos: React.FC = () => {
     }
 
     try {
-      const { data, error } = await supabase.from("walks").insert([
-        {
-          user_id: userId,
-          title: alarm.name,
-          days: alarm.days,
-          hour: alarm.time?.format("HH:mm"),
-          active: true,
-          created_at: new Date().toISOString()
-        }
-      ]).select();
+      const { data, error } = await supabase
+        .from("walks")
+        .insert([
+          {
+            user_id: userId,
+            title: alarm.name,
+            days: alarm.days,
+            hour: alarm.time?.format("HH:mm"),
+            active: true,
+            created_at: new Date().toISOString(),
+          },
+        ])
+        .select();
 
       if (error) throw error;
 
@@ -208,7 +215,7 @@ const Paseos: React.FC = () => {
           title: alarm.name,
           days: alarm.days,
           hour: alarm.time?.format("HH:mm"),
-          active: true
+          active: true,
         })
         .eq("id", alarm.id)
         .select();
@@ -232,15 +239,14 @@ const Paseos: React.FC = () => {
     }
 
     try {
-      const { error } = await supabase
-        .from("walks")
-        .delete()
-        .eq("id", alarmId);
+      const { error } = await supabase.from("walks").delete().eq("id", alarmId);
 
       if (error) throw error;
 
       // Actualizar el estado local eliminando la alarma
-      setAlarms(prevAlarms => prevAlarms.filter(alarm => alarm.id !== alarmId));
+      setAlarms((prevAlarms) =>
+        prevAlarms.filter((alarm) => alarm.id !== alarmId)
+      );
       showNotification("success", "Alarma eliminada correctamente");
     } catch (error) {
       console.error("Error al eliminar la alarma:", error);
@@ -250,22 +256,36 @@ const Paseos: React.FC = () => {
 
   const setupNotifications = useCallback(async () => {
     try {
-      // 1. Verificar soporte para notificaciones
-      if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-        console.log(
-          "Este navegador no soporta notificaciones o service workers"
-        );
+      // 1. Verificar si estamos en un entorno móvil
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      console.log("Configurando notificaciones...");
+      console.log(`Dispositivo: ${isMobile ? "Móvil" : "Escritorio"}`);
+
+      // 2. Verificar soporte para notificaciones
+      if (!("Notification" in window)) {
+        console.log("Este navegador no soporta notificaciones");
         return false;
       }
 
-      // 2. Registrar Service Worker
+      // 3. Registrar Service Worker con manejo específico para móviles
       try {
-        const swRegistration = await navigator.serviceWorker.register(
-          "/firebase-messaging-sw.js"
-        );
+        let swRegistration;
+        if (isMobile) {
+          // En móviles, intentar registrar el SW con scope específico
+          swRegistration = await navigator.serviceWorker.register(
+            "/firebase-messaging-sw.js",
+            { scope: "/" }
+          );
+        } else {
+          swRegistration = await navigator.serviceWorker.register(
+            "/firebase-messaging-sw.js"
+          );
+        }
+
         console.log("Service Worker registrado con éxito:", swRegistration);
 
-        // Esperar a que el Service Worker esté activo antes de continuar
+        // Esperar a que el Service Worker esté activo
         if (swRegistration.installing || swRegistration.waiting) {
           await new Promise<void>((resolve) => {
             const worker = swRegistration.installing || swRegistration.waiting;
@@ -277,43 +297,69 @@ const Paseos: React.FC = () => {
                 }
               });
             } else {
-              resolve(); // Ya está activo
+              resolve();
             }
           });
         }
 
-        // 3. Solicitar permiso de notificación
+        // 4. Solicitar permiso de notificación con manejo específico para móviles
         let permission = Notification.permission;
         if (permission !== "granted" && permission !== "denied") {
+          // En móviles, mostrar un mensaje explicativo antes de solicitar permisos
+          if (isMobile) {
+            showNotification(
+              "warning",
+              "Para recibir notificaciones, por favor acepta los permisos cuando el navegador los solicite"
+            );
+          }
           permission = await Notification.requestPermission();
         }
 
         if (permission !== "granted") {
           console.log("No se ha concedido permiso para notificaciones");
+          if (isMobile) {
+            showNotification(
+              "warning",
+              "Las notificaciones están desactivadas. Para activarlas, ve a la configuración de tu navegador"
+            );
+          }
           return false;
         }
 
-        // 4. Obtener token FCM usando la función mejorada
+        // 5. Obtener token FCM con manejo específico para móviles
+        console.log("Solicitando token FCM...");
         const token = await getOrCreateFCMToken(VAPID_KEY);
 
         if (token) {
-          console.log("Token FCM obtenido correctamente");
+          console.log("Token FCM obtenido correctamente:", token.substring(0, 10) + "...");
           fcmToken = token;
           setNotificationsEnabled(true);
           return true;
         } else {
           console.warn("No se pudo obtener el token FCM");
+          if (isMobile) {
+            showNotification(
+              "warning",
+              "No se pudo configurar las notificaciones push. Intenta recargar la página"
+            );
+          }
           return false;
         }
       } catch (swError) {
         console.error("Error al registrar el Service Worker:", swError);
+        if (isMobile) {
+          showNotification(
+            "error",
+            "Error al configurar las notificaciones. Intenta usar un navegador diferente"
+          );
+        }
         return false;
       }
     } catch (error) {
       console.error("Error al configurar notificaciones:", error);
       return false;
     }
-  }, []);
+  }, [showNotification]);
 
   useEffect(() => {
     const initNotifications = async () => {
@@ -369,17 +415,272 @@ const Paseos: React.FC = () => {
     }
   }, [setupNotifications, showNotification]);
 
-  // Modificar la función schedulePaseo para usar la base de datos
+  // Función para enviar un mensaje a través de Firebase Cloud Messaging
+  const sendFirebaseCloudMessage = async (
+    title: string,
+    body: string,
+    alarm: PaseoAlarm
+  ) => {
+    if (!fcmToken) {
+      console.log("Intentando obtener token FCM...");
+      const token = await getOrCreateFCMToken();
+      if (!token) {
+        console.error("No se pudo obtener un token FCM");
+        showNotification(
+          "error",
+          "No se pudo enviar la notificación push: falta token FCM"
+        );
+        return false;
+      }
+      console.log("Token FCM obtenido correctamente");
+      fcmToken = token;
+    }
+
+    try {
+      const data = {
+        alarmId: alarm.id,
+        petName: alarm.name,
+        clickAction: "/paseos",
+        timestamp: new Date().toISOString()
+      };
+
+      console.log(`Enviando notificación FCM para ${alarm.name}...`);
+
+      // En desarrollo, simular el envío pero registrar en consola
+      if (process.env.NODE_ENV === "production") {
+        console.log("Enviando notificación push al servidor en producción");
+        await sendPushNotificationToServer(fcmToken, title, body, data);
+        console.log("Notificación push enviada al servidor correctamente");
+      } else {
+        console.log("Simulando envío de notificación push (modo desarrollo)");
+        console.log("Datos que se enviarían:", {
+          token: fcmToken.substring(0, 10) + "...",
+          title,
+          body,
+          data
+        });
+      }
+
+      showNotification(
+        "success",
+        `Notificación push enviada para ${alarm.name}`
+      );
+      return true;
+    } catch (error) {
+      console.error("Error al enviar notificación push:", error);
+      showNotification(
+        "error",
+        `Error al enviar notificación push: ${
+          error instanceof Error ? error.message : "Error desconocido"
+        }`
+      );
+      return false;
+    }
+  };
+
+  // Función para enviar notificación push
+  const sendPushNotification = useCallback(async (alarm: PaseoAlarm) => {
+    if (!userId) {
+      console.warn("No hay usuario autenticado para enviar notificaciones");
+      return;
+    }
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (Notification.permission !== "granted") {
+      console.warn("No tenemos permiso para enviar notificaciones push");
+      if (isMobile) {
+        showNotification(
+          "warning",
+          "Las notificaciones están desactivadas. Actívalas en la configuración de tu navegador"
+        );
+      }
+      return;
+    }
+
+    const title = `¡Hora de pasear a ${alarm.name}!`;
+    const body = `Es momento del paseo programado para ${alarm.name}`;
+
+    try {
+      // Obtener el registro del Service Worker
+      const registration = await navigator.serviceWorker.ready;
+      
+      // Opciones básicas de notificación
+      const notificationOptions = {
+        body,
+        icon: "/images/Logo_gradient.png",
+        badge: "/images/Logo_black.png",
+        tag: `paseo-${alarm.id}-${Date.now()}`, // Añadir timestamp para evitar duplicados
+        silent: false,
+        vibrate: isMobile ? [200, 100, 200] : undefined,
+        requireInteraction: true,
+        data: {
+          url: '/paseos', // URL a la que navegar cuando se hace clic en la notificación
+          alarmId: alarm.id,
+          timestamp: Date.now().toString() // Añadir timestamp para identificar cada notificación
+        }
+      };
+
+      // Mostrar la notificación a través del Service Worker
+      await registration.showNotification(title, notificationOptions);
+
+      // Si tenemos FCM token, intentar enviar notificación push
+      if (fcmToken) {
+        await sendFirebaseCloudMessage(title, body, alarm);
+      } else {
+        console.warn("No hay token FCM disponible para enviar notificación push");
+      }
+
+      console.log(`Notificación enviada para: ${alarm.name}`);
+
+      // Actualizar la fecha de última notificación
+      const now = dayjs().tz(TIMEZONE).format();
+
+      // Actualizar estado local
+      setAlarms((prev) =>
+        prev.map((a) =>
+          a.id === alarm.id ? { ...a, lastNotification: now } : a
+        )
+      );
+
+      console.log(`Notificación enviada para ${alarm.name} a las ${now}`);
+    } catch (error) {
+      console.error("Error al enviar notificación:", error);
+      if (isMobile) {
+        showNotification(
+          "error",
+          "Error al enviar la notificación. Intenta recargar la página"
+        );
+      }
+    }
+  }, [userId, showNotification, fcmToken]);
+
+  // Función para verificar las alarmas con mejor precisión
+  const checkAlarms = useCallback(() => {
+    // Verificar si tenemos userId
+    if (!userId) {
+      console.log("No hay usuario autenticado para verificar alarmas");
+      return;
+    }
+
+    const now = dayjs().tz(TIMEZONE);
+    const currentHour = now.hour();
+    const currentMinute = now.minute();
+    const currentDay = now.day();
+    const todayDate = now.format("YYYY-MM-DD");
+
+    // Solo verificar si hay alarmas activas
+    const activeAlarms = alarms.filter(alarm => 
+      alarm.active && 
+      alarm.time && 
+      alarm.days.length > 0 && 
+      alarm.name
+    );
+
+    if (activeAlarms.length === 0) {
+      return;
+    }
+
+    console.log(
+      `Verificando ${activeAlarms.length} alarmas activas: ${now.format("HH:mm:ss")} - Día: ${currentDay}`
+    );
+
+    activeAlarms.forEach((alarm) => {
+      if (!alarm.time) return;
+
+      // Verificar si es el día correcto
+      const isScheduledDay = alarm.days.some(
+        (dayLetter) => dayLetterToNumber[dayLetter] === currentDay
+      );
+
+      if (!isScheduledDay) {
+        return;
+      }
+
+      const alarmHour = alarm.time.hour();
+      const alarmMinute = alarm.time.minute();
+
+      // Verificar si la hora actual coincide exactamente con la hora programada
+      if (currentHour !== alarmHour || currentMinute !== alarmMinute) {
+        return;
+      }
+
+      // Verificar si ya se envió notificación hoy
+      const lastNotificationDate = alarm.lastNotification
+        ? dayjs(alarm.lastNotification).tz(TIMEZONE).format("YYYY-MM-DD")
+        : null;
+
+      if (lastNotificationDate === todayDate) {
+        console.log(`Ya se envió notificación hoy para ${alarm.name}`);
+        return;
+      }
+
+      console.log(
+        `¡Es hora de notificar! ${alarm.name} - ${alarmHour}:${alarmMinute}`
+      );
+      
+      // Enviar notificación una sola vez
+      sendPushNotification(alarm);
+    });
+  }, [alarms, userId, sendPushNotification]);
+
+  // Mejorar el intervalo de verificación de alarmas
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    let lastCheckDate = '';
+
+    const startChecking = () => {
+      console.log("Iniciando verificación de alarmas...");
+      
+      const now = dayjs().tz(TIMEZONE);
+      const currentDate = now.format("YYYY-MM-DD");
+      
+      // Solo verificar si es un nuevo día o si es la primera vez
+      if (lastCheckDate !== currentDate) {
+        lastCheckDate = currentDate;
+        
+        // Verificar inmediatamente al iniciar
+        if (alarms.length > 0 && !showSkeleton && userId) {
+          checkAlarms();
+        }
+      }
+
+      // Calcular el próximo minuto exacto para sincronizar
+      const msUntilNextMinute = (60 - now.second()) * 1000 - now.millisecond();
+
+      // Esperar hasta el próximo minuto exacto antes de iniciar el intervalo
+      setTimeout(() => {
+        checkAlarms();
+        // Verificar cada minuto
+        intervalId = setInterval(checkAlarms, 60000);
+        console.log("Intervalo de verificación de alarmas iniciado (cada minuto)");
+      }, msUntilNextMinute);
+    };
+
+    startChecking();
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        console.log("Intervalo de verificación de alarmas detenido");
+      }
+    };
+  }, [alarms, checkAlarms, showSkeleton, userId]);
+
+  // Modificar la función schedulePaseo para actualizar correctamente el estado
   const schedulePaseo = async (index: number) => {
     const alarm = alarms[index];
     if (alarm.days.length === 0 || !alarm.time || !alarm.name.trim()) {
-      showNotification("warning", "Completa el nombre, días y hora para la alarma");
+      showNotification(
+        "warning",
+        "Completa el nombre, días y hora para la alarma"
+      );
       return;
     }
 
     try {
       let updatedAlarm;
-      
+
       if (alarm.id && !isNaN(parseInt(alarm.id))) {
         // Actualizar alarma existente
         updatedAlarm = await updateAlarmInDatabase(alarm);
@@ -390,28 +691,44 @@ const Paseos: React.FC = () => {
 
       if (updatedAlarm) {
         // Actualizar el estado local con los datos de la base de datos
-        setAlarms(prev => prev.map((a, idx) => 
-          idx === index ? {
-            ...a,
-            id: updatedAlarm.id.toString(),
-            name: updatedAlarm.title,
-            days: updatedAlarm.days,
-            time: dayjs(updatedAlarm.hour, "HH:mm"),
-            active: updatedAlarm.active
-          } : a
-        ));
+        setAlarms((prev) =>
+          prev.map((a, idx) =>
+            idx === index
+              ? {
+                  ...a,
+                  id: updatedAlarm.id.toString(),
+                  name: updatedAlarm.title,
+                  days: updatedAlarm.days,
+                  time: dayjs(updatedAlarm.hour, "HH:mm"),
+                  active: updatedAlarm.active,
+                  lastNotification: undefined // Resetear la última notificación
+                }
+              : a
+          )
+        );
 
         // Mostrar notificación de éxito
         showNotification(
           "success",
-          `Paseo "${alarm.name}" programado para ${alarm.days.join(", ")} a las ${alarm.time.format("h:mm A")}`
+          `Paseo "${alarm.name}" programado para ${alarm.days.join(
+            ", "
+          )} a las ${alarm.time.format("h:mm A")}`
         );
 
         // Configurar notificación push si está habilitado
         if (Notification.permission === "granted") {
-          new Notification("Paseo Programado", {
-            body: `Paseo "${alarm.name}" programado para ${alarm.days.join(", ")} a las ${alarm.time.format("HH:mm")}`,
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification("Paseo Programado", {
+            body: `Paseo "${alarm.name}" programado para ${alarm.days.join(
+              ", "
+            )} a las ${alarm.time.format("HH:mm")}`,
             icon: "/images/Logo_gradient.png",
+            tag: `programado-${alarm.id}-${Date.now()}`,
+            data: {
+              url: '/paseos',
+              alarmId: alarm.id,
+              isProgrammedNotification: true
+            }
           });
         }
 
@@ -419,8 +736,36 @@ const Paseos: React.FC = () => {
         checkAlarms();
       }
     } catch (error) {
-      console.error("Error al programar el paseo:", error);
-      showNotification("error", "Error al programar el paseo");
+      console.error('Error al programar el paseo:', error);
+      showNotification("error", "Error al programar el paseo. Por favor, inténtalo de nuevo.");
+    }
+  };
+
+  // Función para probar la alarma
+  const testAlarm = async (index: number) => {
+    const alarm = alarms[index];
+    if (!alarm.name) {
+      showNotification("warning", "Agrega un nombre para probar la alarma");
+      return;
+    }
+
+    if (!userId) {
+      showNotification(
+        "error",
+        "No hay usuario autenticado. Por favor, inicia sesión nuevamente."
+      );
+      return;
+    }
+
+    try {
+      await sendPushNotification(alarm);
+      showNotification(
+        "success",
+        `Prueba de alarma enviada para ${alarm.name}`
+      );
+    } catch (error) {
+      console.error("Error al probar la alarma:", error);
+      showNotification("error", "Error al enviar la notificación de prueba");
     }
   };
 
@@ -483,178 +828,31 @@ const Paseos: React.FC = () => {
     loadData();
   }, []);
 
-  // Función para enviar notificación push mejorada
-  const sendPushNotification = useCallback(async (alarm: PaseoAlarm) => {
-    if (!userId) {
-      console.warn("No hay usuario autenticado para enviar notificaciones");
-      return;
-    }
-
-    if (Notification.permission !== "granted") {
-      console.warn("No tenemos permiso para enviar notificaciones push");
-      return;
-    }
-
-    const title = `¡Hora de pasear a ${alarm.name}!`;
-    const body = `Es momento del paseo programado para ${alarm.name}`;
+  // Función para manejar el cambio de estado activo/inactivo
+  const handleActiveChange = async (index: number, checked: boolean) => {
+    const alarm = alarms[index];
 
     try {
-      // Mostrar notificación local
-      new Notification(title, {
-        body,
-        icon: "/images/Logo_gradient.png",
-        badge: "/images/Logo_black.png",
-        tag: `paseo-${alarm.id}`,
-        silent: false // Usar en lugar de renotify para asegurar que suene la notificación
-      });
+      // Actualizar en la base de datos
+      const { error } = await supabase
+        .from("walks")
+        .update({ active: checked })
+        .eq("id", alarm.id);
 
-      // Si tenemos FCM token, intentar enviar notificación push
-      if (fcmToken) {
-        await sendFirebaseCloudMessage(title, body, alarm);
-      }
+      if (error) throw error;
 
-      console.log(`Notificación enviada para: ${alarm.name}`);
-
-      // Actualizar la fecha de última notificación
-      const now = dayjs().tz(TIMEZONE).format();
-      
       // Actualizar estado local
       setAlarms((prev) =>
-        prev.map((a) =>
-          a.id === alarm.id ? { ...a, lastNotification: now } : a
-        )
+        prev.map((a, idx) => (idx === index ? { ...a, active: checked } : a))
       );
 
-      // Actualizar en la base de datos
-      if (alarm.id) {
-        const { error } = await supabase
-          .from("walks")
-          .update({ 
-            last_notification: now,
-            active: true 
-          })
-          .eq("id", alarm.id);
-
-        if (error) {
-          console.error("Error al actualizar última notificación:", error);
-        }
-      }
+      showNotification(
+        "success",
+        `Alarma ${checked ? "activada" : "desactivada"} correctamente`
+      );
     } catch (error) {
-      console.error("Error al enviar notificación:", error);
-    }
-  }, [userId]);
-
-  // Función para verificar las alarmas con mejor precisión
-  const checkAlarms = useCallback(() => {
-    if (!userId) {
-      console.log("No hay usuario autenticado para verificar alarmas");
-      return;
-    }
-
-    const now = dayjs().tz(TIMEZONE);
-    const currentHour = now.hour();
-    const currentMinute = now.minute();
-    const currentDay = now.day();
-    const todayDate = now.format("YYYY-MM-DD");
-
-    console.log(
-      `Verificando alarmas: ${now.format("HH:mm:ss")} - Día: ${currentDay}`
-    );
-
-    alarms.forEach((alarm) => {
-      if (!alarm.time || alarm.days.length === 0 || !alarm.name || !alarm.active) {
-        return;
-      }
-
-      // Verificar si es el día correcto
-      const isScheduledDay = alarm.days.some(
-        (dayLetter) => dayLetterToNumber[dayLetter] === currentDay
-      );
-
-      if (!isScheduledDay) {
-        return;
-      }
-
-      const alarmHour = alarm.time.hour();
-      const alarmMinute = alarm.time.minute();
-      const currentSecond = now.second();
-
-      // Verificar si es la hora exacta o si estamos en el primer minuto después
-      const timeMatches =
-        (currentHour === alarmHour && currentMinute === alarmMinute && currentSecond < 30) ||
-        (currentHour === alarmHour && currentMinute === alarmMinute + 1 && currentSecond === 0);
-
-      if (!timeMatches) {
-        return;
-      }
-
-      // Verificar si ya se envió notificación hoy
-      const lastNotificationDate = alarm.lastNotification
-        ? dayjs(alarm.lastNotification).tz(TIMEZONE).format("YYYY-MM-DD")
-        : null;
-
-      if (lastNotificationDate === todayDate) {
-        console.log(`Ya se envió notificación hoy para ${alarm.name}`);
-        return;
-      }
-
-      console.log(
-        `¡Es hora de notificar! ${alarm.name} - ${alarmHour}:${alarmMinute}`
-      );
-      sendPushNotification(alarm);
-    });
-  }, [alarms, userId, sendPushNotification]);
-
-  // Mejorar el intervalo de verificación de alarmas
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const startChecking = () => {
-      // Verificar inmediatamente al iniciar
-      if (alarms.length > 0 && !showSkeleton && userId) {
-        checkAlarms();
-      }
-
-      // Calcular el próximo segundo exacto para sincronizar
-      const now = new Date();
-      const msUntilNextSecond = 1000 - now.getMilliseconds();
-
-      // Esperar hasta el próximo segundo exacto antes de iniciar el intervalo
-      setTimeout(() => {
-        checkAlarms();
-        // Verificar cada 30 segundos
-        intervalId = setInterval(checkAlarms, 30000);
-      }, msUntilNextSecond);
-    };
-
-    startChecking();
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [alarms, checkAlarms, showSkeleton, userId]);
-
-  // Mejorar la función de prueba de alarma
-  const testAlarm = async (index: number) => {
-    const alarm = alarms[index];
-    if (!alarm.name) {
-      showNotification("warning", "Agrega un nombre para probar la alarma");
-      return;
-    }
-
-    if (!userId) {
-      showNotification("error", "No hay usuario autenticado. Por favor, inicia sesión nuevamente.");
-      return;
-    }
-
-    try {
-      await sendPushNotification(alarm);
-      showNotification("success", `Prueba de alarma enviada para ${alarm.name}`);
-    } catch (error) {
-      console.error("Error al probar la alarma:", error);
-      showNotification("error", "Error al enviar la notificación de prueba");
+      console.error("Error al actualizar estado de la alarma:", error);
+      showNotification("error", "Error al actualizar estado de la alarma");
     }
   };
 
@@ -724,75 +922,6 @@ const Paseos: React.FC = () => {
       <div className="skeleton-schedule-button"></div>
     </div>
   );
-
-  // Función para enviar un mensaje a través de Firebase Cloud Messaging
-  const sendFirebaseCloudMessage = async (
-    title: string,
-    body: string,
-    alarm: PaseoAlarm
-  ) => {
-    if (!fcmToken) {
-      const token = await getOrCreateFCMToken();
-      if (!token) {
-        console.error("No se pudo obtener un token FCM");
-        showNotification("error", "No se pudo enviar la notificación push: falta token FCM");
-        return false;
-      }
-      fcmToken = token;
-    }
-
-    try {
-      const data = {
-        alarmId: alarm.id,
-        petName: alarm.name,
-        clickAction: "/paseos",
-      };
-
-      console.log(`Enviando notificación FCM para ${alarm.name}...`);
-
-      if (process.env.NODE_ENV === "production") {
-        await sendPushNotificationToServer(fcmToken, title, body, data);
-        console.log("Notificación push enviada al servidor correctamente");
-      } else {
-        console.log("Simulando envío de notificación push (modo desarrollo)");
-      }
-
-      showNotification("success", `Notificación push enviada para ${alarm.name}`);
-      return true;
-    } catch (error) {
-      console.error("Error al enviar notificación push:", error);
-      showNotification("error", `Error al enviar notificación push: ${error instanceof Error ? error.message : "Error desconocido"}`);
-      return false;
-    }
-  };
-
-  // Función para manejar el cambio de estado activo/inactivo
-  const handleActiveChange = async (index: number, checked: boolean) => {
-    const alarm = alarms[index];
-    
-    try {
-      // Actualizar en la base de datos
-      const { error } = await supabase
-        .from("walks")
-        .update({ active: checked })
-        .eq("id", alarm.id);
-
-      if (error) throw error;
-
-      // Actualizar estado local
-      setAlarms(prev => prev.map((a, idx) => 
-        idx === index ? { ...a, active: checked } : a
-      ));
-
-      showNotification(
-        "success",
-        `Alarma ${checked ? "activada" : "desactivada"} correctamente`
-      );
-    } catch (error) {
-      console.error("Error al actualizar estado de la alarma:", error);
-      showNotification("error", "Error al actualizar estado de la alarma");
-    }
-  };
 
   return (
     <div className="paseos-section">
@@ -905,7 +1034,9 @@ const Paseos: React.FC = () => {
                     <input
                       type="checkbox"
                       checked={alarm.active}
-                      onChange={(e) => handleActiveChange(idx, e.target.checked)}
+                      onChange={(e) =>
+                        handleActiveChange(idx, e.target.checked)
+                      }
                     />
                     <span className="paseos-slider"></span>
                   </label>

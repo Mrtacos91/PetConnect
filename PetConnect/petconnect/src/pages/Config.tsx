@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/Config.css";
 import BackButton from "../components/BackButton";
+import NotificationPopup from "../components/NotificationPopup";
 
 const Config: React.FC = () => {
   // Estado para los formularios
@@ -11,45 +12,74 @@ const Config: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [language, setLanguage] = useState<string>("es");
   const [notifications, setNotifications] = useState<boolean>(true);
+  const [notificationsList, setNotificationsList] = useState<Array<{
+    id: string;
+    type: "success" | "error" | "warning";
+    message: string;
+  }>>([]);
 
-  // Handlers simulados
+  const addNotification = (type: "success" | "error" | "warning", message: string) => {
+    const id = Date.now().toString();
+    setNotificationsList(prev => [...prev, { id, type, message }]);
+    setTimeout(() => {
+      removeNotification(id);
+    }, 3000);
+  };
+
+  const removeNotification = (id: string) => {
+    setNotificationsList(prev => prev.filter(notification => notification.id !== id));
+  };
+
+  // Handlers
   const handleThemeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedTheme = e.target.checked ? "dark" : "light";
     setTheme(selectedTheme);
     localStorage.setItem("theme", selectedTheme);
     document.body.classList.toggle("dark-mode", selectedTheme === "dark");
+    addNotification("success", "Tema actualizado correctamente");
   };
 
   const handleUserSave = (e: React.FormEvent) => {
     e.preventDefault();
     // Aquí iría la lógica para guardar los datos del usuario
-    alert("Datos de usuario guardados.");
+    addNotification("success", "Datos de usuario guardados correctamente");
   };
 
   const handlePreferencesSave = (e: React.FormEvent) => {
     e.preventDefault();
     // Aquí iría la lógica para guardar preferencias
-    alert("Preferencias guardadas.");
+    addNotification("success", "Preferencias guardadas correctamente");
   };
 
   const handleLogout = () => {
     // Aquí iría la lógica para cerrar sesión
-    alert("Sesión cerrada.");
+    addNotification("warning", "Cerrando sesión...");
   };
 
   const handleDeleteAccount = () => {
-    // Aquí iría la lógica para eliminar la cuenta
     if (
       window.confirm(
         "¿Seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer."
       )
     ) {
-      alert("Cuenta eliminada.");
+      addNotification("error", "Cuenta eliminada permanentemente");
     }
+  };
+
+  const handleNotificationToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNotifications(e.target.checked);
+    addNotification(
+      e.target.checked ? "success" : "warning",
+      e.target.checked ? "Notificaciones activadas" : "Notificaciones desactivadas"
+    );
   };
 
   return (
     <div className="config">
+      <NotificationPopup
+        notifications={notificationsList}
+        onClose={removeNotification}
+      />
       <div className="config-bt">
         <BackButton />
       </div>
@@ -113,14 +143,21 @@ const Config: React.FC = () => {
                 <option value="en">Inglés</option>
               </select>
             </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={notifications}
-                onChange={(e) => setNotifications(e.target.checked)}
-              />
-              Recibir notificaciones
-            </label>
+            <div className="checkbox-wrapper-12">
+              <div className="cbx">
+                <input
+                  type="checkbox"
+                  id="notifications"
+                  checked={notifications}
+                  onChange={handleNotificationToggle}
+                />
+                <label htmlFor="notifications"></label>
+                <svg width="15" height="14" viewBox="0 0 15 14" fill="none">
+                  <path d="M2 8.36364L6.23077 12L13 2" />
+                </svg>
+              </div>
+              <span>Activar notificaciones</span>
+            </div>
             <button type="submit">Guardar preferencias</button>
           </form>
         </section>

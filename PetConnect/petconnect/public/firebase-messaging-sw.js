@@ -1,8 +1,8 @@
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"
+  "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"
 );
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.10.0/firebase-messaging-compat.js"
+  "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
 );
 
 // Configuración de depuración
@@ -14,8 +14,8 @@ function logDebug(...args) {
 }
 
 // Manejar errores no capturados
-self.addEventListener('error', (event) => {
-  console.error('[firebase-messaging-sw.js] Error no capturado:', event.error);
+self.addEventListener("error", (event) => {
+  console.error("[firebase-messaging-sw.js] Error no capturado:", event.error);
 });
 
 // Inicializar la aplicación Firebase
@@ -31,7 +31,10 @@ try {
   });
   logDebug("Firebase inicializado correctamente");
 } catch (error) {
-  console.error("[firebase-messaging-sw.js] Error al inicializar Firebase:", error);
+  console.error(
+    "[firebase-messaging-sw.js] Error al inicializar Firebase:",
+    error
+  );
 }
 
 // Obtener una instancia de Firebase Messaging
@@ -40,42 +43,33 @@ try {
   messaging = firebase.messaging();
   logDebug("Firebase Messaging inicializado correctamente");
 } catch (error) {
-  console.error("[firebase-messaging-sw.js] Error al inicializar Firebase Messaging:", error);
+  console.error(
+    "[firebase-messaging-sw.js] Error al inicializar Firebase Messaging:",
+    error
+  );
 }
 
 // Manejar mensajes en segundo plano
 if (messaging) {
-  messaging.onBackgroundMessage(function (payload) {
+  messaging.onBackgroundMessage((payload) => {
     logDebug("Recibido mensaje en segundo plano:", payload);
 
-    try {
-      // Extraer datos de la notificación de forma segura
-      const notificationTitle = payload.notification?.title || "Notificación de PetConnect";
-      const notificationOptions = {
-        body: payload.notification?.body || "",
-        icon: "/images/Logo_gradient.png",
-        badge: "/images/Logo_black.png",
-        data: payload.data, // Incluir datos adicionales si existen
-        // Configuración adicional para mejorar la experiencia de usuario
-        vibrate: [100, 50, 100], // Patrón de vibración
-        actions: [
-          {
-            action: 'view',
-            title: 'Ver'
-          }
-        ]
-      };
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
+      body: payload.notification.body,
+      icon: "/images/Logo_gradient.png",
+      badge: "/images/Logo_black.png",
+      data: payload.data,
+      requireInteraction: true,
+      vibrate: [200, 100, 200]
+    };
 
-      return self.registration.showNotification(
-        notificationTitle,
-        notificationOptions
-      );
-    } catch (error) {
-      console.error("[firebase-messaging-sw.js] Error al procesar mensaje:", error);
-    }
+    return self.registration.showNotification(notificationTitle, notificationOptions);
   });
 } else {
-  console.warn("[firebase-messaging-sw.js] No se pudo inicializar el servicio de mensajería");
+  console.warn(
+    "[firebase-messaging-sw.js] No se pudo inicializar el servicio de mensajería"
+  );
 }
 
 // Evento de instalación del Service Worker
@@ -93,34 +87,43 @@ self.addEventListener("activate", (event) => {
 });
 
 // Manejar clic en notificación
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener("notificationclick", (event) => {
   logDebug("Notificación clickeada", event);
-  
+
   // Cerrar la notificación
   event.notification.close();
-  
+
   try {
-    // Manejar la acción del usuario
-    const clickAction = event.notification.data?.FCM_MSG?.notification?.click_action || '/';
-    
-    // Esto abrirá la URL apropiada o la ventana de la aplicación
+    // Obtener la URL de los datos de la notificación
+    const urlToOpen = event.notification.data?.url || "/";
+
+    // Abrir o enfocar la ventana
     event.waitUntil(
-      clients.matchAll({type: 'window'}).then(windowClients => {
-        // Verificar si ya hay una ventana abierta y enfocar en ella
-        for (let i = 0; i < windowClients.length; i++) {
-          const client = windowClients[i];
-          if (client.url === clickAction && 'focus' in client) {
+      clients.matchAll({
+        type: "window",
+        includeUncontrolled: true
+      }).then((clientList) => {
+        // Buscar una ventana existente
+        for (const client of clientList) {
+          if (client.url === urlToOpen && "focus" in client) {
             return client.focus();
           }
         }
-        
-        // Si no hay ventana abierta, abrir una nueva
+        // Si no hay ventana existente, abrir una nueva
         if (clients.openWindow) {
-          return clients.openWindow(clickAction);
+          return clients.openWindow(urlToOpen);
         }
       })
     );
   } catch (error) {
-    console.error("[firebase-messaging-sw.js] Error al manejar clic en notificación:", error);
+    console.error(
+      "[firebase-messaging-sw.js] Error al manejar clic en notificación:",
+      error
+    );
   }
+});
+
+// Manejar cierre de notificaciones
+self.addEventListener("notificationclose", (event) => {
+  console.log("Notificación cerrada:", event);
 });
