@@ -55,14 +55,14 @@ if (messaging) {
     logDebug("Recibido mensaje en segundo plano:", payload);
 
     const notificationTitle = payload.notification.title;
-    const notificationOptions = {
+      const notificationOptions = {
       body: payload.notification.body,
-      icon: "/images/Logo_gradient.png",
-      badge: "/images/Logo_black.png",
+        icon: "/images/Logo_gradient.png",
+        badge: "/images/Logo_black.png",
       data: payload.data,
       requireInteraction: true,
       vibrate: [200, 100, 200]
-    };
+      };
 
     return self.registration.showNotification(notificationTitle, notificationOptions);
   });

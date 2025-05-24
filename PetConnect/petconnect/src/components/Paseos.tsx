@@ -189,7 +189,7 @@ const Paseos: React.FC = () => {
           },
         ])
         .select();
-
+      
       if (error) throw error;
 
       showNotification("success", "Alarma guardada correctamente");
@@ -279,8 +279,8 @@ const Paseos: React.FC = () => {
           );
         } else {
           swRegistration = await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js"
-          );
+          "/firebase-messaging-sw.js"
+        );
         }
 
         console.log("Service Worker registrado con éxito:", swRegistration);
@@ -641,8 +641,8 @@ const Paseos: React.FC = () => {
         
         // Verificar inmediatamente al iniciar
         if (alarms.length > 0 && !showSkeleton && userId) {
-          checkAlarms();
-        }
+      checkAlarms();
+    }
       }
 
       // Calcular el próximo minuto exacto para sincronizar
@@ -650,7 +650,7 @@ const Paseos: React.FC = () => {
 
       // Esperar hasta el próximo minuto exacto antes de iniciar el intervalo
       setTimeout(() => {
-        checkAlarms();
+      checkAlarms();
         // Verificar cada minuto
         intervalId = setInterval(checkAlarms, 60000);
         console.log("Intervalo de verificación de alarmas iniciado (cada minuto)");
@@ -705,24 +705,24 @@ const Paseos: React.FC = () => {
                 }
               : a
           )
-        );
+    );
 
         // Mostrar notificación de éxito
-        showNotification(
-          "success",
-          `Paseo "${alarm.name}" programado para ${alarm.days.join(
-            ", "
-          )} a las ${alarm.time.format("h:mm A")}`
-        );
+    showNotification(
+      "success",
+      `Paseo "${alarm.name}" programado para ${alarm.days.join(
+        ", "
+      )} a las ${alarm.time.format("h:mm A")}`
+    );
 
         // Configurar notificación push si está habilitado
-        if (Notification.permission === "granted") {
+    if (Notification.permission === "granted") {
           const registration = await navigator.serviceWorker.ready;
           await registration.showNotification("Paseo Programado", {
-            body: `Paseo "${alarm.name}" programado para ${alarm.days.join(
-              ", "
-            )} a las ${alarm.time.format("HH:mm")}`,
-            icon: "/images/Logo_gradient.png",
+        body: `Paseo "${alarm.name}" programado para ${alarm.days.join(
+          ", "
+        )} a las ${alarm.time.format("HH:mm")}`,
+        icon: "/images/Logo_gradient.png",
             tag: `programado-${alarm.id}-${Date.now()}`,
             data: {
               url: '/paseos',

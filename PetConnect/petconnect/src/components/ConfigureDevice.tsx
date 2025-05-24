@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "../styles/ConfDevice.css";
 import { FaTimes, FaCheck, FaExclamationTriangle } from "react-icons/fa";
 import supabase from "../supabase";
+import jsQR from "jsqr";
 
 interface ConfigureDeviceProps {
   isOpen: boolean;
@@ -96,17 +97,31 @@ const ConfigureDevice: React.FC<ConfigureDeviceProps> = ({
         canvas.height = video.videoHeight;
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Aquí normalmente usarías una biblioteca como jsQR para decodificar
-        // Por simplicidad, simulamos la detección de un código
-        const simulatedCode =
-          "PET-" +
-          Math.floor(Math.random() * 10000)
-            .toString()
-            .padStart(4, "0");
+        // Obtener los datos de la imagen
+        const imageData = context.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
 
-        // Detener el escáner y procesar el código
-        stopScanner();
-        processDeviceCode(simulatedCode);
+        // Usar jsQR para decodificar
+        const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: "dontInvert",
+        });
+
+        // Si se detecta un código QR
+        if (qrCode) {
+          console.log("¡QR detectado!", qrCode.data);
+
+          // Verificar si el código tiene el formato esperado (puedes ajustar según tus necesidades)
+          if (qrCode.data && qrCode.data.trim() !== "") {
+            // Detener el escáner y procesar el código
+            stopScanner();
+            processDeviceCode(qrCode.data);
+          }
+        }
+        // Si no se detecta un código, continuamos escaneando (el intervalo seguirá llamando a esta función)
       }
     }
   };
@@ -270,13 +285,34 @@ const ConfigureDevice: React.FC<ConfigureDeviceProps> = ({
             </div>
           </div>
 
-          {/* Elementos ocultos para el escáner */}
+          {/* Elementos para el escáner de QR */}
           <div className={`confdevice-scanner ${isScanning ? "active" : ""}`}>
-            <video
-              ref={videoRef}
-              className="confdevice-video"
-              playsInline
-            ></video>
+            {isScanning && (
+              <div className="confdevice-scanner-overlay">
+                <div className="confdevice-scanner-header">
+                  <h3>Escaneando código QR</h3>
+                  <button
+                    className="confdevice-close-scanner-btn"
+                    onClick={stopScanner}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+                <div className="confdevice-scanner-content">
+                  <div className="confdevice-scanner-frame">
+                    <video
+                      ref={videoRef}
+                      className="confdevice-video"
+                      playsInline
+                    ></video>
+                    <div className="confdevice-qr-marker"></div>
+                  </div>
+                  <p className="confdevice-scanner-instruction">
+                    Apunta la cámara al código QR de tu collar
+                  </p>
+                </div>
+              </div>
+            )}
             <canvas ref={canvasRef} className="confdevice-canvas"></canvas>
           </div>
         </div>
