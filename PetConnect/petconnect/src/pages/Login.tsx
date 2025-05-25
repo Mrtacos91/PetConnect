@@ -32,21 +32,41 @@ const Login: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Verificar si ya hay una sesión activa al cargar la página
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data?.session) {
-        await saveUserToDatabase(data.session.user);
-        navigate("/dashboard");
+        try {
+          await saveUserToDatabase(data.session.user);
+          navigate("/dashboard");
+        } catch (error) {
+          console.error("Error al verificar la sesión:", error);
+        }
       }
     };
 
     checkSession();
 
+    // Escuchar cambios en el estado de autenticación
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log(
+          "Auth state changed:",
+          event,
+          session ? "session exists" : "no session"
+        );
+
         if (event === "SIGNED_IN" && session?.user) {
-          await saveUserToDatabase(session.user);
-          navigate("/dashboard");
+          try {
+            await saveUserToDatabase(session.user);
+            // Usar un pequeño retraso para asegurar que la redirección funcione
+            // después de que se complete el proceso de autenticación
+            setTimeout(() => {
+              navigate("/dashboard");
+            }, 100);
+          } catch (error) {
+            console.error("Error en el evento SIGNED_IN:", error);
+          }
         } else if (event === "SIGNED_OUT") {
           navigate("/login");
         }
@@ -54,7 +74,9 @@ const Login: React.FC = () => {
     );
 
     return () => {
-      authListener?.subscription.unsubscribe();
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
     };
   }, [navigate]);
 
@@ -120,36 +142,60 @@ const Login: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validar todos los campos antes de enviar
-    const newErrors = {
-      email: validateField("email", formData.email),
-      password: validateField("password", formData.password),
-    };
+    try {
+      // Limpiar cualquier alerta previa
+      setAlert(null);
 
-    setErrors(newErrors);
+      // Validar todos los campos antes de enviar
+      const newErrors = {
+        email: validateField("email", formData.email),
+        password: validateField("password", formData.password),
+      };
 
-    // Verificar si hay errores
-    if (Object.values(newErrors).some((error) => error !== "")) {
-      return;
-    }
+      setErrors(newErrors);
 
-    const normalizedEmail = formData.email.toLowerCase();
+      // Verificar si hay errores
+      if (Object.values(newErrors).some((error) => error !== "")) {
+        return;
+      }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: normalizedEmail,
-      password: formData.password,
-    });
+      const normalizedEmail = formData.email.toLowerCase();
 
-    if (error) {
+      // Intentar iniciar sesión
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: formData.password,
+      });
+
+      if (error) {
+        console.error("Error de inicio de sesión:", error);
+        setAlert({
+          type: "error",
+          message:
+            "Credenciales inválidas. Por favor, verifica tu correo y contraseña.",
+        });
+        return;
+      }
+
+      // Si el inicio de sesión es exitoso
+      if (data && data.user) {
+        setAlert({ type: "success", message: "Inicio de sesión exitoso!" });
+
+        // Guardar el usuario en la base de datos
+        await saveUserToDatabase(data.user);
+
+        // Redirección manual para asegurar que funcione
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Error inesperado durante el inicio de sesión:", error);
       setAlert({
         type: "error",
-        message:
-          "Credenciales inválidas. Por favor, verifica tu correo y contraseña.",
+        message: "Ocurrió un error inesperado. Por favor, intenta de nuevo.",
       });
-      return;
     }
-
-    setAlert({ type: "success", message: "Inicio de sesión exitoso!" });
   };
 
   const handleGoogleLogin = async () => {
