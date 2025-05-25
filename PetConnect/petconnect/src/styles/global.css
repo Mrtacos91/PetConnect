@@ -30,6 +30,9 @@ body {
   --skeleton-gradient-mid: #e0e0e0;
   --logo: url("/images/Logo_gradient.png");
   --border-color: linear-gradient(90deg, #ffd700 0%, #ffc300 50%, #b8860b 100%);
+  --accent-color: black;
+  --accent-before: #0c0c0c91;
+  --pet-slot: #b8860b;
 }
 
 /* Variables para modo oscuro */
@@ -47,6 +50,8 @@ body {
   --circle-animation: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   --button-bg: #4e2c70;
   --logo: url("/images/Logo.png");
+  --accent-color: white;
+  --accent-before: #d0d0d0;
 }
 
 :root {

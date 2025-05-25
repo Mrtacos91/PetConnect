@@ -63,7 +63,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
               Mi cuenta
             </div>
           </li>
-          <li>
+          <li
+            onClick={() => navigate("/customise")}
+            style={{ cursor: "pointer" }}
+          >
             <div className="container-pets">
               <FaPaw className="icon-side" />
               Mis mascotas

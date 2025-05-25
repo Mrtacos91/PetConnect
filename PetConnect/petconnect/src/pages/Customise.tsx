@@ -1,13 +1,29 @@
-import { useNavigate } from "react-router-dom";
-import { FaPencilAlt, FaCheck, FaTimes } from "react-icons/fa";
+import {
+  FaPencilAlt,
+  FaCheck,
+  FaTimes,
+  FaArrowLeft,
+  FaArrowRight,
+  FaPaw,
+  FaPlus,
+  FaTrash,
+} from "react-icons/fa";
 import Sidebar from "../components/Sidebar";
 import MenuButton from "../components/MenuButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Customise.css";
-import "../styles/style.css"; 
+import "../styles/style.css";
 import { useState, useEffect } from "react";
 import BackButton from "../components/BackButton";
-import { getCurrentUser, getLocalUserId, getPetByUserId, uploadPetImage, savePetData, PetData } from "../services/pet-service";
+import {
+  getCurrentUser,
+  getLocalUserId,
+  getAllPetsByUserId,
+  uploadPetImage,
+  savePetData,
+  deletePet,
+  PetData,
+} from "../services/pet-service";
 
 const Customise: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -19,6 +35,11 @@ const Customise: React.FC = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [userPets, setUserPets] = useState<PetData[]>([]);
+  const [currentPetIndex, setCurrentPetIndex] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<
     Array<{
       id: string;
@@ -27,37 +48,133 @@ const Customise: React.FC = () => {
     }>
   >([]);
 
-  const navigate = useNavigate();
-  
-  const loadExistingPetData = async () => {
+  // Cargar todas las mascotas del usuario
+  const loadAllPets = async () => {
     const user = await getCurrentUser();
     if (!user) return;
 
-    const userId = await getLocalUserId(user.email!);
-    if (!userId) return;
+    const localUserId = await getLocalUserId(user.email!);
+    if (!localUserId) return;
 
-    const existingPet = await getPetByUserId(userId);
+    setUserId(localUserId);
 
-    if (existingPet) {
-      setPetName(existingPet.pet_name || "");
-      setPetType(existingPet.pet_type || "");
-      setPetBreed(existingPet.pet_breed || "");
-      setPetAge(existingPet.pet_age?.toString() || "");
-      setCurrentImageUrl(existingPet.image_pet);
-      setPhotoPreview(existingPet.image_pet);
+    const pets = await getAllPetsByUserId(localUserId);
+    setUserPets(pets);
+
+    // Si hay mascotas, cargar la primera por defecto
+    if (pets.length > 0) {
+      loadPetData(pets[0]);
+      setCurrentPetIndex(0);
+    } else {
+      // Si no hay mascotas, limpiar los campos
+      clearPetForm();
     }
   };
 
-  // Cargar datos al montar el componente
+  // Cargar datos de una mascota específica
+  const loadPetData = (pet: PetData) => {
+    setPetName(pet.pet_name || "");
+    setPetType(pet.pet_type || "");
+    setPetBreed(pet.pet_breed || "");
+    setPetAge(pet.pet_age?.toString() || "");
+    setCurrentImageUrl(pet.image_pet || null);
+    setPhotoPreview(pet.image_pet || null);
+  };
+
+  // Limpiar el formulario para una nueva mascota
+  const clearPetForm = () => {
+    setPetName("");
+    setPetType("");
+    setPetBreed("");
+    setPetAge("");
+    setPetPhoto(null);
+    setCurrentImageUrl(null);
+    setPhotoPreview(null);
+  };
+
+  // Navegar a la mascota anterior
+  const goToPreviousPet = () => {
+    if (currentPetIndex > 0) {
+      const newIndex = currentPetIndex - 1;
+      setCurrentPetIndex(newIndex);
+      loadPetData(userPets[newIndex]);
+    }
+  };
+
+  // Navegar a la siguiente mascota o crear una nueva
+  const goToNextPet = () => {
+    if (currentPetIndex < userPets.length - 1) {
+      // Si hay más mascotas, ir a la siguiente
+      const newIndex = currentPetIndex + 1;
+      setCurrentPetIndex(newIndex);
+      loadPetData(userPets[newIndex]);
+    } else if (userPets.length < 3) {
+      // Si hay menos de 3 mascotas, permitir crear una nueva
+      setCurrentPetIndex(userPets.length);
+      clearPetForm();
+    }
+  };
+
+  // Cargar datos al montar el componente y configurar el scroll
   useEffect(() => {
-    loadExistingPetData();
+    loadAllPets();
+
+    // Función para manejar el scroll
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      if (scrollPosition > 10) {
+        document.body.classList.add("scrolling");
+      } else {
+        document.body.classList.remove("scrolling");
+      }
+    };
+
+    // Agregar el event listener
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Limpiar el event listener al desmontar el componente
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   // Función para mostrar notificaciones
+  // Función para manejar la eliminación de una mascota
+  const handleDeletePet = async () => {
+    if (!userPets[currentPetIndex]?.id) return;
+
+    setDeleting(true);
+    const petId = userPets[currentPetIndex].id!;
+
+    try {
+      const result = await deletePet(petId);
+
+      if (result.success) {
+        showNotification("success", "Mascota eliminada correctamente");
+        // Recargar la lista de mascotas
+        await loadAllPets();
+        // Si no hay más mascotas, limpiar el formulario
+        if (userPets.length <= 1) {
+          clearPetForm();
+        }
+      } else {
+        showNotification(
+          "error",
+          result.error || "Error al eliminar la mascota"
+        );
+      }
+    } catch (error) {
+      console.error("Error eliminando mascota:", error);
+      showNotification("error", "Error inesperado al eliminar la mascota");
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
+
   const showNotification = (type: "success" | "error", message: string) => {
     const id = Date.now().toString();
     setNotifications((prev) => [...prev, { id, type, message }]);
-
 
     setTimeout(() => {
       setNotifications((prev) =>
@@ -76,8 +193,6 @@ const Customise: React.FC = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
-
 
   // Manejo de la imagen seleccionada
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,8 +226,6 @@ const Customise: React.FC = () => {
         return;
       }
 
-      // 2️⃣ BUSCAR ID LOCAL EN TABLA "users"
-      const userId = await getLocalUserId(user.email!);
       if (!userId) {
         showNotification(
           "error",
@@ -124,7 +237,7 @@ const Customise: React.FC = () => {
 
       let imageUrl = currentImageUrl; // Usar la imagen existente por defecto
 
-      // 3️⃣ MANEJAR LA IMAGEN EN SUPABASE STORAGE
+      // 2️⃣ MANEJAR LA IMAGEN EN SUPABASE STORAGE
       if (petPhoto) {
         imageUrl = await uploadPetImage(user.id, petPhoto, currentImageUrl);
         if (!imageUrl) {
@@ -137,7 +250,7 @@ const Customise: React.FC = () => {
         }
       }
 
-      // 4️⃣ PREPARAR Y GUARDAR LOS DATOS DE LA MASCOTA
+      // 3️⃣ PREPARAR Y GUARDAR LOS DATOS DE LA MASCOTA
       const petData: PetData = {
         user_id: userId,
         pet_name: petName,
@@ -147,10 +260,9 @@ const Customise: React.FC = () => {
         image_pet: imageUrl,
       };
 
-      // Obtener el ID de la mascota existente si hay una
-      const existingPet = await getPetByUserId(userId);
-      if (existingPet?.id) {
-        petData.id = existingPet.id;
+      // Si estamos editando una mascota existente, incluir su ID
+      if (currentPetIndex < userPets.length && userPets[currentPetIndex]?.id) {
+        petData.id = userPets[currentPetIndex].id;
       }
 
       // Guardar los datos usando la función del servicio
@@ -161,10 +273,14 @@ const Customise: React.FC = () => {
         showNotification("error", "Error guardando los datos.");
       } else {
         showNotification("success", "¡Mascota guardada con éxito!");
-        // Redirigir después de mostrar la notificación
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
+
+        // Recargar las mascotas para actualizar la lista
+        await loadAllPets();
+
+        // Si era una mascota nueva, actualizar el índice actual
+        if (currentPetIndex >= userPets.length) {
+          setCurrentPetIndex(userPets.length);
+        }
       }
     } catch (error) {
       console.error("Error en el proceso de guardado:", error);
@@ -177,7 +293,7 @@ const Customise: React.FC = () => {
   return (
     <div className="customise-page">
       <div className="BackBt-CP">
-      <BackButton/>
+        <BackButton />
       </div>
       <ThemeToggle />
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
@@ -207,11 +323,64 @@ const Customise: React.FC = () => {
         ))}
       </div>
 
-      
-
       <main className="dashboard">
         <div className="customise-container">
-          <h1>Personaliza tu mascota</h1>
+          <div className="pet-navigation">
+            <button
+              className="pet-nav-btn"
+              onClick={goToPreviousPet}
+              disabled={currentPetIndex === 0}
+            >
+              <FaArrowLeft />
+            </button>
+
+            <h1>
+              {currentPetIndex < userPets.length
+                ? `Personaliza tu mascota ${currentPetIndex + 1}/${Math.min(
+                    userPets.length + (userPets.length < 3 ? 1 : 0),
+                    3
+                  )}`
+                : `Añadir nueva mascota ${userPets.length + 1}/3`}
+            </h1>
+
+            <button
+              className="pet-nav-btn"
+              onClick={goToNextPet}
+              disabled={
+                (currentPetIndex === userPets.length && userPets.length >= 3) ||
+                (currentPetIndex === userPets.length - 1 &&
+                  userPets.length === 3)
+              }
+            >
+              <FaArrowRight />
+            </button>
+          </div>
+
+          <div className="pet-slot-indicators">
+            {[
+              ...Array(
+                Math.min(3, userPets.length + (userPets.length < 3 ? 1 : 0))
+              ),
+            ].map((_, index) => (
+              <div
+                key={index}
+                className={`pet-slot ${
+                  currentPetIndex === index ? "active" : ""
+                }`}
+                onClick={() => {
+                  if (index < userPets.length) {
+                    setCurrentPetIndex(index);
+                    loadPetData(userPets[index]);
+                  } else if (index === userPets.length) {
+                    setCurrentPetIndex(index);
+                    clearPetForm();
+                  }
+                }}
+              >
+                {index < userPets.length ? <FaPaw /> : <FaPlus />}
+              </div>
+            ))}
+          </div>
 
           {/* Imagen de la mascota */}
           <div className="pet-photo-wrapper">
@@ -288,12 +457,59 @@ const Customise: React.FC = () => {
               />
             </div>
 
-            <button type="submit" className="save-button" disabled={loading}>
-              {loading ? "Guardando..." : "Guardar cambios"}
-            </button>
+            <div className="form-actions">
+              <button
+                type="submit"
+                className="save-button-pet"
+                disabled={loading}
+              >
+                {loading ? "Guardando..." : "Guardar cambios"}
+              </button>
+
+              {currentPetIndex < userPets.length &&
+                userPets[currentPetIndex]?.id && (
+                  <button
+                    type="button"
+                    className="delete-pet-button"
+                    onClick={() => setShowDeleteModal(true)}
+                    disabled={loading}
+                  >
+                    <FaTrash /> Eliminar mascota
+                  </button>
+                )}
+            </div>
           </form>
         </div>
       </main>
+
+      {/* Modal de confirmación para eliminar mascota */}
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="delete-modal">
+            <h3>¿Estás seguro que quieres eliminar esta mascota?</h3>
+            <p>
+              Esta acción no se puede deshacer y se eliminarán todos los datos
+              de la mascota.
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="cancel-button"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+              >
+                Cancelar
+              </button>
+              <button
+                className="confirm-delete-button"
+                onClick={handleDeletePet}
+                disabled={deleting}
+              >
+                {deleting ? "Eliminando..." : "Sí, eliminar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
