@@ -9,7 +9,19 @@ import {
   PetData,
 } from "../services/pet-service";
 
-const HighlightCard: React.FC = () => {
+interface MyPetCardProps {
+  imageUrl: string;
+  name: string;
+  type: string;
+  breed: string;
+}
+
+const MyPetCard: React.FC<MyPetCardProps> = ({
+  imageUrl,
+  name,
+  type,
+  breed,
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [pets, setPets] = useState<PetData[]>([]);
   const [currentPetIndex, setCurrentPetIndex] = useState(0);
@@ -25,16 +37,57 @@ const HighlightCard: React.FC = () => {
       if (!user) return;
 
       const userId = await getLocalUserId(user.email!);
-      if (!userId) return;
+      if (!userId) {
+        // Si no hay usuario local, usar los props pasados
+        setPets([
+          {
+            id: "default",
+            image_pet: imageUrl,
+            pet_name: name,
+            pet_type: type,
+            pet_breed: breed,
+            pet_age: 0, // Default age
+            user_id: "default",
+          },
+        ]);
+        return;
+      }
 
       const userPets = await getAllPetsByUserId(userId);
-      setPets(userPets);
+      if (userPets.length === 0) {
+        // Si no hay mascotas, usar los props pasados
+        setPets([
+          {
+            id: "default",
+            image_pet: imageUrl,
+            pet_name: name,
+            pet_type: type,
+            pet_breed: breed,
+            pet_age: 0, // Default age
+            user_id: userId,
+          },
+        ]);
+      } else {
+        setPets(userPets);
+      }
     } catch (error) {
       console.error("Error cargando mascotas:", error);
+      // En caso de error, usar los props pasados
+      setPets([
+        {
+          id: "default",
+          image_pet: imageUrl,
+          pet_name: name,
+          pet_type: type,
+          pet_breed: breed,
+          pet_age: 0, // Default age
+          user_id: "error",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [imageUrl, name, type, breed]);
 
   // Navegación con transición de paneo horizontal
   const changePet = useCallback(
@@ -107,7 +160,16 @@ const HighlightCard: React.FC = () => {
     );
   }
 
-  const currentPet = pets[currentPetIndex] || {};
+  const currentPet = pets[currentPetIndex] || {
+    id: "default",
+    image_pet: imageUrl,
+    pet_name: name,
+    pet_type: type,
+    pet_breed: breed,
+    pet_age: 0, // Default age
+    user_id: "default",
+  };
+
   const { image_pet, pet_name, pet_type, pet_breed, id } = currentPet;
 
   return (
@@ -175,4 +237,4 @@ const HighlightCard: React.FC = () => {
   );
 };
 
-export default HighlightCard;
+export default MyPetCard;
