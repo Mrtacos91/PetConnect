@@ -18,7 +18,7 @@ body {
 :root {
   --bg-default: white;
   --card-background: #ffffff;
-  --text-primary: #333333;
+  --text-primary: #000;
   --text-bottomnav: #ffffff;
   --text-secondary: #555555;
   --border-color: #927e4d;
@@ -33,25 +33,27 @@ body {
   --accent-color: black;
   --accent-before: #0c0c0c91;
   --pet-slot: #b8860b;
+  --bottom-bg: #000;
 }
 
 /* Variables para modo oscuro */
 .dark-mode {
-  --bg-default: #1e1e2e;
-  --card-background: #1e1e2e;
+  --bg-default: #1a1a1a;
+  --card-background: #1a1a1a;
   --text-primary: #eeeeee;
   --text-bottomnav: #eeeeee;
   --text-secondary: #cccccc;
   --border-color: #927e4d;
   --shadow-default: rgb(0, 0, 0.01);
   --shadow-hover: rgba(0, 0, 0, 0.6);
-  --skeleton-gradient-start: #363241;
-  --skeleton-gradient-mid: #464053;
+  --skeleton-gradient-start: #333131c7;
+  --skeleton-gradient-mid: #6360606b;
   --circle-animation: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
   --button-bg: #4e2c70;
   --logo: url("/images/Logo.png");
   --accent-color: white;
   --accent-before: #d0d0d0;
+  --bottom-bg: #000;
 }
 
 :root {
@@ -61,7 +63,7 @@ body {
 }
 
 body.dark-mode {
-  --background-color: #1e1e2e;
+  --background-color: #1a1a1a;
   --text-color: #f8f8f2;
   --primary-color: #bb86fc;
 }

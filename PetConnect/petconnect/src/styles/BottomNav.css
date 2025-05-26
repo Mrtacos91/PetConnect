@@ -1,146 +1,169 @@
-.bottom-nav {
+.BottomNav-container {
+  --main-color: #ff6ec4;
+  --secondary-color: #7873f5;
+  --total-options: 4;
+
+  display: flex;
   position: fixed;
   bottom: 20px;
   left: 50%;
-  text-align: center;
   transform: translateX(-50%);
+  background: var(--card-background);
+  border-radius: 3rem;
+  padding: 0.5rem 0.3rem;
+  box-shadow: 0 0 20px var(--bottom-bg);
   width: 90%;
   max-width: 400px;
-  background: var(--card-background); /* Fondo dinámico */
-  border-radius: 20px;
-  padding: 10px 0;
-  display: flex;
-  box-shadow: 0px 5px 15px rgb(65, 66, 66); /* Sombra dinámica */
-  justify-content: space-around;
-  align-items: center;
-  overflow: hidden;
   z-index: 1000;
-  backdrop-filter: none;
+  justify-content: center;
 }
 
-.bottom-nav ul {
+.BottomNav-container ul {
   list-style: none;
   display: flex;
   width: 100%;
-  justify-content: space-around;
+  justify-content: space-between;
   padding: 0;
   margin: 0;
   position: relative;
+  align-items: center;
+  overflow: visible;
 }
 
-/* Eliminamos sombras */
-li {
-  box-shadow: none !important;
-}
-
-.bottom-nav li {
+.BottomNav-container li {
+  position: relative;
+  padding: 0.5rem 0.8rem;
+  border-radius: 3rem;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary);
+  transition: all 0.3s ease-in-out;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 14px;
-  color: var(--text-primary); /* Color dinámico del texto */
-  cursor: pointer;
+  justify-content: center;
+  text-align: center;
   box-shadow: none !important;
-  transition: transform 0.2s ease-in-out, color 0.3s;
-  width: 25%; /* Se ajusta automáticamente */
-  z-index: 900;
+  width: 25%;
 }
 
-.bottom-nav li:hover {
-  transform: scale(1.1);
+.BottomNav-container li:hover {
+  color: var(--main-color);
+  transform: translateY(-2px);
 }
 
-.bottom-nav li svg {
+.BottomNav-container li svg {
   font-size: 20px;
-  color: var(--text-primary); /* Color dinámico del icono */
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  margin-bottom: 4px;
+  pointer-events: none;
 }
 
-/* 🔵 Indicador animado */
-.indicator {
-  position: absolute;
-  bottom: -10px;
-  width: 70px;
-  height: 70px;
-  background: var(--button-bg);
-  border-radius: 50%;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Transición más suave con efecto bounce */
-  box-shadow: 0px 5px 15px rgba(65, 66, 66, 0.5); /* Sombra más sutil */
-  z-index: 0;
-  left: 12px;
-  top: 0px; /* Posición inicial, será sobrescrita por JS */
-  transform-origin: center;
-}
-
-/* 🌀 Curva inferior */
-.indicator::before {
-  content: "";
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 15px;
-  background: var(--bg-default); /* Se adapta al fondo */
-  border-radius: 50%;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* ✨ Efecto del icono activo */
-.bottom-nav .list.active {
-  color: var(--text-bottomnav); /* Color dinámico del activo */
+.BottomNav-container .list.active {
+  color: var(--main-color);
   font-weight: bold;
-  transform: translateY(-5px); /* Ligero movimiento hacia arriba */
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: translateY(-3px);
 }
 
-.bottom-nav .list.active svg {
-  color: var(--text-bottomnav);
+.BottomNav-container .list.active svg {
+  color: var(--main-color);
   transform: scale(1.2);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s ease-in-out;
+  filter: drop-shadow(0 0 3px rgba(255, 110, 196, 0.5));
 }
 
-/* 📌 Responsividad */
+.BottomNav-indicator {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  height: 3px;
+  width: 14%;
+  background: linear-gradient(
+    to right,
+    var(--main-color),
+    var(--secondary-color)
+  );
+  border-radius: 4px;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1;
+  will-change: transform;
+}
+
+/* Responsive styles */
 @media (max-width: 480px) {
-  .bottom-nav {
+  .BottomNav-container {
     width: 95%;
     bottom: 15px;
-    padding: 8px 0;
+    padding: 0.4rem;
   }
 
-  .bottom-nav li {
+  .BottomNav-container li {
     font-size: 12px;
+    padding: 0.5rem 1rem;
   }
 
-  .bottom-nav li svg {
+  .BottomNav-container li svg {
     font-size: 18px;
-  }
-
-  .indicator {
-    width: 60px;
-    height: 60px;
-  }
-
-  .indicator::before {
-    width: 50px;
-    height: 12px;
   }
 }
 
-/* Para pantallas muy pequeñas */
+/* For very small screens */
 @media (max-width: 320px) {
-  .bottom-nav {
+  .BottomNav-container {
     width: 100%;
     border-radius: 15px 15px 0 0;
     bottom: 0;
+    padding: 0.3rem;
   }
 
-  .bottom-nav li span {
+  .BottomNav-container li {
     font-size: 10px;
+    padding: 0.4rem 0.8rem;
   }
 
-  .indicator {
-    width: 50px;
-    height: 50px;
+  .BottomNav-container li span {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .BottomNav-container li svg {
+    font-size: 16px;
+  }
+}
+
+/* For large screens */
+@media (min-width: 768px) {
+  .BottomNav-container {
+    max-width: 450px;
+    padding: 0.6rem;
+  }
+
+  .BottomNav-container li {
+    font-size: 15px;
+    padding: 0.7rem 1.7rem;
+  }
+
+  .BottomNav-container li svg {
+    font-size: 22px;
+  }
+}
+
+/* For extra large screens */
+@media (min-width: 1200px) {
+  .BottomNav-container {
+    max-width: 500px;
+    padding: 0.7rem;
+  }
+
+  .BottomNav-container li {
+    font-size: 16px;
+    padding: 0.8rem 2rem;
+  }
+
+  .BottomNav-container li svg {
+    font-size: 24px;
   }
 }

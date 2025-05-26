@@ -79,7 +79,6 @@ const Paseos: React.FC = () => {
   const [, setNotificationsEnabled] = useState<boolean>(false);
   const [userId, setUserId] = useState<number | null>(null);
 
-  // Función para mostrar notificación visual
   const showNotification = useCallback(
     (type: "success" | "error" | "warning", message: string) => {
       const id =
@@ -189,7 +188,7 @@ const Paseos: React.FC = () => {
           },
         ])
         .select();
-      
+
       if (error) throw error;
 
       showNotification("success", "Alarma guardada correctamente");
@@ -279,8 +278,8 @@ const Paseos: React.FC = () => {
           );
         } else {
           swRegistration = await navigator.serviceWorker.register(
-          "/firebase-messaging-sw.js"
-        );
+            "/firebase-messaging-sw.js"
+          );
         }
 
         console.log("Service Worker registrado con éxito:", swRegistration);
@@ -331,7 +330,10 @@ const Paseos: React.FC = () => {
         const token = await getOrCreateFCMToken(VAPID_KEY);
 
         if (token) {
-          console.log("Token FCM obtenido correctamente:", token.substring(0, 10) + "...");
+          console.log(
+            "Token FCM obtenido correctamente:",
+            token.substring(0, 10) + "..."
+          );
           fcmToken = token;
           setNotificationsEnabled(true);
           return true;
@@ -441,7 +443,7 @@ const Paseos: React.FC = () => {
         alarmId: alarm.id,
         petName: alarm.name,
         clickAction: "/paseos",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       console.log(`Enviando notificación FCM para ${alarm.name}...`);
@@ -457,7 +459,7 @@ const Paseos: React.FC = () => {
           token: fcmToken.substring(0, 10) + "...",
           title,
           body,
-          data
+          data,
         });
       }
 
@@ -479,81 +481,86 @@ const Paseos: React.FC = () => {
   };
 
   // Función para enviar notificación push
-  const sendPushNotification = useCallback(async (alarm: PaseoAlarm) => {
-    if (!userId) {
-      console.warn("No hay usuario autenticado para enviar notificaciones");
-      return;
-    }
-
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (Notification.permission !== "granted") {
-      console.warn("No tenemos permiso para enviar notificaciones push");
-      if (isMobile) {
-        showNotification(
-          "warning",
-          "Las notificaciones están desactivadas. Actívalas en la configuración de tu navegador"
-        );
+  const sendPushNotification = useCallback(
+    async (alarm: PaseoAlarm) => {
+      if (!userId) {
+        console.warn("No hay usuario autenticado para enviar notificaciones");
+        return;
       }
-      return;
-    }
 
-    const title = `¡Hora de pasear a ${alarm.name}!`;
-    const body = `Es momento del paseo programado para ${alarm.name}`;
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    try {
-      // Obtener el registro del Service Worker
-      const registration = await navigator.serviceWorker.ready;
-      
-      // Opciones básicas de notificación
-      const notificationOptions = {
-        body,
-        icon: "/images/Logo_gradient.png",
-        badge: "/images/Logo_black.png",
-        tag: `paseo-${alarm.id}-${Date.now()}`, // Añadir timestamp para evitar duplicados
-        silent: false,
-        vibrate: isMobile ? [200, 100, 200] : undefined,
-        requireInteraction: true,
-        data: {
-          url: '/paseos', // URL a la que navegar cuando se hace clic en la notificación
-          alarmId: alarm.id,
-          timestamp: Date.now().toString() // Añadir timestamp para identificar cada notificación
+      if (Notification.permission !== "granted") {
+        console.warn("No tenemos permiso para enviar notificaciones push");
+        if (isMobile) {
+          showNotification(
+            "warning",
+            "Las notificaciones están desactivadas. Actívalas en la configuración de tu navegador"
+          );
         }
-      };
-
-      // Mostrar la notificación a través del Service Worker
-      await registration.showNotification(title, notificationOptions);
-
-      // Si tenemos FCM token, intentar enviar notificación push
-      if (fcmToken) {
-        await sendFirebaseCloudMessage(title, body, alarm);
-      } else {
-        console.warn("No hay token FCM disponible para enviar notificación push");
+        return;
       }
 
-      console.log(`Notificación enviada para: ${alarm.name}`);
+      const title = `¡Hora de pasear a ${alarm.name}!`;
+      const body = `Es momento del paseo programado para ${alarm.name}`;
 
-      // Actualizar la fecha de última notificación
-      const now = dayjs().tz(TIMEZONE).format();
+      try {
+        // Obtener el registro del Service Worker
+        const registration = await navigator.serviceWorker.ready;
 
-      // Actualizar estado local
-      setAlarms((prev) =>
-        prev.map((a) =>
-          a.id === alarm.id ? { ...a, lastNotification: now } : a
-        )
-      );
+        // Opciones básicas de notificación
+        const notificationOptions = {
+          body,
+          icon: "/images/Logo_gradient.png",
+          badge: "/images/Logo_black.png",
+          tag: `paseo-${alarm.id}-${Date.now()}`, // Añadir timestamp para evitar duplicados
+          silent: false,
+          vibrate: isMobile ? [200, 100, 200] : undefined,
+          requireInteraction: true,
+          data: {
+            url: "/paseos", // URL a la que navegar cuando se hace clic en la notificación
+            alarmId: alarm.id,
+            timestamp: Date.now().toString(), // Añadir timestamp para identificar cada notificación
+          },
+        };
 
-      console.log(`Notificación enviada para ${alarm.name} a las ${now}`);
-    } catch (error) {
-      console.error("Error al enviar notificación:", error);
-      if (isMobile) {
-        showNotification(
-          "error",
-          "Error al enviar la notificación. Intenta recargar la página"
+        // Mostrar la notificación a través del Service Worker
+        await registration.showNotification(title, notificationOptions);
+
+        // Si tenemos FCM token, intentar enviar notificación push
+        if (fcmToken) {
+          await sendFirebaseCloudMessage(title, body, alarm);
+        } else {
+          console.warn(
+            "No hay token FCM disponible para enviar notificación push"
+          );
+        }
+
+        console.log(`Notificación enviada para: ${alarm.name}`);
+
+        // Actualizar la fecha de última notificación
+        const now = dayjs().tz(TIMEZONE).format();
+
+        // Actualizar estado local
+        setAlarms((prev) =>
+          prev.map((a) =>
+            a.id === alarm.id ? { ...a, lastNotification: now } : a
+          )
         );
+
+        console.log(`Notificación enviada para ${alarm.name} a las ${now}`);
+      } catch (error) {
+        console.error("Error al enviar notificación:", error);
+        if (isMobile) {
+          showNotification(
+            "error",
+            "Error al enviar la notificación. Intenta recargar la página"
+          );
+        }
       }
-    }
-  }, [userId, showNotification, fcmToken]);
+    },
+    [userId, showNotification, fcmToken]
+  );
 
   // Función para verificar las alarmas con mejor precisión
   const checkAlarms = useCallback(() => {
@@ -570,11 +577,9 @@ const Paseos: React.FC = () => {
     const todayDate = now.format("YYYY-MM-DD");
 
     // Solo verificar si hay alarmas activas
-    const activeAlarms = alarms.filter(alarm => 
-      alarm.active && 
-      alarm.time && 
-      alarm.days.length > 0 && 
-      alarm.name
+    const activeAlarms = alarms.filter(
+      (alarm) =>
+        alarm.active && alarm.time && alarm.days.length > 0 && alarm.name
     );
 
     if (activeAlarms.length === 0) {
@@ -582,7 +587,9 @@ const Paseos: React.FC = () => {
     }
 
     console.log(
-      `Verificando ${activeAlarms.length} alarmas activas: ${now.format("HH:mm:ss")} - Día: ${currentDay}`
+      `Verificando ${activeAlarms.length} alarmas activas: ${now.format(
+        "HH:mm:ss"
+      )} - Día: ${currentDay}`
     );
 
     activeAlarms.forEach((alarm) => {
@@ -618,7 +625,7 @@ const Paseos: React.FC = () => {
       console.log(
         `¡Es hora de notificar! ${alarm.name} - ${alarmHour}:${alarmMinute}`
       );
-      
+
       // Enviar notificación una sola vez
       sendPushNotification(alarm);
     });
@@ -627,22 +634,22 @@ const Paseos: React.FC = () => {
   // Mejorar el intervalo de verificación de alarmas
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
-    let lastCheckDate = '';
+    let lastCheckDate = "";
 
     const startChecking = () => {
       console.log("Iniciando verificación de alarmas...");
-      
+
       const now = dayjs().tz(TIMEZONE);
       const currentDate = now.format("YYYY-MM-DD");
-      
+
       // Solo verificar si es un nuevo día o si es la primera vez
       if (lastCheckDate !== currentDate) {
         lastCheckDate = currentDate;
-        
+
         // Verificar inmediatamente al iniciar
         if (alarms.length > 0 && !showSkeleton && userId) {
-      checkAlarms();
-    }
+          checkAlarms();
+        }
       }
 
       // Calcular el próximo minuto exacto para sincronizar
@@ -650,10 +657,12 @@ const Paseos: React.FC = () => {
 
       // Esperar hasta el próximo minuto exacto antes de iniciar el intervalo
       setTimeout(() => {
-      checkAlarms();
+        checkAlarms();
         // Verificar cada minuto
         intervalId = setInterval(checkAlarms, 60000);
-        console.log("Intervalo de verificación de alarmas iniciado (cada minuto)");
+        console.log(
+          "Intervalo de verificación de alarmas iniciado (cada minuto)"
+        );
       }, msUntilNextMinute);
     };
 
@@ -701,34 +710,34 @@ const Paseos: React.FC = () => {
                   days: updatedAlarm.days,
                   time: dayjs(updatedAlarm.hour, "HH:mm"),
                   active: updatedAlarm.active,
-                  lastNotification: undefined // Resetear la última notificación
+                  lastNotification: undefined, // Resetear la última notificación
                 }
               : a
           )
-    );
+        );
 
         // Mostrar notificación de éxito
-    showNotification(
-      "success",
-      `Paseo "${alarm.name}" programado para ${alarm.days.join(
-        ", "
-      )} a las ${alarm.time.format("h:mm A")}`
-    );
+        showNotification(
+          "success",
+          `Paseo "${alarm.name}" programado para ${alarm.days.join(
+            ", "
+          )} a las ${alarm.time.format("h:mm A")}`
+        );
 
         // Configurar notificación push si está habilitado
-    if (Notification.permission === "granted") {
+        if (Notification.permission === "granted") {
           const registration = await navigator.serviceWorker.ready;
           await registration.showNotification("Paseo Programado", {
-        body: `Paseo "${alarm.name}" programado para ${alarm.days.join(
-          ", "
-        )} a las ${alarm.time.format("HH:mm")}`,
-        icon: "/images/Logo_gradient.png",
+            body: `Paseo "${alarm.name}" programado para ${alarm.days.join(
+              ", "
+            )} a las ${alarm.time.format("HH:mm")}`,
+            icon: "/images/Logo_gradient.png",
             tag: `programado-${alarm.id}-${Date.now()}`,
             data: {
-              url: '/paseos',
+              url: "/paseos",
               alarmId: alarm.id,
-              isProgrammedNotification: true
-            }
+              isProgrammedNotification: true,
+            },
           });
         }
 
@@ -736,8 +745,11 @@ const Paseos: React.FC = () => {
         checkAlarms();
       }
     } catch (error) {
-      console.error('Error al programar el paseo:', error);
-      showNotification("error", "Error al programar el paseo. Por favor, inténtalo de nuevo.");
+      console.error("Error al programar el paseo:", error);
+      showNotification(
+        "error",
+        "Error al programar el paseo. Por favor, inténtalo de nuevo."
+      );
     }
   };
 
