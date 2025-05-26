@@ -82,7 +82,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
           // Obtener los datos de ubicación más recientes para ese dispositivo
           const { data: locationData, error: locationError } = await supabase
             .from("LocationGps")
-            .select("Latitude, Longitude, Time, Date")
+            .select("Latitude, Longitude, Time, Date, safe_zone, house_initial")
             .eq("device_id", userData.device)
             .order("Date", { ascending: false })
             .order("Time", { ascending: false })
@@ -120,6 +120,71 @@ const LocationMap: React.FC<LocationMapProps> = ({
                 lat,
                 lng,
               });
+            }
+
+            // Actualizar el radio de la zona segura si existe en la base de datos
+            if (locationData.safe_zone) {
+              console.log(
+                "Zona segura cargada desde la base de datos:",
+                locationData.safe_zone
+              );
+              setSafeZoneRadius(locationData.safe_zone);
+            }
+
+            // Cargar las coordenadas de la casa desde house_initial si existen
+            if (locationData.house_initial) {
+              try {
+                let houseLat, houseLng;
+
+                // Verificar si house_initial ya es un array o es una cadena
+                if (Array.isArray(locationData.house_initial)) {
+                  // Si ya es un array, usamos directamente los valores
+                  [houseLat, houseLng] = locationData.house_initial.map(Number);
+                  console.log(
+                    "Coordenadas recibidas como array:",
+                    houseLat,
+                    houseLng
+                  );
+                } else if (typeof locationData.house_initial === "string") {
+                  // Si es una cadena, procesamos el formato PostgreSQL
+                  const coordsString = locationData.house_initial.replace(
+                    /[{}]/g,
+                    ""
+                  );
+                  [houseLat, houseLng] = coordsString.split(",").map(Number);
+                  console.log(
+                    "Coordenadas recibidas como string:",
+                    houseLat,
+                    houseLng
+                  );
+                } else {
+                  // Si no es ni array ni string, loguear el tipo para depuración
+                  console.error(
+                    "Tipo inesperado para house_initial:",
+                    typeof locationData.house_initial
+                  );
+                  console.log("Valor recibido:", locationData.house_initial);
+                  throw new Error("Formato de coordenadas no reconocido");
+                }
+
+                // Verificar que los valores sean válidos
+                if (!isNaN(houseLat) && !isNaN(houseLng)) {
+                  console.log(
+                    "Ubicación de casa cargada desde la base de datos:",
+                    houseLat,
+                    houseLng
+                  );
+                  setHouseLocation({
+                    lat: houseLat,
+                    lng: houseLng,
+                  });
+                }
+              } catch (error) {
+                console.error(
+                  "Error al procesar las coordenadas de la casa:",
+                  error
+                );
+              }
             }
 
             setLastUpdated(`${locationData.Date} ${locationData.Time}`);
@@ -469,13 +534,120 @@ const LocationMap: React.FC<LocationMapProps> = ({
     setSafeZoneRadius(Number(event.target.value));
   };
 
-  const handleEditModeToggle = () => {
+  const handleEditModeToggle = async () => {
     if (isEditMode) {
-      showNotification(
-        "success",
-        "¡Configuración de zona segura guardada correctamente!"
-      );
+      try {
+        // Obtener el usuario actual
+        const { data: sessionData } = await supabase.auth.getUser();
+        if (!sessionData?.user?.email) {
+          console.error("Usuario no autenticado");
+          showNotification("error", "Error al guardar: Usuario no autenticado");
+          return;
+        }
+
+        // Obtener el usuario local con su device_id
+        const { data: userData, error: userError } = await supabase
+          .from("Users")
+          .select("device")
+          .eq("email", sessionData.user.email)
+          .single();
+
+        if (userError || !userData) {
+          console.error("Error obteniendo datos del usuario:", userError);
+          showNotification(
+            "error",
+            "Error al guardar: No se pudo obtener información del usuario"
+          );
+          return;
+        }
+
+        // Verificar si el usuario tiene un dispositivo asociado
+        if (!userData.device) {
+          console.error("Usuario sin dispositivo GPS asociado");
+          showNotification(
+            "error",
+            "Error al guardar: No hay dispositivo GPS asociado"
+          );
+          return;
+        }
+
+        // Buscar si ya existe un registro para este dispositivo
+        const { data: existingData, error: existingError } = await supabase
+          .from("LocationGps")
+          .select("device_id")
+          .eq("device_id", userData.device)
+          .limit(1);
+
+        if (existingError) {
+          console.error(
+            "Error al verificar registros existentes:",
+            existingError
+          );
+          showNotification(
+            "error",
+            "Error al guardar: No se pudo verificar registros existentes"
+          );
+          return;
+        }
+
+        let updateResult;
+
+        if (existingData && existingData.length > 0) {
+          // Actualizar el registro existente
+          // Guardar el radio de la zona segura y las coordenadas de la casa
+          // Formato para house_initial como array PostgreSQL: "{latitud,longitud}"
+          const houseCoordinates = `{${houseLocation.lat},${houseLocation.lng}}`;
+
+          updateResult = await supabase
+            .from("LocationGps")
+            .update({
+              safe_zone: safeZoneRadius,
+              house_initial: houseCoordinates,
+            })
+            .eq("device_id", userData.device);
+        } else {
+          // Si no existe un registro, crear uno nuevo
+          // Esto es poco probable que ocurra, pero lo manejamos por si acaso
+          const now = new Date();
+          const dateStr = now.toISOString().split("T")[0]; // YYYY-MM-DD
+          const timeStr = now.toTimeString().split(" ")[0]; // HH:MM:SS
+
+          // Formato para house_initial como array PostgreSQL: "{latitud,longitud}"
+          const houseCoordinates = `{${houseLocation.lat},${houseLocation.lng}}`;
+
+          updateResult = await supabase.from("LocationGps").insert({
+            device_id: userData.device,
+            safe_zone: safeZoneRadius,
+            Latitude: petLocation.lat,
+            Longitude: petLocation.lng,
+            Date: dateStr,
+            Time: timeStr,
+            house_initial: houseCoordinates,
+          });
+        }
+
+        if (updateResult.error) {
+          console.error("Error al guardar la zona segura:", updateResult.error);
+          showNotification(
+            "error",
+            "Error al guardar la zona segura en la base de datos"
+          );
+        } else {
+          console.log("Zona segura guardada correctamente:", safeZoneRadius);
+          showNotification(
+            "success",
+            "¡Configuración de zona segura guardada correctamente!"
+          );
+        }
+      } catch (error) {
+        console.error("Error al guardar la zona segura:", error);
+        showNotification(
+          "error",
+          "Error al guardar la zona segura en la base de datos"
+        );
+      }
     }
+
     setIsEditMode(!isEditMode);
     if (!isEditMode) {
       setPetLocation({ lat: latitude, lng: longitude });

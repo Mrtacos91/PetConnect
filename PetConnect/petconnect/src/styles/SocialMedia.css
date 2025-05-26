@@ -1,75 +1,48 @@
-/* From Uiverse.io by javierBarroso */
 .social-login-icons {
-  bottom: 80px;
   display: flex;
-  position: fixed;
   align-items: center;
-  gap: 10px;
-  padding: 20px;
-  -webkit-box-reflect: below 5px linear-gradient(transparent, #00000055);
 }
+
 .social-login-icons svg {
-  width: 40px;
+  width: 24px;
+  height: 24px;
+  fill: white;
 }
 
 .social-icon-1,
-.social-icon-1-1,
 .social-icon-2,
-.social-icon-2-2,
 .social-icon-3,
-.social-icon-3-3,
-.social-icon-4,
-.social-icon-4-4 {
+.social-icon-4 {
   width: 50px;
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50px;
-  margin: 15px 0 0px 0;
   cursor: pointer;
 }
 
-.icon {
-  fill: #ffffff;
+.socialcontainer {
+  height: 50px;
+  overflow: hidden;
+  margin: 0 5px;
+  transition: transform 0.3s ease;
+  background-color: transparent;
 }
 
-.socialcontainer {
-  height: 80px;
-  overflow: hidden;
-}
 .social-icon-1 {
   transition-duration: 0.4s;
+  border-radius: 50%;
   background-color: rgb(0, 0, 0);
-  transition-timing-function: cubic-bezier(0.46, -0.78, 0.5, 1.56);
 }
-.social-icon-1 svg,
-.social-icon-2 svg,
-.social-icon-3 svg,
-.social-icon-4 svg {
-  opacity: 0;
-  transition-duration: 0.5s;
-  transition-delay: 0.2s;
+
+.socialcontainer:hover {
+  transform: translateY(-5px);
+  background-color: var(--card-background);
 }
-.social-icon-1-1 {
-  transition-duration: 0.4s;
-  background-color: rgb(0, 0, 0, 0);
-}
-.socialcontainer:hover .social-icon-1 {
-  transform: translateY(-70px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.socialcontainer:hover .social-icon-1 svg,
-.socialcontainer:hover .social-icon-2 svg,
-.socialcontainer:hover .social-icon-3 svg,
-.socialcontainer:hover .social-icon-4 svg {
-  opacity: 1;
-}
+
 .social-icon-2 {
   transition-duration: 0.4s;
-  transition-timing-function: cubic-bezier(0.46, -0.78, 0.5, 1.56);
+  border-radius: 50%;
   background: linear-gradient(
     72.44deg,
     #ff7a00 11.92%,
@@ -77,28 +50,16 @@
     #d300c5 85.69%
   );
 }
-.socialcontainer:hover .social-icon-2 {
-  transform: translateY(-70px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 .social-icon-3 {
   transition-duration: 0.4s;
-  transition-timing-function: cubic-bezier(0.46, -0.78, 0.5, 1.56);
+  border-radius: 50%;
   background: #316ff6;
 }
 
-.socialcontainer:hover .social-icon-3 {
-  transform: translateY(-70px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .social-icon-4 {
   transition-duration: 0.4s;
-  transition-timing-function: cubic-bezier(0.46, -0.78, 0.5, 1.56);
-
+  border-radius: 50%;
   background: linear-gradient(
     180deg,
     rgba(129, 34, 144, 1) 0%,
@@ -106,26 +67,13 @@
   );
 }
 
-.socialcontainer:hover .social-icon-4 {
-  transform: translateY(-70px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Container styling */
 .social-media-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
   padding: 20px;
-  background-color: var(--card-background, #f5f5f5);
+  background-color: transparent;
   border-radius: 12px;
   margin: 20px 0;
-}
-
-/* Dark mode adjustments */
-.dark-theme .icon svg {
-  fill: #fff;
 }
