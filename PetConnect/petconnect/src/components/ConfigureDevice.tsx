@@ -216,9 +216,8 @@ const ConfigureDevice: React.FC<ConfigureDeviceProps> = ({
             <div className="confdevice-divider">
               <div className="confdevice-option-container">
                 <div
-                  className={`confdevice-option ${
-                    mode === "scan" ? "active" : ""
-                  }`}
+                  className={`confdevice-option ${mode === "scan" ? "active" : ""
+                    }`}
                   onClick={() => {
                     setMode("scan");
                     setNotification({ type: null, message: "" });
@@ -251,9 +250,8 @@ const ConfigureDevice: React.FC<ConfigureDeviceProps> = ({
 
               <div className="confdevice-option-container">
                 <div
-                  className={`confdevice-option ${
-                    mode === "code" ? "active" : ""
-                  }`}
+                  className={`confdevice-option ${mode === "code" ? "active" : ""
+                    }`}
                   onClick={() => {
                     setMode("code");
                     setNotification({ type: null, message: "" });
