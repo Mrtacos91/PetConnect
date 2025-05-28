@@ -753,7 +753,10 @@ const LocationMap: React.FC<LocationMapProps> = ({
           <MapContainer
             center={[petLocation.lat, petLocation.lng]}
             zoom={15}
-            scrollWheelZoom={false}
+            scrollWheelZoom={true}
+            tapHold={true}
+            touchZoom={true}
+            zoomControl={true}
             className="map"
             ref={mapRef}
           >

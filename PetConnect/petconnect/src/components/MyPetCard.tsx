@@ -22,6 +22,8 @@ const MyPetCard: React.FC<MyPetCardProps> = ({
   type,
   breed,
 }) => {
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [pets, setPets] = useState<PetData[]>([]);
   const [currentPetIndex, setCurrentPetIndex] = useState(0);
@@ -145,6 +147,67 @@ const MyPetCard: React.FC<MyPetCardProps> = ({
     return () => clearInterval(interval);
   }, [pets.length, currentPetIndex, changePet]);
 
+  // Manejadores para el swipe en móviles
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (pets.length <= 1 || isTransitioning) return;
+      setTouchStartX(e.touches[0].clientX);
+      setTouchStartY(e.touches[0].clientY);
+    },
+    [pets.length, isTransitioning]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (
+        touchStartX === null ||
+        touchStartY === null ||
+        pets.length <= 1 ||
+        isTransitioning
+      ) {
+        setTouchStartX(null);
+        setTouchStartY(null);
+        return;
+      }
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      const minSwipeDistance = 50; // Distancia mínima para un swipe
+
+      // Priorizar swipe horizontal sobre scroll vertical
+      if (
+        Math.abs(deltaX) > minSwipeDistance &&
+        Math.abs(deltaX) > Math.abs(deltaY) * 1.5
+      ) {
+        if (deltaX > 0) {
+          // Swipe de izquierda a derecha -> Siguiente mascota (según solicitud del usuario)
+          const newIndex = (currentPetIndex + 1) % pets.length;
+          changePet(newIndex);
+        } else {
+          // Swipe de derecha a izquierda -> Mascota anterior
+          const newIndex = (currentPetIndex - 1 + pets.length) % pets.length;
+          changePet(newIndex);
+        }
+      }
+
+      // Resetear coordenadas
+      setTouchStartX(null);
+      setTouchStartY(null);
+    },
+    [
+      touchStartX,
+      touchStartY,
+      pets.length,
+      isTransitioning,
+      currentPetIndex,
+      changePet,
+    ]
+  );
+
   // Si no hay mascotas
   if (!isLoading && pets.length === 0) {
     return (
@@ -190,7 +253,11 @@ const MyPetCard: React.FC<MyPetCardProps> = ({
         </div>
       ) : (
         <div className="highlight-card-MyPet">
-          <div className="pet-carousel">
+          <div
+            className="pet-carousel"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className="pet-content pet-content-active" ref={petContentRef}>
               <button
                 className="edit-button-MyPet"
