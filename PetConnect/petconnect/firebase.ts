@@ -7,11 +7,7 @@ import {
   onMessage,
   isSupported,
 } from "firebase/messaging";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const VAPID_KEY =
   "BHcoQ51F4626heoEPCv6m2ofkWAbqOGxb-90DO_9ljj7A__8kC22n42GngzidG50oAv68IhHqPS_4iyMrVmWny0";
 export const firebaseConfig = {
@@ -77,15 +73,16 @@ export const sendPushNotificationToServer = async (
 ) => {
   try {
     // URL del servidor de notificaciones
-    const serverUrl = process.env.NODE_ENV === "production"
-      ? "https://petconnect-c839e.web.app/api/notifications/send"
-      : "http://localhost:5000/api/notifications/send";
+    const serverUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://petconnect-c839e.web.app/api/notifications/send"
+        : "http://localhost:5000/api/notifications/send";
 
     const response = await fetch(serverUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.REACT_APP_FIREBASE_SERVER_KEY}`,
+        Authorization: `Bearer ${process.env.REACT_APP_FIREBASE_SERVER_KEY}`,
       },
       body: JSON.stringify({
         token,
@@ -100,7 +97,11 @@ export const sendPushNotificationToServer = async (
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Error al enviar la solicitud: ${response.status} - ${errorData.message || 'Error desconocido'}`);
+      throw new Error(
+        `Error al enviar la solicitud: ${response.status} - ${
+          errorData.message || "Error desconocido"
+        }`
+      );
     }
 
     return await response.json();

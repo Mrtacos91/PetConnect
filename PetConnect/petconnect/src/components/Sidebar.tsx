@@ -89,7 +89,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
           </li>
         </ul>
       </nav>
-      <SocialMedia />
+      <div className="social-media-SB">
+        <SocialMedia />
+      </div>
     </div>
   );
 };

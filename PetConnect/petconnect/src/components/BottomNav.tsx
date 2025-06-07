@@ -1,4 +1,4 @@
-import React, {useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import "../styles/BottomNav.css";
 import { FaHome, FaComments, FaHeart } from "react-icons/fa";
 import { PiGps } from "react-icons/pi";
@@ -24,17 +24,33 @@ const BottomNav: React.FC<BottomNavProps> = ({ setActiveTab, currentTab }) => {
 
   // Actualizar la posición del indicador cuando cambia el currentTab
   useEffect(() => {
-    updateIndicatorPosition(getIndexFromTab(currentTab));
+    // Add a small delay to ensure the layout is fully rendered
+    const timer = setTimeout(() => {
+      updateIndicatorPosition(getIndexFromTab(currentTab));
+    }, 50);
+    return () => clearTimeout(timer);
   }, [currentTab]);
 
-  // También actualizar cuando cambia el tamaño de la ventana
+  // También actualizar cuando cambia el tamaño de la ventana o la orientación del dispositivo
   useEffect(() => {
     const handleResize = () => {
-      updateIndicatorPosition(getIndexFromTab(currentTab));
+      // Agregamos un pequeño retraso para asegurar que los cálculos de tamaño sean correctos
+      setTimeout(() => {
+        updateIndicatorPosition(getIndexFromTab(currentTab));
+      }, 100);
     };
 
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+
+    // También actualizamos cuando la página termina de cargar completamente
+    window.addEventListener("load", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+      window.removeEventListener("load", handleResize);
+    };
   }, [currentTab]);
 
   const updateIndicatorPosition = (index: number) => {
@@ -42,17 +58,26 @@ const BottomNav: React.FC<BottomNavProps> = ({ setActiveTab, currentTab }) => {
     const indicator = indicatorRef.current;
 
     if (activeItem && indicator) {
+      // Get current active tab's position and dimensions
       const itemRect = activeItem.getBoundingClientRect();
       const navRect = activeItem.parentElement?.getBoundingClientRect();
 
       if (navRect) {
-        const leftPosition =
-          itemRect.left -
-          navRect.left +
-          itemRect.width / 2 -
-          indicator.offsetWidth / 2;
-
-        indicator.style.left = `${leftPosition}px`;
+        // Precisely calculate center point of the active tab
+        const itemCenter = itemRect.left + (itemRect.width / 2);
+        
+        // Calculate offset from the nav container's left edge
+        const navLeft = navRect.left;
+        
+        // Get the indicator's actual width for perfect centering
+        const indicatorWidth = indicator.offsetWidth;
+        
+        // Calculate precise transform value for exact centering
+        // This positions the indicator's center directly below the tab's center
+        const transformValue = itemCenter - navLeft - (indicatorWidth / 2);
+        
+        // Apply the transform with the exact value
+        indicator.style.transform = `translateX(${transformValue}px)`;
       }
     }
   };
@@ -62,9 +87,9 @@ const BottomNav: React.FC<BottomNavProps> = ({ setActiveTab, currentTab }) => {
   };
 
   return (
-    <nav className="bottom-nav">
+    <nav className="BottomNav-container">
       <ul>
-        <div ref={indicatorRef} className="indicator" />
+        <div ref={indicatorRef} className="BottomNav-indicator" />
 
         <li
           ref={(el) => (itemRefs.current[0] = el)}
