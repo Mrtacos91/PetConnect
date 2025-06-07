@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Customise from "./pages/Customise";
+import Micuenta from "./pages/micuenta";
 import CarnetPage from "./pages/CarnetPage";
 import Calendar from "./pages/Calendar";
 import Recardatorios from "./pages/Recardatorios";
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/customise" element={<Customise />} />
+          <Route path="/micuenta" element={<Micuenta />} />
           <Route path="/carnet" element={<CarnetPage />} />
           <Route path="/recordatorios" element={<Recardatorios />} />
           <Route path="/config" element={<Config />} />

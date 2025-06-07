@@ -8,6 +8,7 @@
   max-width: 100%;
   overflow-x: hidden;
 }
+
 .carnet-backbt {
   display: flex;
   justify-content: flex-start;
@@ -75,7 +76,8 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
-  min-width: 600px; /* Asegura que en móviles se pueda hacer scroll */
+  min-width: 600px;
+  /* Asegura que en móviles se pueda hacer scroll */
 }
 
 .carnet-table th,
@@ -207,12 +209,10 @@
 /* Skeleton Loaders */
 .skeleton-carnet,
 .skeleton-carnet-card .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
+  background: linear-gradient(90deg,
+      var(--skeleton-gradient-start) 25%,
+      var(--skeleton-gradient-mid) 50%,
+      var(--skeleton-gradient-start) 75%);
   background-size: 200% 100%;
   animation: loadingAnimation 1.5s infinite;
   border-radius: 8px;
@@ -222,6 +222,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }

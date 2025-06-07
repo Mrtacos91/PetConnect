@@ -5,12 +5,15 @@ import { FaArrowLeft, FaArrowRight, FaArrowCircleLeft } from "react-icons/fa";
 import Sidebar from "../components/Sidebar";
 import ThemeToggle from "../components/ThemeToggle";
 import MenuButton from "../components/MenuButton";
+import supabase from "../supabase";
 
 interface Event {
-  id: string;
-  date: Date;
+  id: number;
+  date: string | Date;
   title: string;
   description: string;
+  user_id: number;
+  created_at?: string;
 }
 
 const Calendar: React.FC = () => {
@@ -23,25 +26,16 @@ const Calendar: React.FC = () => {
   const [eventTitle, setEventTitle] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [currentEventId, setCurrentEventId] = useState<string | null>(null);
+  const [currentEventId, setCurrentEventId] = useState<number | null>(null);
   const [notifications, setNotifications] = useState<
     Array<{ id: string; type: string; message: string }>
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<number | null>(null);
 
   const monthNames = [
-    "ENERO",
-    "FEBRERO",
-    "MARZO",
-    "ABRIL",
-    "MAYO",
-    "JUNIO",
-    "JULIO",
-    "AGOSTO",
-    "SEPTIEMBRE",
-    "OCTUBRE",
-    "NOVIEMBRE",
-    "DICIEMBRE",
+    "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+    "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
   ];
 
   const dayNames = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
@@ -49,34 +43,6 @@ const Calendar: React.FC = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
-  useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    // Cargar eventos del localStorage
-    const savedEvents = localStorage.getItem("petConnectEvents");
-    if (savedEvents) {
-      const parsedEvents = JSON.parse(savedEvents).map((event: any) => ({
-        ...event,
-        date: new Date(event.date),
-      }));
-      setEvents(parsedEvents);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Guardar eventos en localStorage
-    if (events.length > 0) {
-      localStorage.setItem("petConnectEvents", JSON.stringify(events));
-    }
-  }, [events]);
 
   const showNotification = (type: string, message: string) => {
     const id = Date.now().toString();
@@ -88,6 +54,75 @@ const Calendar: React.FC = () => {
       );
     }, 5000);
   };
+
+  const checkUser = async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        console.error("Error de sesión:", error);
+        navigate("/login");
+        return null;
+      }
+
+      const { data: localUser, error: localError } = await supabase
+        .from("Users")
+        .select("id")
+        .eq("email", user.email)
+        .single();
+
+      if (localError || !localUser) {
+        console.error("Error al obtener usuario local:", localError);
+        showNotification("error", "No se encontró tu usuario local");
+        return null;
+      }
+
+      setUserId(localUser.id);
+      return localUser.id;
+    } catch (error) {
+      console.error("Error en checkUser:", error);
+      showNotification("error", "Error al verificar usuario");
+      return null;
+    }
+  };
+
+  const fetchEvents = async (user_id: number) => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("calendar")
+        .select("*")
+        .eq("user_id", user_id)
+        .order("date", { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      const parsedEvents = (data || []).map((event: any) => ({
+        ...event,
+        date: new Date(event.date),
+      }));
+
+      setEvents(parsedEvents);
+    } catch (error) {
+      console.error("Error en fetchEvents:", error);
+      showNotification("error", "Error al cargar eventos");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initializeData = async () => {
+      const user_id = await checkUser();
+      if (user_id !== null) {
+        await fetchEvents(user_id);
+      }
+    };
+
+    initializeData();
+  }, [navigate]);
 
   const prevMonth = () => {
     setCurrentMonth(
@@ -115,129 +150,168 @@ const Calendar: React.FC = () => {
 
   const handleDateClick = (day: number, isCurrentMonth: boolean) => {
     if (isCurrentMonth) {
+      // Crear la fecha en hora local sin problemas de zona horaria
       const newDate = new Date(
-        currentMonth.getFullYear(),
-        currentMonth.getMonth(),
-        day
+        Date.UTC(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth(),
+          day,
+          12, // Hora fija (mediodía) para evitar problemas
+          0,
+          0,
+          0
+        )
       );
+
       setSelectedDate(newDate);
 
-      // Buscar eventos para esta fecha
-      const eventsForDay = events.filter(
-        (event) =>
-          event.date.getDate() === day &&
-          event.date.getMonth() === currentMonth.getMonth() &&
-          event.date.getFullYear() === currentMonth.getFullYear()
-      );
+      const eventForDay = events.find((event) => {
+        const eventDate = typeof event.date === "string" ? new Date(event.date) : event.date;
+        const utcEventDate = new Date(Date.UTC(
+          eventDate.getFullYear(),
+          eventDate.getMonth(),
+          eventDate.getDate(),
+          12,
+          0,
+          0,
+          0
+        ));
 
-      if (eventsForDay.length > 0) {
-        // Si hay eventos, mostrar el primero
-        setEventTitle(eventsForDay[0].title);
-        setEventDescription(eventsForDay[0].description);
-        setCurrentEventId(eventsForDay[0].id);
+        return (
+          utcEventDate.getDate() === newDate.getDate() &&
+          utcEventDate.getMonth() === newDate.getMonth() &&
+          utcEventDate.getFullYear() === newDate.getFullYear()
+        );
+      });
+
+      if (eventForDay) {
+        setEventTitle(eventForDay.title);
+        setEventDescription(eventForDay.description);
+        setCurrentEventId(eventForDay.id);
         setIsEditing(true);
       } else {
-        // Si no hay eventos, limpiar el formulario
-        setEventTitle("");
-        setEventDescription("");
-        setCurrentEventId(null);
-        setIsEditing(false);
+        resetForm();
       }
     }
   };
 
   const handleAddEvent = () => {
+    if (!selectedDate) {
+      showNotification("error", "Por favor selecciona una fecha primero");
+      return;
+    }
     setShowEventForm(true);
     setIsEditing(false);
-    setEventTitle("");
-    setEventDescription("");
-    setCurrentEventId(null);
+    resetForm();
   };
 
   const handleEditEvent = () => {
-    if (!selectedDate) {
-      showNotification("error", "Por favor selecciona una fecha primero");
+    if (!selectedDate || !currentEventId) {
+      showNotification("error", "Por favor selecciona un evento primero");
       return;
     }
 
-    const eventsForDay = events.filter(
-      (event) =>
-        event.date.getDate() === selectedDate.getDate() &&
-        event.date.getMonth() === selectedDate.getMonth() &&
-        event.date.getFullYear() === selectedDate.getFullYear()
-    );
-
-    if (eventsForDay.length === 0) {
-      showNotification("error", "No hay eventos para editar en esta fecha");
-      return;
-    }
-
-    setEventTitle(eventsForDay[0].title);
-    setEventDescription(eventsForDay[0].description);
-    setCurrentEventId(eventsForDay[0].id);
-    setIsEditing(true);
     setShowEventForm(true);
   };
 
-  const handleDeleteEvent = () => {
-    if (!selectedDate) {
-      showNotification("error", "Por favor selecciona una fecha primero");
+  const handleDeleteEvent = async () => {
+    if (!currentEventId) {
+      showNotification("error", "Por favor selecciona un evento primero");
       return;
     }
 
-    const updatedEvents = events.filter(
-      (event) =>
-        !(
-          event.date.getDate() === selectedDate.getDate() &&
-          event.date.getMonth() === selectedDate.getMonth() &&
-          event.date.getFullYear() === selectedDate.getFullYear()
-        )
-    );
+    try {
+      const { error } = await supabase
+        .from("calendar")
+        .delete()
+        .eq("id", currentEventId);
 
-    if (updatedEvents.length === events.length) {
-      showNotification("error", "No hay eventos para eliminar en esta fecha");
-      return;
+      if (error) throw error;
+
+      setEvents(events.filter(event => event.id !== currentEventId));
+      setSelectedDate(null);
+      setCurrentEventId(null);
+      setEventTitle("");
+      setEventDescription("");
+      setIsEditing(false);
+
+      showNotification("success", "Evento eliminado correctamente");
+    } catch (error) {
+      console.error("Error al eliminar evento:", error);
+      showNotification("error", "Error al eliminar el evento");
     }
-
-    setEvents(updatedEvents);
-    setSelectedDate(null);
-    setEventTitle("");
-    setEventDescription("");
-    setCurrentEventId(null);
-    showNotification("success", "Evento eliminado correctamente");
   };
 
-  const handleSaveEvent = () => {
-    if (!selectedDate || !eventTitle.trim()) {
+  const handleSaveEvent = async () => {
+    if (!selectedDate || !eventTitle.trim() || userId === null) {
       showNotification("error", "Por favor completa todos los campos");
       return;
     }
 
-    if (isEditing && currentEventId) {
-      // Actualizar evento existente
-      const updatedEvents = events.map((event) =>
-        event.id === currentEventId
-          ? { ...event, title: eventTitle, description: eventDescription }
-          : event
-      );
-      setEvents(updatedEvents);
-      showNotification("success", "Evento actualizado correctamente");
-    } else {
-      // Crear nuevo evento
-      const newEvent: Event = {
-        id: Date.now().toString(),
-        date: selectedDate,
+    try {
+      // Crear fecha UTC para evitar problemas de zona horaria
+      const utcDate = new Date(Date.UTC(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        12,
+        0,
+        0,
+        0
+      ));
+
+      const eventData = {
         title: eventTitle,
         description: eventDescription,
+        date: utcDate.toISOString(),
+        user_id: userId
       };
-      setEvents([...events, newEvent]);
-      showNotification("success", "Evento creado correctamente");
-    }
 
-    setShowEventForm(false);
+      if (isEditing && currentEventId) {
+        const { error } = await supabase
+          .from("calendar")
+          .update(eventData)
+          .eq("id", currentEventId);
+
+        if (error) throw error;
+
+        setEvents(events.map(event =>
+          event.id === currentEventId ? {
+            ...event,
+            ...eventData,
+            date: utcDate
+          } : event
+        ));
+      } else {
+        const { data, error } = await supabase
+          .from("calendar")
+          .insert(eventData)
+          .select();
+
+        if (error) throw error;
+
+        if (data?.[0]) {
+          setEvents([...events, {
+            ...data[0],
+            date: new Date(data[0].date),
+          }]);
+        }
+      }
+
+      showNotification("success", `Evento ${isEditing ? 'actualizado' : 'creado'} correctamente`);
+      setShowEventForm(false);
+      resetForm();
+    } catch (error) {
+      console.error("Error en handleSaveEvent:", error);
+      showNotification("error", `Error al ${isEditing ? 'actualizar' : 'crear'} evento`);
+    }
+  };
+
+  const resetForm = () => {
     setEventTitle("");
     setEventDescription("");
     setCurrentEventId(null);
+    setIsEditing(false);
   };
 
   const renderCalendarDays = () => {
@@ -254,7 +328,6 @@ const Calendar: React.FC = () => {
         <div
           key={`prev-${day}`}
           className="calendar-day prev-month"
-          onClick={() => {}}
         >
           {day}
         </div>
@@ -269,40 +342,41 @@ const Calendar: React.FC = () => {
         day
       );
       const isToday = new Date().toDateString() === date.toDateString();
-      const isSelected =
-        selectedDate && selectedDate.toDateString() === date.toDateString();
+      const isSelected = selectedDate &&
+        selectedDate.getDate() === day &&
+        selectedDate.getMonth() === currentMonth.getMonth() &&
+        selectedDate.getFullYear() === currentMonth.getFullYear();
 
-      // Verificar si hay eventos para este día
-      const hasEvent = events.some(
-        (event) =>
-          event.date.getDate() === day &&
-          event.date.getMonth() === currentMonth.getMonth() &&
-          event.date.getFullYear() === currentMonth.getFullYear()
-      );
+      const hasEvent = events.some(event => {
+        const eventDate = typeof event.date === "string" ? new Date(event.date) : event.date;
+        return (
+          eventDate.getDate() === day &&
+          eventDate.getMonth() === currentMonth.getMonth() &&
+          eventDate.getFullYear() === currentMonth.getFullYear()
+        );
+      });
 
       days.push(
         <div
           key={`current-${day}`}
-          className={`calendar-day current-month ${isToday ? "today" : ""} ${
-            isSelected ? "selected" : ""
-          } ${hasEvent ? "has-event" : ""}`}
+          className={`calendar-day current-month ${isToday ? "today" : ""} ${isSelected ? "selected" : ""} ${hasEvent ? "has-event" : ""}`}
           onClick={() => handleDateClick(day, true)}
         >
           {day}
+          {hasEvent && <div className="event-dot"></div>}
         </div>
       );
     }
 
     // Días del mes siguiente
     const totalDaysDisplayed = days.length;
-    const daysNeeded = 42 - totalDaysDisplayed; // 6 filas x 7 días = 42
+    const daysNeeded = 42 - totalDaysDisplayed;
 
     for (let day = 1; day <= daysNeeded; day++) {
       days.push(
         <div
           key={`next-${day}`}
           className="calendar-day next-month"
-          onClick={() => {}}
         >
           {day}
         </div>
@@ -317,6 +391,7 @@ const Calendar: React.FC = () => {
       <Sidebar isOpen={isSidebarOpen} />
       <ThemeToggle />
       <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
       <div className="notification-container">
         {notifications.map((notification) => (
           <div
@@ -364,7 +439,7 @@ const Calendar: React.FC = () => {
                 <FaArrowLeft />
               </button>
               <h2 className="current-month">
-                {monthNames[currentMonth.getMonth()]}
+                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
               </h2>
               <button className="month-nav-button" onClick={nextMonth}>
                 <FaArrowRight />
@@ -384,14 +459,11 @@ const Calendar: React.FC = () => {
         </div>
       ) : (
         <div className="calendar-grid">
-          {/* Días de la semana */}
           {dayNames.map((day) => (
             <div key={day} className="calendar-weekday">
               {day}
             </div>
           ))}
-
-          {/* Días del mes */}
           {renderCalendarDays()}
         </div>
       )}
@@ -448,6 +520,17 @@ const Calendar: React.FC = () => {
                 placeholder="Descripción del evento"
               />
             </div>
+            <div className="form-group">
+              <label>Fecha seleccionada:</label>
+              <div className="selected-date">
+                {selectedDate?.toLocaleDateString('es-ES', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </div>
+            </div>
             <div className="form-actions">
               <button
                 className="calendar-button save-button-cl"
@@ -457,7 +540,10 @@ const Calendar: React.FC = () => {
               </button>
               <button
                 className="calendar-button cancel-button"
-                onClick={() => setShowEventForm(false)}
+                onClick={() => {
+                  setShowEventForm(false);
+                  resetForm();
+                }}
               >
                 <span>Cancelar</span>
               </button>

@@ -26,6 +26,7 @@
     padding: 0 clamp(2px, 2vw, 8px);
     gap: clamp(4px, 2vw, 12px);
   }
+
   .config-bt {
     flex-direction: column;
     align-items: stretch;
@@ -41,6 +42,7 @@
     padding: 0 clamp(24px, 4vw, 64px);
     gap: clamp(16px, 3vw, 40px);
   }
+
   .config-bt {
     max-width: 300px;
     gap: clamp(12px, 2vw, 32px);
@@ -82,6 +84,7 @@
   padding-bottom: clamp(12px, 4vw, 24px);
   border-bottom: 1px solid var(--border-color, #b8860b);
 }
+
 .config-section:last-child {
   border-bottom: none;
 }
@@ -128,6 +131,7 @@
   font-size: clamp(1rem, 3vw, 1.1rem);
   transition: background 0.2s, color 0.2s;
 }
+
 .config-form button:hover {
   filter: brightness(0.95);
 }
@@ -139,11 +143,13 @@
   height: clamp(20px, 6vw, 26px);
   margin-right: clamp(6px, 2vw, 16px);
 }
+
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
+
 .slider {
   position: absolute;
   cursor: pointer;
@@ -155,6 +161,7 @@
   border-radius: 26px;
   transition: 0.4s;
 }
+
 .slider:before {
   position: absolute;
   content: "";
@@ -166,10 +173,12 @@
   border-radius: 50%;
   transition: 0.4s;
 }
-input:checked + .slider {
+
+input:checked+.slider {
   background: #b8860b;
 }
-input:checked + .slider:before {
+
+input:checked+.slider:before {
   transform: translateX(20px);
 }
 
@@ -184,6 +193,7 @@ input:checked + .slider:before {
 .danger {
   border-bottom: none;
 }
+
 .Config-logout-btn,
 .Config-delete-btn {
   display: inline-block;
@@ -212,24 +222,29 @@ input:checked + .slider:before {
 }
 
 @media (max-width: 540px) {
+
   .config,
   .config-page {
     padding: 0 clamp(2px, 2vw, 8px);
   }
+
   .config-section {
     padding-bottom: clamp(8px, 2vw, 16px);
     margin-bottom: clamp(12px, 3vw, 20px);
   }
+
   .config-form input[type="text"],
   .config-form input[type="email"],
   .config-form select {
     font-size: clamp(0.9rem, 4vw, 1rem);
     padding: clamp(5px, 1.5vw, 10px) clamp(6px, 2vw, 12px);
   }
+
   .config-form button {
     font-size: clamp(0.95rem, 4vw, 1rem);
     padding: clamp(7px, 1.5vw, 12px) 0;
   }
+
   .Config-logout-btn,
   .Config-delete-btn {
     max-width: 100%;
@@ -240,11 +255,13 @@ input:checked + .slider:before {
 }
 
 @media (min-width: 900px) {
+
   .config,
   .config-page {
     max-width: 700px;
     padding: clamp(16px, 3vw, 48px);
   }
+
   .Config-logout-btn,
   .Config-delete-btn {
     max-width: 400px;
@@ -257,11 +274,13 @@ input:checked + .slider:before {
   background: #b8860b;
   color: #fff;
 }
+
 .Config-delete-btn {
   background: #fff0e6;
   border-color: #c0392b;
   color: #c0392b;
 }
+
 .Config-delete-btn:hover {
   background: #c0392b;
   color: #fff;
@@ -343,11 +362,11 @@ input:checked + .slider:before {
   transition-delay: 0.2s;
 }
 
-.checkbox-wrapper-12 .cbx input:checked + label {
+.checkbox-wrapper-12 .cbx input:checked+label {
   animation: splash-12 0.6s ease forwards;
 }
 
-.checkbox-wrapper-12 .cbx input:checked + label + svg path {
+.checkbox-wrapper-12 .cbx input:checked+label+svg path {
   stroke-dashoffset: 0;
 }
 
