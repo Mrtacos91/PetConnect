@@ -97,7 +97,7 @@
 
 /* Estilo para los botones */
 .edit-button {
-  background: var(--button-bg);
+  background: var(--button-bg) !important;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -216,6 +216,9 @@
     min-height: 400px;
     height: 45vh;
   }
+  .location-map-title {
+    margin-top: 30px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -224,6 +227,9 @@
     width: 100%;
     min-height: 350px;
     height: 40vh;
+  }
+  .location-map-title {
+    margin-top: 30px;
   }
 }
 
@@ -241,10 +247,14 @@
   .skeleton-card {
     min-height: 180px;
   }
+  .location-map-title {
+    margin-top: 30px;
+  }
 }
 
 .pet-location-info {
   margin-top: 30px;
+  margin-bottom: 80px;
   padding: 12px;
   width: 100%;
   max-width: 600px;

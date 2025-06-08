@@ -1,12 +1,27 @@
 /* Estilos para la página de Carnet */
+:root {
+  --primary-color: #4a6fa5;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --light-gray: #f8f9fa;
+  --border-color: #dee2e6;
+  --shadow-default: rgba(0, 0, 0, 0.1);
+  --card-background: #ffffff;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.993);
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
+}
+
 .carnet-container {
   background-color: var(--card-background);
-  border-radius: 15px;
-  padding: 20px;
-  margin: 20px;
-  box-shadow: 0 4px 8px var(--shadow-default);
+  border-radius: var(--border-radius);
+  padding: clamp(15px, 3vw, 25px);
+  margin: 10px;
+  box-shadow: var(--card-shadow);
   max-width: 100%;
   overflow-x: hidden;
+  box-sizing: border-box;
 }
 .carnet-backbt {
   display: flex;
@@ -49,7 +64,7 @@
 
 /* Información de la mascota */
 .carnet-pet-info {
-  background-color: var(--background-secondary);
+  background-color: var(--card-background);
   border-radius: 10px;
   padding: 15px;
   margin-bottom: 20px;
@@ -65,25 +80,465 @@
 
 /* Contenedor de la tabla para scroll horizontal en móviles */
 .carnet-table-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   overflow-x: auto;
-  margin-bottom: 15px;
+  background-color: var(--card-background);
+  margin: 20px 0;
   -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .carnet-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  min-width: 600px; /* Asegura que en móviles se pueda hacer scroll */
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0;
+  min-width: 800px; /* Ancho mínimo para asegurar el scroll horizontal */
+  background: var(--card-background);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 .carnet-table th,
 .carnet-table td {
-  padding: 12px;
+  padding: clamp(10px, 2vw, 15px);
+  color: var(--text-primary);
   text-align: left;
   border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+}
+
+.carnet-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Estilos para celdas de entrada */
+.input-field {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+select.input-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 12px;
+  padding-right: 30px;
+}
+
+.carnet-action-button.preview-button {
+  background-color: #17a2b8;
+  font-size: 1rem;
+}
+
+/* Estilos para botones */
+.edit-button,
+.save-button,
+.add-button,
+.delete-button,
+.preview-button,
+.download-pdf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.edit-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+  margin-right: 10px;
+}
+
+.add-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.delete-button {
+  background-color: transparent;
+  color: #dc3545;
+  padding: 5px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-button:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.preview-button {
+  background-color: #17a2b8;
+  color: white;
+  margin-right: 10px;
+}
+
+.download-pdf-button {
+  background-color: #17a2b8;
+  color: white;
+  margin-top: 15px;
+}
+
+/* Badge de estado */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Estilos para móviles */
+@media (max-width: 992px) {
+  /* Ocultar la tabla en móviles */
+  .carnet-table-container > table {
+    display: none !important;
+  }
+
+  /* Mostrar contenedor de tarjetas en móviles */
+  .mobile-cards-container {
+    display: block !important;
+  }
+
+  /* Estilo para el mensaje de no hay registros en móviles */
+  .no-records-mobile {
+    display: block;
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    margin: 15px 0;
+  }
+
+  /* Ocultar el mensaje de no registros de la tabla en móviles */
+  .carnet-table .no-records {
+    display: none;
+  }
+  .carnet-container {
+    margin: 0;
+    border-radius: 0;
+    padding: 15px 10px;
+  }
+
+  .carnet-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .carnet-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .carnet-actions button {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 120px;
+  }
+
+  /* Estilo para el contenedor de la tabla */
+  .carnet-table-container {
+    display: block;
+    width: 100%;
+    overflow-x: visible;
+    margin: 20px 0;
+  }
+
+  /* Ocultar la tabla en móviles */
+  .carnet-table {
+    display: none;
+  }
+
+  /* Mostrar tarjetas en móviles */
+  .mobile-cards-container {
+    display: block;
+    width: 100%;
+  }
+
+  .record-card {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .record-card-content {
+    padding: 15px;
+  }
+
+  .form-field {
+    margin-bottom: 15px;
+  }
+
+  .form-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .form-field .input-field {
+    width: 100%;
+    margin: 0;
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 15px;
+    background-color: var(--background-secondary);
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* Ajustes para el modal de vista previa */
+  .pdf-preview-container {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  /* Mostrar tabla en la vista previa incluso en móviles */
+  .pdf-preview-container .carnet-table {
+    display: table;
+    width: 100%;
+    min-width: 100%;
+  }
+}
+
+/* Estilos para pantallas medianas y grandes */
+@media (min-width: 993px) {
+  /* Ocultar tarjetas en pantallas grandes */
+  .mobile-cards-container {
+    display: none !important;
+  }
+
+  /* Mostrar tabla en pantallas grandes */
+  .carnet-table {
+    display: table !important;
+  }
+
+  /* Asegurar que la tabla ocupe todo el ancho */
+  .carnet-table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* Estilos para la vista previa del PDF */
+.pdf-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--card-background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 15px;
+}
+
+.pdf-preview-container {
+  background-color: #ffffff;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-preview-header {
+  padding: 15px 20px;
+  background: var(--card-background);
   color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pdf-preview-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.close-preview {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.pdf-content h2 {
+  color: black;
+}
+
+.pdf-pet-info {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pdf-pet-info p {
+  margin: 5px 0;
+}
+
+.pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.pdf-table th,
+.pdf-table td {
+  background-color: #ffffff;
+  color: black;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.pdf-table th {
+  font-weight: 600;
+}
+
+.pdf-preview-actions {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Estilos para el skeleton loader */
+.skeleton-container {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.skeleton-carnet {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+  height: 20px;
+  margin: 5px 0;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.carnet-title-skeleton {
+  width: 200px;
+  height: 30px;
+  margin-bottom: 15px;
+}
+
+.carnet-actions-skeleton {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.carnet-button-skeleton {
+  width: 100px;
+  height: 40px;
+}
+
+.carnet-pet-info-skeleton {
+  margin-bottom: 20px;
+}
+
+.carnet-table-header-skeleton {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.carnet-table-header-skeleton .skeleton-carnet {
+  flex: 1;
+  height: 30px;
+}
+
+.carnet-table-row-skeleton {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.carnet-table-row-skeleton .skeleton-carnet {
+  flex: 1;
+  height: 50px;
 }
 
 .carnet-table th {
@@ -97,7 +552,6 @@
 
 .edit-button,
 .save-button {
-  background: var(--circle-animation);
   border: none;
   border-radius: 8px;
   color: white;
@@ -112,6 +566,7 @@
 .save-button:hover {
   opacity: 0.9;
   transform: translateY(-2px);
+  background-color: var(--button-bg);
 }
 
 .status-completed {
@@ -141,7 +596,7 @@
   border-radius: 16px;
   padding: 20px;
   margin: 15px auto;
-  margin-bottom: 50px;
+  margin-bottom: clamp(3rem, 8vw, 18rem);
   box-shadow: 0 4px 10px var(--shadow-default);
   max-width: 450px;
   width: 100%;
@@ -391,7 +846,7 @@
 }
 
 .pdf-preview-container {
-  background-color: var(--card-background);
+  background-color: #ffffff;
   border-radius: 12px;
   width: 100%;
   max-width: 800px;
@@ -635,7 +1090,7 @@
 
 @media (max-width: 480px) {
   .carnetcard-container {
-    max-width: 95%;
+    max-width: 85%;
     padding: 15px;
   }
 

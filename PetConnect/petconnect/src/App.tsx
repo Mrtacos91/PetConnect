@@ -1,32 +1,101 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Customise from "./pages/Customise";
-import CarnetPage from "./pages/CarnetPage";
-import Calendar from "./pages/Calendar";
-import Recardatorios from "./pages/Recardatorios";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Config from "./pages/Config";
 import "./styles/global.css";
+import Loader from "./components/Loader";
+
+// Lazy load all page components
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Customise = lazy(() => import("./pages/Customise"));
+const CarnetPage = lazy(() => import("./pages/CarnetPage"));
+const Recardatorios = lazy(() => import("./pages/Recardatorios"));
+const Config = lazy(() => import("./pages/Config"));
+const Calendar = lazy(() => import("./pages/Calendar"));
+
+// Loading component for Suspense fallback
+const LoadingFallback = () => <Loader />;
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <Login />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <Login />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <Register />
+            </Suspense>
+          }
+        />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/customise" element={<Customise />} />
-          <Route path="/carnet" element={<CarnetPage />} />
-          <Route path="/recordatorios" element={<Recardatorios />} />
-          <Route path="/config" element={<Config />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Dashboard />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Calendar />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/customise"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Customise />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/carnet"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <CarnetPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/recordatorios"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Recardatorios />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/config"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Config />
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
     </Router>

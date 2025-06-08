@@ -198,3 +198,27 @@
     font-size: 0.9rem;
   }
 }
+
+@media (max-width: 480px) {
+  .calendar-card {
+    padding: 1rem;
+    width: 80%;
+  }
+
+  .calendar-card-icon {
+    font-size: 2rem;
+  }
+
+  .calendar-card-title {
+    font-size: 1.2rem;
+  }
+
+  .calendar-card-description {
+    font-size: 0.85rem;
+  }
+
+  .calendar-card-button span {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+}

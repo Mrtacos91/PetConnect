@@ -768,9 +768,10 @@ const LocationMap: React.FC<LocationMapProps> = ({
             <Circle
               center={[houseLocation.lat, houseLocation.lng]}
               radius={safeZoneRadius}
-              color="blue"
-              fillColor="blue"
-              fillOpacity={0.2}
+              color="#48bff3"
+              opacity={0.3}
+              fillColor="#48bff3"
+              fillOpacity={0.3}
             />
 
             <Marker

@@ -8,10 +8,20 @@ import BackButton from "./BackButton";
 interface VaccinationRecord {
   id: number;
   date: string;
-  vaccine: string;
+  vaccineType: string;
+  vaccineName: string;
   deworming: string;
   status: "Completado" | "Pendiente";
 }
+
+const VACCINE_TYPES = [
+  "Rabia",
+  "Moquillo",
+  "Parvovirus",
+  "Leptospirosis",
+  "Bordetella",
+  "Otra",
+];
 
 interface CarnetProps {
   loading?: boolean;
@@ -30,10 +40,11 @@ const Carnet: React.FC<CarnetProps> = ({
   const [records, setRecords] = useState<VaccinationRecord[]>([
     {
       id: 1,
-      date: "2025-03-11",
-      vaccine: "Rabia",
+      date: new Date().toISOString().split("T")[0],
+      vaccineType: "Rabia",
+      vaccineName: "Rabia Inactivada",
       deworming: "Desparasitante A",
-      status: "Completado",
+      status: "Pendiente",
     },
   ]);
 
@@ -82,11 +93,19 @@ const Carnet: React.FC<CarnetProps> = ({
     const newRecord: VaccinationRecord = {
       id: records.length > 0 ? Math.max(...records.map((r) => r.id)) + 1 : 1,
       date: new Date().toISOString().split("T")[0],
-      vaccine: "",
+      vaccineType: "",
+      vaccineName: "",
       deworming: "",
       status: "Pendiente",
     };
     setRecords([...records, newRecord]);
+    // Desplazar al final del formulario
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 100);
   };
 
   const deleteRecord = (id: number) => {
@@ -163,11 +182,13 @@ const Carnet: React.FC<CarnetProps> = ({
       </div>
 
       <div className="carnet-table-container">
+        {/* Tabla para pantallas grandes */}
         <table className="carnet-table">
           <thead>
             <tr>
               <th>Fecha</th>
-              <th>Vacuna</th>
+              <th>Tipo de Vacuna</th>
+              <th>Nombre de Vacuna</th>
               <th>Desparasitación</th>
               <th>Estado</th>
               {isEditing && <th>Acciones</th>}
@@ -191,18 +212,41 @@ const Carnet: React.FC<CarnetProps> = ({
                       record.date
                     )}
                   </td>
-                  <td data-label="Vacuna">
+                  <td data-label="Tipo de Vacuna">
+                    {isEditing ? (
+                      <select
+                        className="input-field"
+                        value={record.vaccineType}
+                        onChange={(e) =>
+                          handleChange(record.id, "vaccineType", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {VACCINE_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      record.vaccineType || "-"
+                    )}
+                  </td>
+                  <td data-label="Nombre de Vacuna">
                     {isEditing ? (
                       <input
                         type="text"
                         className="input-field"
-                        value={record.vaccine}
+                        value={record.vaccineName}
                         onChange={(e) =>
-                          handleChange(record.id, "vaccine", e.target.value)
+                          handleChange(record.id, "vaccineName", e.target.value)
                         }
+                        placeholder="Ej: Rabia Inactivada"
+                        required
                       />
                     ) : (
-                      record.vaccine
+                      record.vaccineName || "-"
                     )}
                   </td>
                   <td data-label="Desparasitación">
@@ -216,7 +260,7 @@ const Carnet: React.FC<CarnetProps> = ({
                         }
                       />
                     ) : (
-                      record.deworming
+                      record.deworming || "-"
                     )}
                   </td>
                   <td data-label="Estado">
@@ -225,20 +269,30 @@ const Carnet: React.FC<CarnetProps> = ({
                         className="input-field"
                         value={record.status}
                         onChange={(e) =>
-                          handleChange(record.id, "status", e.target.value)
+                          handleChange(
+                            record.id,
+                            "status",
+                            e.target.value as "Completado" | "Pendiente"
+                          )
                         }
                       >
-                        <option value="Completado">Completado</option>
                         <option value="Pendiente">Pendiente</option>
+                        <option value="Completado">Completado</option>
                       </select>
                     ) : (
-                      <span className={`status-${record.status.toLowerCase()}`}>
+                      <span
+                        className={`status-badge ${
+                          record.status === "Completado"
+                            ? "completed"
+                            : "pending"
+                        }`}
+                      >
                         {record.status}
                       </span>
                     )}
                   </td>
                   {isEditing && (
-                    <td className="action-cell">
+                    <td className="actions-cell">
                       <button
                         className="delete-button"
                         onClick={() => deleteRecord(record.id)}
@@ -252,47 +306,186 @@ const Carnet: React.FC<CarnetProps> = ({
               ))
             ) : (
               <tr>
-                <td colSpan={isEditing ? 5 : 4} className="no-records">
-                  No hay registros. Haz clic en "Agregar Registro" para
-                  comenzar.
+                <td colSpan={isEditing ? 6 : 5} className="no-records">
+                  No hay registros de vacunación
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+
+        {/* Mensaje de "No hay registros" para móviles */}
+        {records.length === 0 && (
+          <div className="no-records-mobile">
+            No hay registros de vacunación
+          </div>
+        )}
+
+        {/* Vista de tarjetas para móviles */}
+        <div className="mobile-cards-container">
+          {records.length > 0 ? (
+            records.map((record) => (
+              <div key={record.id} className="record-card">
+                <div className="record-card-content">
+                  <div className="form-field">
+                    <label>Fecha</label>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        className="input-field"
+                        value={record.date}
+                        onChange={(e) =>
+                          handleChange(record.id, "date", e.target.value)
+                        }
+                      />
+                    ) : (
+                      <div className="field-value">{record.date}</div>
+                    )}
+                  </div>
+
+                  <div className="form-field">
+                    <label>Tipo de Vacuna</label>
+                    {isEditing ? (
+                      <select
+                        className="input-field"
+                        value={record.vaccineType}
+                        onChange={(e) =>
+                          handleChange(record.id, "vaccineType", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {VACCINE_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <div className="field-value">
+                        {record.vaccineType || "-"}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="form-field">
+                    <label>Nombre de Vacuna</label>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        className="input-field"
+                        value={record.vaccineName}
+                        onChange={(e) =>
+                          handleChange(record.id, "vaccineName", e.target.value)
+                        }
+                        placeholder="Ej: Rabia Inactivada"
+                        required
+                      />
+                    ) : (
+                      <div className="field-value">
+                        {record.vaccineName || "-"}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="form-field">
+                    <label>Desparasitación</label>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        className="input-field"
+                        value={record.deworming}
+                        onChange={(e) =>
+                          handleChange(record.id, "deworming", e.target.value)
+                        }
+                      />
+                    ) : (
+                      <div className="field-value">
+                        {record.deworming || "-"}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="form-field">
+                    <label>Estado</label>
+                    {isEditing ? (
+                      <select
+                        className="input-field"
+                        value={record.status}
+                        onChange={(e) =>
+                          handleChange(
+                            record.id,
+                            "status",
+                            e.target.value as "Completado" | "Pendiente"
+                          )
+                        }
+                      >
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Completado">Completado</option>
+                      </select>
+                    ) : (
+                      <span
+                        className={`status-badge ${
+                          record.status === "Completado"
+                            ? "completed"
+                            : "pending"
+                        }`}
+                      >
+                        {record.status}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {isEditing && (
+                  <div className="card-actions">
+                    <button
+                      className="delete-button"
+                      onClick={() => deleteRecord(record.id)}
+                      aria-label="Eliminar registro"
+                    >
+                      <FaTrashAlt /> Eliminar
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="no-records">No hay registros de vacunación</div>
+          )}
+        </div>
       </div>
 
-      {/* Modal de vista previa del PDF */}
+      {/* Vista previa del PDF */}
       {showPreview && (
         <div className="pdf-preview-overlay">
           <div className="pdf-preview-container">
             <div className="pdf-preview-header">
               <h3>Vista Previa del Carnet</h3>
-              <button className="close-preview-button" onClick={togglePreview}>
+              <button
+                className="close-preview"
+                onClick={togglePreview}
+                aria-label="Cerrar vista previa"
+              >
                 <FaTimes />
               </button>
             </div>
-            <div className="pdf-preview-content" ref={pdfPreviewRef}>
-              <div className="pdf-header">
-                <h2>Carnet de Vacunación</h2>
-                <div className="pdf-pet-info">
-                  <p>
-                    <strong>Mascota:</strong> {petName}
-                  </p>
-                  <p>
-                    <strong>Especie:</strong> {petSpecies}
-                  </p>
-                  <p>
-                    <strong>Fecha de emisión:</strong>{" "}
-                    {new Date().toLocaleDateString()}
-                  </p>
-                </div>
+            <div className="pdf-content" ref={pdfPreviewRef}>
+              <h2>Carnet de Vacunación</h2>
+              <div className="pdf-pet-info">
+                <p>
+                  <strong>Mascota:</strong> {petName}
+                </p>
+                <p>
+                  <strong>Especie:</strong> {petSpecies}
+                </p>
               </div>
               <table className="pdf-table">
                 <thead>
                   <tr>
                     <th>Fecha</th>
-                    <th>Vacuna</th>
+                    <th>Tipo de Vacuna</th>
+                    <th>Nombre de Vacuna</th>
                     <th>Desparasitación</th>
                     <th>Estado</th>
                   </tr>
@@ -301,18 +494,14 @@ const Carnet: React.FC<CarnetProps> = ({
                   {records.map((record) => (
                     <tr key={record.id}>
                       <td>{record.date}</td>
-                      <td>{record.vaccine}</td>
-                      <td>{record.deworming}</td>
-                      <td className={`status-${record.status.toLowerCase()}`}>
-                        {record.status}
-                      </td>
+                      <td>{record.vaccineType || "-"}</td>
+                      <td>{record.vaccineName || "-"}</td>
+                      <td>{record.deworming || "-"}</td>
+                      <td>{record.status}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <div className="pdf-footer">
-                <p>PetConnect - Cuidando de tus mascotas</p>
-              </div>
             </div>
             <div className="pdf-preview-actions">
               <button className="download-pdf-button" onClick={generatePDF}>
@@ -326,8 +515,7 @@ const Carnet: React.FC<CarnetProps> = ({
   );
 };
 
-// Componente Skeleton para Carnet
-export const CarnetSkeleton: React.FC = () => {
+const CarnetSkeleton = () => {
   return (
     <div className="carnet-container skeleton-container">
       <div className="carnet-header">
@@ -347,19 +535,17 @@ export const CarnetSkeleton: React.FC = () => {
           <div className="skeleton-carnet"></div>
           <div className="skeleton-carnet"></div>
           <div className="skeleton-carnet"></div>
-        </div>
-        <div className="carnet-table-row-skeleton">
-          <div className="skeleton-carnet"></div>
-          <div className="skeleton-carnet"></div>
-          <div className="skeleton-carnet"></div>
           <div className="skeleton-carnet"></div>
         </div>
-        <div className="carnet-table-row-skeleton">
-          <div className="skeleton-carnet"></div>
-          <div className="skeleton-carnet"></div>
-          <div className="skeleton-carnet"></div>
-          <div className="skeleton-carnet"></div>
-        </div>
+        {[1, 2, 3].map((row) => (
+          <div key={row} className="carnet-table-row-skeleton">
+            <div className="skeleton-carnet"></div>
+            <div className="skeleton-carnet"></div>
+            <div className="skeleton-carnet"></div>
+            <div className="skeleton-carnet"></div>
+            <div className="skeleton-carnet"></div>
+          </div>
+        ))}
       </div>
     </div>
   );

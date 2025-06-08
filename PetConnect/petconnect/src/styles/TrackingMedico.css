@@ -44,14 +44,14 @@
   border-radius: 3px;
 }
 .add-button {
-  background-color: var(--button-bg);
+  background-color: var(--button-bg) !important;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 16px;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
 }
 .add-button:hover {
-  transform: scale(1.03);
+  transform: translateY(-3px);
   background-color: var(--button-bg);
 }
 /* Formulario de registro médico */
@@ -108,7 +108,7 @@
   gap: 0.5rem;
   margin-top: 1.5rem;
 }
-.add-record1 select{
+.add-record1 select {
   width: 95%;
   padding: clamp(12px, 1.5vw, 15px);
   margin-bottom: 1rem;
@@ -119,8 +119,7 @@
   font-size: 1rem;
   transition: all 0.3s ease;
 }
-.add-record1 input
- {
+.add-record1 input {
   width: 100%;
   padding: clamp(12px, 1.5vw, 15px);
   margin-bottom: 1rem;
@@ -160,6 +159,7 @@
   cursor: pointer;
   font-size: clamp(14px, 2vw, 16px);
   margin-top: 1rem;
+  background-color: var(--button-bg);
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
@@ -177,12 +177,12 @@
 
 .button-add-tm:hover,
 .button-edit-tm:hover {
-  transform: scale(1.02);
+  transform: translateY(-3px);
   background: var(--button-bg);
 }
 
 .button-cancel-tm:hover {
-  transform: scale(1.02);
+  transform: translateY(-3px);
   background-color: #be123c;
 }
 
@@ -488,7 +488,7 @@
 
 @media (max-width: 480px) {
   .tracking-medico1 {
-    width: min(98%, 400px);
+    width: 80%;
     padding: 1rem;
     margin: 1rem auto 2.5rem;
   }
@@ -513,5 +513,13 @@
   .button-cancel-tm {
     padding: 8px;
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .tracking-container {
+    width: 80%;
+    padding: 1rem;
+    margin: 1rem auto 2.5rem;
   }
 }

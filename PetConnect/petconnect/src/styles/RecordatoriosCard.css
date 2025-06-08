@@ -121,3 +121,35 @@
   border-radius: 20px;
   margin-bottom: 0;
 }
+
+@media (max-width: 480px) {
+  .recordatorioscard-container {
+    max-width: 85%;
+    padding: 15px;
+  }
+
+  .recordatorioscard-icon {
+    font-size: 2rem;
+  }
+
+  .recordatorioscard-title {
+    font-size: 1.2rem;
+  }
+
+  .recordatorioscard-description {
+    font-size: 0.85rem;
+  }
+
+  .recordatorioscard-button {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .recordatorioscard-container {
+    max-width: 80%;
+    padding: 1rem;
+    margin: 1rem auto 2.5rem;
+  }
+}

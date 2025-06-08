@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Calendar.css";
-import { FaArrowLeft, FaArrowRight, FaArrowCircleLeft } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaSave,
+  FaTimes,
+} from "react-icons/fa";
 import Sidebar from "../components/Sidebar";
 import ThemeToggle from "../components/ThemeToggle";
 import MenuButton from "../components/MenuButton";
+import BackButton from "../components/BackButton";
 
 interface Event {
   id: string;
@@ -335,14 +344,7 @@ const Calendar: React.FC = () => {
         {isLoading ? (
           <div className="skeleton-button"></div>
         ) : (
-          <button
-            className="calendar-back-button"
-            onClick={() => navigate("/dashboard")}
-          >
-            <span>
-              <FaArrowCircleLeft /> Volver
-            </span>
-          </button>
+          <BackButton route="/dashboard" />
         )}
       </div>
 
@@ -401,26 +403,30 @@ const Calendar: React.FC = () => {
           <>
             <div className="skeleton-button"></div>
             <div className="skeleton-button"></div>
-            <div className="skeleton-button"></div>
           </>
         ) : (
           <>
             <button
-              className="calendar-button add-button"
+              className="calendar-action-button add-button"
               onClick={handleAddEvent}
             >
+              <FaPlus className="button-icon" />
               <span>Agregar</span>
             </button>
             <button
-              className="calendar-button edit-button"
+              className="calendar-action-button edit-button"
               onClick={handleEditEvent}
+              disabled={!selectedDate}
             >
+              <FaEdit className="button-icon" />
               <span>Editar</span>
             </button>
             <button
-              className="calendar-button delete-button"
+              className="calendar-action-button delete-button-calendar"
               onClick={handleDeleteEvent}
+              disabled={!selectedDate}
             >
+              <FaTrash className="button-icon" />
               <span>Eliminar</span>
             </button>
           </>
@@ -450,15 +456,17 @@ const Calendar: React.FC = () => {
             </div>
             <div className="form-actions">
               <button
-                className="calendar-button save-button-cl"
+                className="calendar-form-button save-button"
                 onClick={handleSaveEvent}
               >
+                <FaSave className="button-icon" />
                 <span>Guardar</span>
               </button>
               <button
-                className="calendar-button cancel-button"
+                className="calendar-form-button cancel-button"
                 onClick={() => setShowEventForm(false)}
               >
+                <FaTimes className="button-icon" />
                 <span>Cancelar</span>
               </button>
             </div>
