@@ -23,6 +23,7 @@
   overflow-x: hidden;
   box-sizing: border-box;
 }
+
 .carnet-backbt {
   display: flex;
   justify-content: flex-start;
@@ -677,6 +678,7 @@ select.input-field {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }

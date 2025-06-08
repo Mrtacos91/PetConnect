@@ -57,7 +57,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
           />
         </div>
         <ul>
-          <li>
+          <li
+            onClick={() => navigate("/micuenta")} style={{ cursor: "pointer" }}
+          >
             <div className="container-myaccount">
               <FaUser className="icon-side" />
               Mi cuenta

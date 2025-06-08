@@ -1,0 +1,292 @@
+/* micuenta.css - Estilos específicos para el componente Account */
+
+/* Contenedor principal */
+.mi-cuenta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: rgba(23, 23, 42, 0.8);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  gap: 40px;
+  padding: 20px;
+  /* Agregado para que tenga un pequeño margen interno */
+  box-sizing: border-box;
+}
+
+.mi-cuenta-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* Botón de volver (mobile) */
+.mi-cuenta-back-btn {
+  display: none;
+  gap: 8px;
+  padding: 10px 15px;
+  background-color: #4361ee;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.mi-cuenta-back-btn:hover {
+  background-color: #3f37c9;
+  transform: translateY(-2px);
+}
+
+/* Sidebar */
+.mi-cuenta-sidebar {
+  width: 300px;
+  padding: 30px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Tarjeta de usuario */
+.mi-cuenta-user-card {
+  display: flex;
+  color: #212529;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.mi-cuenta-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #f8f9fa;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.mi-cuenta-avatar:hover {
+  transform: scale(1.05);
+}
+
+.mi-cuenta-user-card h3 {
+  margin: 0;
+  color: #212529;
+  font-size: 1.5rem;
+}
+
+/* Contenido principal */
+.mi-cuenta-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.mi-cuenta-profile-section {
+  background-color: rgba(23, 23, 42, 0.8);
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
+  /* Efecto glow sutil */
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Encabezado */
+.mi-cuenta-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ced4da;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.mi-cuenta-section-header h2 {
+  margin: 0;
+  color: #cdd0d4;
+  font-size: 1.8rem;
+}
+
+/* Botones */
+.mi-cuenta-edit-btn,
+.mi-cuenta-save-btn,
+.mi-cuenta-cancel-btn,
+.mi-cuenta-logout-btn,
+.mi-cuenta-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.mi-cuenta-edit-btn {
+  background-color: #4361ee;
+  color: white;
+}
+
+.mi-cuenta-edit-btn:hover {
+  background-color: #3f37c9;
+  transform: translateY(-2px);
+}
+
+.mi-cuenta-save-btn {
+  background-color: #4cc9f0;
+  color: white;
+}
+
+.mi-cuenta-volver-inicio-btn {
+  margin: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  gap: 4px;
+  /* Margen solo a la derecha para separarlo de otros elementos */
+  display: inline-block;
+}
+
+.mi-cuenta-volver-inicio-btn:hover {
+  background-color: #0056b3;
+}
+
+.mi-cuenta-save-btn:hover {
+  background-color: #3aa8d1;
+  transform: translateY(-2px);
+}
+
+.mi-cuenta-cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.mi-cuenta-cancel-btn:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+.mi-cuenta-logout-btn {
+  background-color: #f8f9fa;
+  color: #212529;
+  border: 1px solid #dee2e6;
+}
+
+.mi-cuenta-logout-btn:hover {
+  background-color: #e2e6ea;
+  transform: translateY(-2px);
+}
+
+.mi-cuenta-delete-btn {
+  background-color: #f72585;
+  color: white;
+}
+
+.mi-cuenta-delete-btn:hover {
+  background-color: #e5177b;
+  transform: translateY(-2px);
+}
+
+/* Formulario */
+.mi-cuenta-form-group {
+  margin-bottom: 20px;
+  color: #ced4da;
+}
+
+.mi-cuenta-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #eaedf0;
+}
+
+.mi-cuenta-form-group input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #dce1e6;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.mi-cuenta-form-group input:focus {
+  border-color: #4361ee;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(243, 243, 245, 0.918);
+}
+
+/* Acciones del formulario */
+.mi-cuenta-form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* Información del perfil */
+.mi-cuenta-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mi-cuenta-info-row {
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.mi-cuenta-info-label {
+  font-weight: 500;
+  color: #f3f6f8;
+  min-width: 150px;
+}
+
+.mi-cuenta-info-value {
+  color: #fdfeff;
+}
+
+/* Acciones de cuenta */
+.mi-cuenta-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mi-cuenta-container {
+    flex-direction: column;
+  }
+
+  .mi-cuenta-back-btn {
+    display: flex;
+  }
+
+  .mi-cuenta-sidebar {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .mi-cuenta-content {
+    padding: 20px;
+  }
+
+  .mi-cuenta-actions {
+    flex-direction: column;
+  }
+}

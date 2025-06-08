@@ -39,6 +39,7 @@
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.22.3",
     "react-to-pdf": "^2.0.0",
+    "react-toastify": "^11.0.5",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
@@ -46,6 +47,7 @@
     "@types/react": "^18.3.20",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.3.6",
+    "@types/react-toastify": "^4.0.2",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
     "eslint": "^8.57.0",
