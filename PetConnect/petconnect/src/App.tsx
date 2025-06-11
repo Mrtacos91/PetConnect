@@ -14,7 +14,7 @@ const Recardatorios = lazy(() => import("./pages/Recardatorios"));
 const Config = lazy(() => import("./pages/Config"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Account = lazy(() => import("./pages/micuenta"));
-
+const Nfc = lazy(() => import("./pages/Nfc"));
 // Loading component for Suspense fallback
 const LoadingFallback = () => <Loader />;
 
@@ -106,6 +106,14 @@ const App: React.FC = () => {
             }
           />
         </Route>
+        <Route
+          path="/nfc"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <Nfc />
+            </Suspense>
+          }
+        />
       </Routes>
     </Router>
   );

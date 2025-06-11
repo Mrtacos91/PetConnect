@@ -8,8 +8,6 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
-import Sidebar from "../components/Sidebar";
-import MenuButton from "../components/MenuButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Customise.css";
 import "../styles/style.css";
@@ -26,7 +24,6 @@ import {
 } from "../services/pet-service";
 
 const Customise: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [petName, setPetName] = useState("");
   const [petType, setPetType] = useState("");
   const [petBreed, setPetBreed] = useState("");
@@ -190,10 +187,6 @@ const Customise: React.FC = () => {
     );
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   // Manejo de la imagen seleccionada
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -295,9 +288,9 @@ const Customise: React.FC = () => {
       <div className="BackBt-CP">
         <BackButton />
       </div>
-      <ThemeToggle />
-      <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} />
+      <div>
+        <ThemeToggle />
+      </div>
 
       {/* Contenedor de notificaciones */}
       <div className="notification-container">
@@ -327,6 +320,7 @@ const Customise: React.FC = () => {
         <div className="customise-container">
           <div className="pet-navigation">
             <button
+              type="button"
               className="pet-nav-btn"
               onClick={goToPreviousPet}
               disabled={currentPetIndex === 0}
@@ -334,16 +328,27 @@ const Customise: React.FC = () => {
               <FaArrowLeft />
             </button>
 
-            <h1>
-              {currentPetIndex < userPets.length
-                ? `Personaliza tu mascota ${currentPetIndex + 1}/${Math.min(
-                    userPets.length + (userPets.length < 3 ? 1 : 0),
-                    3
-                  )}`
-                : `Añadir nueva mascota ${userPets.length + 1}/3`}
-            </h1>
+            <div className="paw-indicators">
+              {[0, 1, 2].map((index) => (
+                <div
+                  key={index}
+                  className={`paw-indicator ${
+                    index < userPets.length ? "active" : ""
+                  } ${index === currentPetIndex ? "current" : ""}`}
+                  onClick={() => {
+                    if (index < userPets.length) {
+                      setCurrentPetIndex(index);
+                      loadPetData(userPets[index]);
+                    }
+                  }}
+                >
+                  <FaPaw />
+                </div>
+              ))}
+            </div>
 
             <button
+              type="button"
               className="pet-nav-btn"
               onClick={goToNextPet}
               disabled={
@@ -407,54 +412,68 @@ const Customise: React.FC = () => {
 
           <form className="customise-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="petName">Nombre</label>
               <input
                 type="text"
                 id="petName"
+                className="form__field"
                 value={petName}
                 onChange={(e) => setPetName(e.target.value)}
-                placeholder="Nuevo nombre"
+                placeholder=" "
                 autoComplete="off"
+                required
               />
-            </div>
-
-            <div className="form-group-type">
-              <label htmlFor="petType">Tipo de Mascota</label>
-              <select
-                id="petType"
-                value={petType}
-                onChange={(e) => setPetType(e.target.value)}
-              >
-                <option value="">Selecciona un tipo</option>
-                <option value="Perro">Perro</option>
-                <option value="Gato">Gato</option>
-                <option value="Ave">Ave</option>
-                <option value="Roedor">Roedor</option>
-                <option value="Otro">Otro</option>
-              </select>
+              <label htmlFor="petName" className="form__label">
+                Nombre
+              </label>
             </div>
 
             <div className="form-group">
-              <label htmlFor="petBreed">Raza</label>
+              <input
+                type="text"
+                id="petType"
+                className="form__field"
+                value={petType}
+                onChange={(e) => setPetType(e.target.value)}
+                placeholder=" "
+                autoComplete="off"
+                required
+              />
+              <label htmlFor="petType" className="form__label">
+                Tipo de mascota
+              </label>
+            </div>
+
+            <div className="form-group">
               <input
                 type="text"
                 id="petBreed"
+                className="form__field"
                 value={petBreed}
                 onChange={(e) => setPetBreed(e.target.value)}
-                placeholder="Nueva raza"
+                placeholder=" "
                 autoComplete="off"
               />
+              <label htmlFor="petBreed" className="form__label">
+                Raza
+              </label>
             </div>
 
             <div className="form-group">
-              <label htmlFor="petAge">Edad</label>
               <input
                 type="number"
                 id="petAge"
+                className="form__field"
                 value={petAge}
                 onChange={(e) => setPetAge(e.target.value)}
-                placeholder="Edad en años"
+                placeholder=" "
+                required
+                min="0"
+                max="30"
+                step="0.5"
               />
+              <label htmlFor="petAge" className="form__label">
+                Edad (años)
+              </label>
             </div>
 
             <div className="form-actions">

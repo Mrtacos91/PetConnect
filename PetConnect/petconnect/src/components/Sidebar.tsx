@@ -44,9 +44,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   };
 
   return (
-    <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
-      <nav className="sidebar">
-        <div className="logo">
+    <div className={`sidebar-container ${isOpen ? "sidebar-open" : ""}`}>
+      <nav className="sidebar-nav">
+        <div className="sidebar-logo">
           <img
             src={
               isDarkMode
@@ -54,44 +54,48 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                 : "/images/Logo_black.png"
             }
             alt="PetConnect Logo"
+            className="sidebar-logo-img"
           />
         </div>
-        <ul>
+        <ul className="sidebar-menu">
           <li
-            onClick={() => navigate("/micuenta")} style={{ cursor: "pointer" }}
+            className="sidebar-menu-item"
+            onClick={() => navigate("/micuenta")}
           >
-            <div className="container-myaccount">
-              <FaUser className="icon-side" />
-              Mi cuenta
+            <div className="sidebar-menu-link">
+              <FaUser className="sidebar-icon" />
+              <span className="sidebar-link-text">Mi cuenta</span>
             </div>
           </li>
           <li
+            className="sidebar-menu-item"
             onClick={() => navigate("/customise")}
-            style={{ cursor: "pointer" }}
           >
-            <div className="container-pets">
-              <FaPaw className="icon-side" />
-              Mis mascotas
+            <div className="sidebar-menu-link">
+              <FaPaw className="sidebar-icon" />
+              <span className="sidebar-link-text">Mis mascotas</span>
             </div>
           </li>
-          <li onClick={() => navigate("/config")} style={{ cursor: "pointer" }}>
-            <div className="container-config">
-              <FaCog className="icon-side" />
-              Configuración
+          <li className="sidebar-menu-item" onClick={() => navigate("/config")}>
+            <div className="sidebar-menu-link">
+              <FaCog className="sidebar-icon" />
+              <span className="sidebar-link-text">Configuración</span>
             </div>
           </li>
-
-          <li className="logout-btn" onClick={handleLogout}>
-            <div className="container-logout">
-              <FaSignOutAlt className="icon-side" />
-              Cerrar sesión
+          <li
+            className="sidebar-menu-item sidebar-logout"
+            onClick={handleLogout}
+          >
+            <div className="sidebar-menu-link">
+              <FaSignOutAlt className="sidebar-icon" />
+              <span className="sidebar-link-text">Cerrar sesión</span>
             </div>
           </li>
         </ul>
+        <div className="sidebar-social">
+          <SocialMedia />
+        </div>
       </nav>
-      <div className="social-media-SB">
-        <SocialMedia />
-      </div>
     </div>
   );
 };

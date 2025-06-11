@@ -35,7 +35,7 @@ const MyNfcCard: React.FC<MyNfcCardProps> = ({
 
   const handleNavigateToNfcSettings = () => {
     // TODO: Update this path when the NFC settings page/route is created
-    navigate("/nfc-settings");
+    navigate("/nfc");
   };
 
   if (isLoading) {
