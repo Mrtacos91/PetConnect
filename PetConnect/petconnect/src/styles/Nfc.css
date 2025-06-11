@@ -278,13 +278,35 @@
   text-align: center;
 }
 .nfc-status-banner {
-  width: 600px;
+  width: 90%;
+  max-width: 600px;
   margin: 20px auto;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 16px;
   padding: 1rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px var(--shadow-default);
+  background-color: var(--card-background);
+}
+
+@media (max-width: 768px) {
+  .nfc-status-banner {
+    width: 95%;
+    padding: 0.8rem;
+    margin: 15px auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .nfc-status-banner {
+    width: 100%;
+    border-radius: 0;
+    margin: 0;
+    padding: 0.8rem 1rem;
+  }
 }
 .nfc-section {
   background: var(--card-background);

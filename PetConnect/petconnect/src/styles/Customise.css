@@ -1,12 +1,48 @@
 /* ===== Base Styles ===== */
 .customise-page {
-  padding: 20px;
-  max-width: 1200px;
+  width: 100%;
+  padding: 2rem;
   margin: 0 auto;
   color: var(--text-primary);
   background: var(--background-color);
   min-height: 100vh;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Responsive container for content */
+.customise-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Large desktops */
+@media (min-width: 1440px) {
+  .customise-page {
+    padding: 4rem 10%;
+  }
+}
+
+/* Tablets and small desktops */
+@media (max-width: 1024px) {
+  .customise-page {
+    padding: 1.5rem 5%;
+  }
+}
+
+/* Large mobile devices */
+@media (max-width: 768px) {
+  .customise-page {
+    padding: 1.2rem 3%;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .customise-page {
+    padding: 1rem 2%;
+  }
 }
 
 /* ===== Typography ===== */
@@ -29,8 +65,8 @@
 }
 .BackBt-CP {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 2px;
+  left: 2px;
   z-index: 1000;
 }
 /* ===== Form Elements ===== */

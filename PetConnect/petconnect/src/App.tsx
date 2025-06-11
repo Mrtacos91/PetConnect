@@ -3,18 +3,19 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/global.css";
 import Loader from "./components/Loader";
+import Customise from "./pages/Customise";
+import Nfc from "./pages/Nfc";
 
-// Lazy load all page components
+// Lazy load page components
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Customise = lazy(() => import("./pages/Customise"));
 const CarnetPage = lazy(() => import("./pages/CarnetPage"));
 const Recardatorios = lazy(() => import("./pages/Recardatorios"));
 const Config = lazy(() => import("./pages/Config"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Account = lazy(() => import("./pages/micuenta"));
-const Nfc = lazy(() => import("./pages/Nfc"));
+
 // Loading component for Suspense fallback
 const LoadingFallback = () => <Loader />;
 
@@ -65,14 +66,7 @@ const App: React.FC = () => {
               </Suspense>
             }
           />
-          <Route
-            path="/customise"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <Customise />
-              </Suspense>
-            }
-          />
+          <Route path="/customise" element={<Customise />} />
           <Route
             path="/carnet"
             element={
@@ -106,14 +100,7 @@ const App: React.FC = () => {
             }
           />
         </Route>
-        <Route
-          path="/nfc"
-          element={
-            <Suspense fallback={<LoadingFallback />}>
-              <Nfc />
-            </Suspense>
-          }
-        />
+        <Route path="/nfc" element={<Nfc />} />
       </Routes>
     </Router>
   );
