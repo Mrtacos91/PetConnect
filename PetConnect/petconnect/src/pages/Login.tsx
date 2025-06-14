@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import supabase from "../supabase";
 import AlertMessage from "../components/AlertMessage";
@@ -233,7 +233,7 @@ const Login: React.FC = () => {
       <form className="login-box" onSubmit={handleLogin} autoComplete="off">
         <h2>Bienvenido a PetConnect</h2>
 
-        <div className="input-container">
+        <div className="input-container-login">
           <input
             type="email"
             name="email"
@@ -249,7 +249,7 @@ const Login: React.FC = () => {
           )}
         </div>
 
-        <div className="input-container password-container">
+        <div className="input-container-login password-container">
           <input
             type={showPassword ? "text" : "password"}
             name="password"
@@ -269,6 +269,11 @@ const Login: React.FC = () => {
           >
             {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
           </span>
+        </div>
+        <div className="forgot-password-container-login">
+          <Link to="/forgot-password" className="forgot-password-link">
+            ¿Olvidaste tu contraseña?
+          </Link>
         </div>
 
         <button type="submit">Iniciar sesión</button>

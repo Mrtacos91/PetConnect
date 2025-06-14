@@ -9,6 +9,8 @@ import Nfc from "./pages/Nfc";
 // Lazy load page components
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ChangePassword = lazy(() => import("./pages/ChangePassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CarnetPage = lazy(() => import("./pages/CarnetPage"));
 const Recardatorios = lazy(() => import("./pages/Recardatorios"));
@@ -44,6 +46,22 @@ const App: React.FC = () => {
           element={
             <Suspense fallback={<LoadingFallback />}>
               <Register />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <ForgotPassword />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <ChangePassword />
             </Suspense>
           }
         />

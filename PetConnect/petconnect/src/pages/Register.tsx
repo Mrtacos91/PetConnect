@@ -166,7 +166,7 @@ const Register: React.FC = () => {
       <form className="register-box" onSubmit={handleSubmit} autoComplete="off">
         <h2>Unete a PetConnect</h2>
 
-        <div className="input-container">
+        <div className="input-container-register">
           <input
             type="text"
             name="fullName"
@@ -182,7 +182,7 @@ const Register: React.FC = () => {
           )}
         </div>
 
-        <div className="input-container">
+        <div className="input-container-register">
           <input
             type="email"
             name="email"
@@ -198,7 +198,7 @@ const Register: React.FC = () => {
           )}
         </div>
 
-        <div className="input-container">
+        <div className="input-container-register">
           <input
             type="text"
             name="phone"
@@ -214,7 +214,7 @@ const Register: React.FC = () => {
           )}
         </div>
 
-        <div className="input-container">
+        <div className="input-container-register">
           <input
             type="password"
             name="password"
@@ -230,7 +230,7 @@ const Register: React.FC = () => {
           )}
         </div>
 
-        <div className="input-container">
+        <div className="input-container-register">
           <input
             type="password"
             name="confirmPassword"

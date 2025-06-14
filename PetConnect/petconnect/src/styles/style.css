@@ -70,37 +70,63 @@ h2 {
 
 .input-container input {
   width: 100%;
-  padding: 10px;
+  padding: 10px 10px 10px 0;
   border: none;
   background: transparent;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   color: #fff;
   outline: none;
   font-size: 16px;
   margin-bottom: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: border-color, transform;
 }
 
-.input-container input:focus + label,
-.input-container input:not(:placeholder-shown) + label {
-  top: 5px;
-  font-size: 12px;
-  color: #333;
+.input-container input:focus,
+.input-container input:active {
+  border-bottom-color: #3091e0;
+}
+
+.input-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.input-container input:focus::placeholder {
+  opacity: 0.5;
 }
 
 .input-container label {
   position: absolute;
   top: 10px;
-  left: 10px;
-  color: rgba(255, 255, 255, 0.7);
-  transition: 0.3s;
+  left: 0;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  font-size: 15px;
+  font-weight: 300;
 }
 
-.input-container input:focus + label,
-.input-container input:not(:placeholder-shown) + label {
-  top: -10px;
-  font-size: 12px;
+/* Forgot Password Link */
+
+.forgot-password-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+  display: inline-block;
+  padding: 5px 0;
+}
+
+.forgot-password-link:hover {
   color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.forgot-password-link:active {
+  transform: translateY(1px);
 }
 
 .input-container input.error {
@@ -116,6 +142,204 @@ h2 {
 .input-container input.error:focus {
   border-color: #ff6b6b;
   box-shadow: 0 0 0 2px rgba(255, 62, 62, 0.2);
+}
+
+/* Estilos para input-container-login */
+.input-container-login {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.input-container-login input {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-container-login input:focus {
+  border-bottom-color: #ffffff;
+  box-shadow: 0 1px 0 0 rgba(48, 145, 224, 0.3);
+}
+
+.input-container-login input:focus + label,
+.input-container-login input:not(:placeholder-shown) + label {
+  top: -15px;
+  font-size: 12px;
+  color: #3091e0;
+  text-shadow: 0 0 5px rgba(48, 145, 224, 0.2);
+}
+
+.input-container-login label {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.input-container-login .toggle-password {
+  position: absolute;
+  right: 0;
+  top: 25%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.input-container-login .toggle-password:hover {
+  color: #3091e0;
+}
+
+/* Estilos de error para inputs del login */
+.input-container-login input.error {
+  border-bottom-color: #ff3e3e;
+  animation: shake 0.5s ease-in-out;
+  margin-bottom: 10px; /* Reducir margen inferior para el input */
+}
+
+.input-container-login input.error:focus {
+  border-bottom-color: #ff6b6b;
+  box-shadow: 0 1px 0 0 rgba(255, 62, 62, 0.3);
+}
+
+.input-container-login input.error + label {
+  color: #ff3e3e;
+  top: -15px;
+  font-size: 12px;
+}
+
+.input-container-login input.error:focus + label {
+  color: #ff6b6b;
+}
+
+/* Asegurar que los contenedores de input tengan espacio para los mensajes de error */
+.input-container-login {
+  min-height: 80px; /* Altura mínima para contener el input y el mensaje de error */
+  margin-bottom: 5px;
+  margin-top: 20px; /* Reducir margen inferior para compensar */
+  position: relative; /* Asegurar posicionamiento absoluto de los hijos */
+}
+
+/* Asegurar que el primer input tenga el mismo espaciado */
+.input-container-login:first-child {
+  margin-top: 15px;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-3px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+.input-container-login .error-message {
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  position: absolute;
+  bottom: 1px;
+  left: 0;
+  right: 0;
+  background: rgba(255, 62, 62, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* Estilos para input-container-register */
+.input-container-register {
+  position: relative;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.input-container-register input {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-container-register input:focus {
+  border-bottom-color: #3091e0;
+}
+
+.input-container-register input:focus + label,
+.input-container-register input:not(:placeholder-shown) + label {
+  top: -15px;
+  font-size: 12px;
+  color: #3091e0;
+  text-shadow: 0 0 5px rgba(48, 145, 224, 0.2);
+}
+
+.input-container-register label {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  font-size: 15px;
+}
+
+.input-container-register .error-message {
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  background: rgba(255, 62, 62, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.input-container-register input.error {
+  border-bottom-color: #ff3e3e;
+}
+
+.input-container-register input.error + label {
+  color: #ff3e3e;
+}
+
+.input-container-register input.error:focus {
+  border-bottom-color: #ff6b6b;
 }
 
 .error-message {
@@ -206,20 +430,43 @@ button:hover {
 
 .toggle-password:hover {
   color: #cac9c9;
-  transition: 0.3s;
+  transition: 0.4s;
 }
 
 .password-container {
   position: relative;
 }
 
+/* ensure space for eye icon */
+.password-container input {
+  padding-right: 44px;
+}
+
 .toggle-password {
   position: absolute;
-  right: 10px;
-  top: 35%;
+  top: 25%;
+  right: 0px;
   transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffffcc;
   cursor: pointer;
-  color: white;
+  transition: all 0.4s ease;
+}
+
+.toggle-password:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.toggle-password:active {
+  transform: translateY(-50%) scale(0.9);
+  color: #3091e0;
 }
 
 .google-login-button {
@@ -242,6 +489,39 @@ button:hover {
 
 .google-login-button:hover {
   background-color: #f0f0f0c7;
+}
+
+/* Forgot Password Link */
+.forgot-password-container-login {
+  text-align: right;
+  margin: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forgot-password-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+  color: #e0e0e0;
+}
+
+.forgot-password-link a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.forgot-password-link a:hover {
+  text-decoration: underline;
+  color: #e0e0e0;
 }
 
 .google-icon {
