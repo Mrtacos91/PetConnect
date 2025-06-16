@@ -2,21 +2,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
+  width: 90vw;
+  height: 85vh;
+  max-width: 1200px;
+  margin: auto;
+  margin-bottom: 40px;
+  padding: 20px;
   overflow: hidden;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 0;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 16px;
   background: white;
   z-index: 1;
-  box-shadow: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .assistant-iframe::-webkit-scrollbar {
@@ -92,61 +92,83 @@
 /* 📱 Media queries para móviles */
 @media (max-width: 768px) {
   .assistant-card {
-    width: 100%;
-    min-width: auto; /* Elimina restricciones de tamaño */
-    min-height: 90vh; /* Ajustado para mejor visualización */
-    height: auto;
-    top: -80px; /* Ajustado para mejor posicionamiento */
-    box-shadow: 0px 3px 10px rgba(65, 66, 66, 0.3);
-    border-radius: 15px;
-    max-width: 100%;
+    width: 95vw;
+    min-width: auto;
+    min-height: auto;
+    height: 85vh;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 15px;
     margin: 0;
   }
 
   .assistant-iframe {
     width: 100%;
-    height: 100vh; /* Se asegura de llenar el espacio */
-    overflow: hidden; /* Oculta la scrollbar */
+    height: 100%;
+    border-radius: 8px;
+    overflow: auto;
   }
 
   .skeleton-loader {
-    border-radius: 15px; /* Coincide con el card */
+    border-radius: 12px;
   }
 }
 
 /* 📱 Media queries para móviles pequeños */
 @media (max-width: 480px) {
   .assistant-card {
-    width: 100%;
+    width: 92vw;
+    height: 75vh;
     min-width: auto;
-    min-height: 100vh;
-    height: auto;
-    box-shadow: none;
+    padding: 10px;
+    margin-bottom: 50px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.08);
     border-radius: 10px;
-    /* Ajustado para mejor posicionamiento */
+    top: 42%;
   }
 
   .assistant-iframe {
     width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    scrollbar-width: none;
-    top: 0px; /* Oculta la scrollbar */
+    height: 100%;
+    overflow: auto;
+    border-radius: 6px;
   }
 
   .skeleton-loader {
-    border-radius: 10px; /* Coincide con el card */
+    border-radius: 10px;
   }
 }
 
 /* 📱 Media queries para móviles muy pequeños */
-@media (max-width: 320px) {
+@media (max-width: 360px) {
   .assistant-card {
-    top: -10px;
+    width: 94vw;
+    height: 70vh;
+    padding: 8px;
+    margin-bottom: 60px;
     border-radius: 8px;
+    top: 40%;
+  }
+
+  .assistant-iframe {
+    border-radius: 4px;
+    padding: 10px;
   }
 
   .skeleton-loader {
     border-radius: 8px;
+  }
+}
+
+@media (max-width: 320px) {
+  .assistant-card {
+    width: 96vw;
+    height: 70vh;
+    padding: 6px;
+    margin-bottom: 10px;
+    top: 50%;
   }
 }

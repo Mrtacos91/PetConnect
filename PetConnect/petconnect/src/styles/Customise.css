@@ -62,6 +62,7 @@
   box-shadow: 0 2px 10px var(--shadow-default);
   margin: 0 auto;
   max-width: 600px;
+  overflow: hidden;
 }
 .BackBt-CP {
   position: absolute;

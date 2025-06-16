@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { QRCodeCanvas } from "qrcode.react";
 import BackButton from "../components/BackButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Nfc.css";
+
+import {
+  FaDog,
+  FaUserAlt,
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaMicrochip,
+  FaQrcode,
+} from "react-icons/fa";
 
 interface PetInfo {
   nombre: string;
@@ -19,18 +29,12 @@ interface ContactInfo {
   otroContacto: string;
 }
 
-import {
-  FaDog,
-  FaUserAlt,
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaMicrochip,
-} from "react-icons/fa";
-
 const Nfc: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [hasNfc, setHasNfc] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalView, setModalView] = useState<"select" | "qr" | "nfc">("select");
   const [petInfo, setPetInfo] = useState<PetInfo>({
     nombre: "",
     tipoAnimal: "",
@@ -48,80 +52,86 @@ const Nfc: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   useEffect(() => {
-    // Verificar si el dispositivo soporta NFC
     if ("NDEFReader" in window) {
       setHasNfc(true);
     }
-    // Aquí podrías cargar la información existente si el ID ya está vinculado
     loadExistingData();
   }, [id]);
 
   const loadExistingData = async () => {
-    try {
-      // Aquí deberías hacer una llamada a tu API para obtener los datos existentes
-      // const response = await fetch(`/api/nfc/${id}`);
-      // const data = await response.json();
-      // if (data) {
-      //   setPetInfo(data.petInfo);
-      //   setContactInfo(data.contactInfo);
-      // }
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error al cargar datos:", error);
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   };
 
   const handlePetInfoChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setPetInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setPetInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleContactInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setContactInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setContactInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const saveData = async () => {
     setIsLoading(true);
     setSuccessMsg("");
     setErrorMsg("");
     try {
-      // Aquí deberías hacer una llamada a tu API para guardar los datos
-      // const response = await fetch(`/api/nfc/${id}`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     petInfo,
-      //     contactInfo,
-      //   }),
-      // });
-
-      // if (response.ok) {
-      //   setSuccessMsg('Información vinculada exitosamente');
-      // }
-      setSuccessMsg("Información vinculada exitosamente (demo)");
-      console.log("Información a vincular:", { id, petInfo, contactInfo });
-    } catch (error) {
-      console.error("Error al vincular información:", error);
-      setErrorMsg("Error al vincular la información");
-    } finally {
+      console.log("Información guardada:", { id, petInfo, contactInfo });
+      setSuccessMsg("Información guardada. Ahora puedes vincularla.");
       setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error("Error al guardar información:", error);
+      setErrorMsg("Error al guardar la información");
+      setIsLoading(false);
+      return false;
     }
   };
 
-  if (isLoading) {
+  const handleOpenModal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    if (form.checkValidity()) {
+      const success = await saveData();
+      if (success) {
+        setIsModalOpen(true);
+        setModalView("select");
+      }
+    } else {
+      form.reportValidity();
+    }
+  };
+
+  const writeNfcTag = async () => {
+    if (!hasNfc) {
+      setErrorMsg("Tu dispositivo no soporta NFC.");
+      return;
+    }
+    try {
+      const ndef = new (window as any).NDEFReader();
+      await ndef.write({
+        records: [
+          {
+            recordType: "url",
+            data: `https://petconnectmx.netlify.app/nfc/${id}`,
+          },
+        ],
+      });
+      setSuccessMsg(
+        "¡Etiqueta NFC escrita exitosamente! Acerca la etiqueta para escribir."
+      );
+    } catch (error) {
+      console.error("Error al escribir en la etiqueta NFC:", error);
+      setErrorMsg(
+        "No se pudo escribir en la etiqueta NFC. Cancela e inténtalo de nuevo."
+      );
+    }
+  };
+
+  if (isLoading && !isModalOpen) {
     return (
       <div className="nfc-root">
         <div className="nfc-page-container">
@@ -144,9 +154,11 @@ const Nfc: React.FC = () => {
           className="nfc-status-banner"
           style={{
             background: hasNfc
-              ? "var(--skeleton-gradient-start, #e9fbe9)"
-              : "#ffeaea",
-            color: hasNfc ? "var(--accent-color, #249e57)" : "#e74c3c",
+              ? "var(--accent-positive-bg)"
+              : "var(--accent-negative-bg)",
+            color: hasNfc
+              ? "var(--accent-positive-text)"
+              : "var(--accent-negative-text)",
           }}
         >
           {hasNfc ? (
@@ -167,7 +179,7 @@ const Nfc: React.FC = () => {
         </div>
         <div className="nfc-form-container">
           <h1>
-            <FaMicrochip style={{ verticalAlign: "middle", marginRight: 8 }} />{" "}
+            <FaMicrochip style={{ verticalAlign: "middle", marginRight: 8 }} />
             Vincular Información NFC/QR
           </h1>
           <p className="nfc-id">ID: {id}</p>
@@ -185,10 +197,10 @@ const Nfc: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="nfc-form">
+          <form onSubmit={handleOpenModal} className="nfc-form">
             <section className="nfc-section">
               <h2 className="nfc-section-title">
-                <FaDog style={{ verticalAlign: "middle", marginRight: 8 }} />{" "}
+                <FaDog style={{ verticalAlign: "middle", marginRight: 8 }} />
                 Información de la Mascota
               </h2>
               <div className="nfc-form-group">
@@ -257,7 +269,7 @@ const Nfc: React.FC = () => {
               <h2 className="nfc-section-title">
                 <FaUserAlt
                   style={{ verticalAlign: "middle", marginRight: 8 }}
-                />{" "}
+                />
                 Información de Contacto
               </h2>
               <div className="nfc-form-group">
@@ -317,12 +329,107 @@ const Nfc: React.FC = () => {
 
             <div className="nfc-options">
               <button type="submit" className="nfc-button" disabled={isLoading}>
-                {isLoading ? "Vinculando..." : "Vincular Información"}
+                {isLoading ? "Guardando..." : "Guardar y Vincular"}
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>
+                {modalView === "select"
+                  ? "Vincular Placa"
+                  : modalView === "qr"
+                  ? "Escanear QR"
+                  : "Acercar Placa NFC"}
+              </h2>
+              <button
+                className="modal-close-button"
+                onClick={() => setIsModalOpen(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="modal-body">
+              {modalView === "select" && (
+                <>
+                  <p>
+                    Elige un método para vincular la información a tu placa.
+                  </p>
+                  <div className="modal-options-container">
+                    <div
+                      className="option-card"
+                      onClick={() => setModalView("qr")}
+                    >
+                      <FaQrcode className="icon" />
+                      <h3>Vincular con QR</h3>
+                    </div>
+                    {hasNfc && (
+                      <div
+                        className="option-card"
+                        onClick={() => setModalView("nfc")}
+                      >
+                        <FaMicrochip className="icon" />
+                        <h3>Vincular con NFC</h3>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              {modalView === "qr" && (
+                <div style={{ textAlign: "center" }}>
+                  <p>Escanea este código QR con la cámara de tu celular.</p>
+                  <div className="qr-code-container">
+                    <QRCodeCanvas
+                      value={`https://petconnectmx.netlify.app/nfc/${id}`}
+                      size={256}
+                      bgColor={"#ffffff"}
+                      fgColor={"#000000"}
+                      level={"L"}
+                      includeMargin={false}
+                    />
+                  </div>
+                  <button
+                    className="nfc-button"
+                    style={{ marginTop: "1.5rem" }}
+                    onClick={() => setModalView("select")}
+                  >
+                    Volver
+                  </button>
+                </div>
+              )}
+              {modalView === "nfc" && (
+                <div style={{ textAlign: "center" }}>
+                  <p>
+                    Prepara tu placa NFC y presiona el botón para escribir la
+                    información.
+                  </p>
+                  <button
+                    className="nfc-button nfc-write-button"
+                    onClick={writeNfcTag}
+                  >
+                    Escribir en Placa NFC
+                  </button>
+                  <button
+                    className="nfc-button"
+                    style={{
+                      marginTop: "1rem",
+                      background: "var(--text-secondary)",
+                    }}
+                    onClick={() => setModalView("select")}
+                  >
+                    Volver
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

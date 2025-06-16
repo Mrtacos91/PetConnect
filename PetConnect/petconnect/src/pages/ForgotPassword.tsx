@@ -103,11 +103,11 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <div className="auth-background forgot-bg">
+    <div className="forgot-password-page">
       <div className="forgot-password-container">
         <div className="logo-container">
           <img
-            src="../public/images/logo.png"
+            src="/public/images/logo.png"
             alt="PetConnect Logo"
             className="logo"
             onClick={() => navigate("/")}

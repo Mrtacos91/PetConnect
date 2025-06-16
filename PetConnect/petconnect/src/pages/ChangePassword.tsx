@@ -170,8 +170,16 @@ const ChangePassword: React.FC = () => {
   );
 
   return (
-    <div className="auth-background">
+    <div className="change-password-page">
       <div className="change-password-container">
+        <div className="logo-container">
+          <img
+            src="public/images/logo.png"
+            alt="PetConnect Logo"
+            className="logo"
+            onClick={() => navigate("/")}
+          />
+        </div>
         <h2>{accessToken ? "Restablecer Contraseña" : "Cambiar Contraseña"}</h2>
         <p>
           {accessToken
@@ -186,23 +194,25 @@ const ChangePassword: React.FC = () => {
         {!passwordChanged ? (
           <form onSubmit={handleSubmit} className="change-password-form">
             <div className="input-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Nueva contraseña"
-                value={password}
-                onChange={handlePasswordChange}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={
-                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                }
-              >
-                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
-              </button>
+              <div className="input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Nueva contraseña"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={
+                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  }
+                >
+                  {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                </button>
+              </div>
 
               <div className="password-requirements">
                 <PasswordRequirement
@@ -225,29 +235,31 @@ const ChangePassword: React.FC = () => {
             </div>
 
             <div className="input-container">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirmar nueva contraseña"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                aria-label={
-                  showConfirmPassword
-                    ? "Ocultar confirmación"
-                    : "Mostrar confirmación"
-                }
-              >
-                {showConfirmPassword ? (
-                  <FiEyeOff size={20} />
-                ) : (
-                  <FiEye size={20} />
-                )}
-              </button>
+              <div className="input-wrapper">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirmar nueva contraseña"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={
+                    showConfirmPassword
+                      ? "Ocultar confirmación"
+                      : "Mostrar confirmación"
+                  }
+                >
+                  {showConfirmPassword ? (
+                    <FiEyeOff size={20} />
+                  ) : (
+                    <FiEye size={20} />
+                  )}
+                </button>
+              </div>
               {!passwordsMatch && confirmPassword.length > 0 && (
                 <div className="error-message">
                   Las contraseñas no coinciden
