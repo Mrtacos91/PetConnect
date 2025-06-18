@@ -8,7 +8,7 @@ interface FoundHotelCardProps {
 
 const FoundHotelCard: React.FC<FoundHotelCardProps> = ({
   Info,
-  url = "https://www.google.com/maps/search/hoteles+para+mascotas+cerca+de+mi/@19.555423,-99.252622,14z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoJLDEwMjExNjM5SAFQAw%3D%3D", // URL por defecto
+  url = "https://www.google.com/maps/search/hoteles+pet+friendly+cerca+de+mi/@19.5554008,-99.3144218,12z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDYxNS4wIKXMDSoASAFQAw%3D%3D", // URL por defecto
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -38,7 +38,7 @@ const FoundHotelCard: React.FC<FoundHotelCardProps> = ({
         // 🔹 Contenido real
         <div className="FoundHotel-Card">
           <h3 className="FoundHotel-info">
-            <strong>¿Necesitas dónde hospedar a tu mascota?</strong>
+            <strong>¿Necesitas hospedarte con tu mascota?</strong>
           </h3>
           <p>{Info}</p>
         </div>

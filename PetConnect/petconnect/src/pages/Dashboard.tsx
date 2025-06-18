@@ -15,6 +15,7 @@ const Actividades = lazy(() => import("../components/Actividades"));
 const LocationCard = lazy(() => import("../components/LocationCard"));
 const FoundDoctorCard = lazy(() => import("../components/FoundDoctorCard"));
 const FoundHotelCard = lazy(() => import("../components/FoundHotelCard"));
+const FoundCanCard = lazy(() => import("../components/FoundCanCard"));
 const WelcomeCard = lazy(() => import("../components/WelcomeCard"));
 const ActivitiesCard = lazy(() => import("../components/ActivitiesCard"));
 const AssistantCard = lazy(() => import("../components/AssistantCard"));
@@ -155,7 +156,10 @@ const Dashboard: React.FC = () => {
                   <FoundDoctorCard Info="Encuentra un veterinario cerca de ti aquí" />
                 </section>
                 <section className="right-panel">
-                  <FoundHotelCard Info="Encuentra un hotel para tu mascota aquí" />
+                  <FoundCanCard Info="Encuentra unas Guarderia para tus mascotas aqui" />
+                </section>
+                <section className="right-panel">
+                  <FoundHotelCard Info="Encuentra un hotel  Pet Friendly aqui" />
                 </section>
               </Suspense>
             </main>
