@@ -174,7 +174,7 @@ const ChangePassword: React.FC = () => {
       <div className="change-password-container">
         <div className="logo-container">
           <img
-            src="public/images/logo.png"
+            src="public/images/Logo.png"
             alt="PetConnect Logo"
             className="logo"
             onClick={() => navigate("/")}

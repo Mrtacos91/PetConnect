@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { QRCodeCanvas } from "qrcode.react";
+import { Html5QrcodeScanner } from "html5-qrcode";
 import BackButton from "../components/BackButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Nfc.css";
@@ -35,6 +35,7 @@ const Nfc: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalView, setModalView] = useState<"select" | "qr" | "nfc">("select");
+  const [scanResult, setScanResult] = useState<string | null>(null);
   const [petInfo, setPetInfo] = useState<PetInfo>({
     nombre: "",
     tipoAnimal: "",
@@ -57,6 +58,51 @@ const Nfc: React.FC = () => {
     }
     loadExistingData();
   }, [id]);
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      setScanResult(null);
+    }
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    if (modalView === "qr" && isModalOpen && !scanResult) {
+      const scanner = new Html5QrcodeScanner(
+        "qr-scanner-container",
+        {
+          qrbox: {
+            width: 250,
+            height: 250,
+          },
+          fps: 5,
+        },
+        false
+      );
+
+      let didScan = false;
+
+      const onScanSuccess = (result: string) => {
+        if (!didScan) {
+          didScan = true;
+          scanner.clear();
+          setScanResult(result);
+          setSuccessMsg(`Placa con QR vinculada exitosamente.`);
+        }
+      };
+
+      const onScanError = (_err: string) => {
+        // This callback is required but we can leave it empty.
+      };
+
+      scanner.render(onScanSuccess, onScanError);
+
+      return () => {
+        if (didScan === false) {
+          scanner.clear().catch(() => {});
+        }
+      };
+    }
+  }, [modalView, isModalOpen, scanResult]);
 
   const loadExistingData = async () => {
     setIsLoading(false);
@@ -382,24 +428,45 @@ const Nfc: React.FC = () => {
               )}
               {modalView === "qr" && (
                 <div style={{ textAlign: "center" }}>
-                  <p>Escanea este código QR con la cámara de tu celular.</p>
-                  <div className="qr-code-container">
-                    <QRCodeCanvas
-                      value={`https://petconnectmx.netlify.app/nfc/${id}`}
-                      size={256}
-                      bgColor={"#ffffff"}
-                      fgColor={"#000000"}
-                      level={"L"}
-                      includeMargin={false}
-                    />
-                  </div>
-                  <button
-                    className="nfc-button"
-                    style={{ marginTop: "1.5rem" }}
-                    onClick={() => setModalView("select")}
-                  >
-                    Volver
-                  </button>
+                  {scanResult ? (
+                    <>
+                      <h3>¡Escaneo Exitoso!</h3>
+                      <p>
+                        La información de la mascota se ha vinculado a la placa
+                        con el ID:
+                      </p>
+                      <p>
+                        <strong>{scanResult}</strong>
+                      </p>
+                      <button
+                        className="nfc-button"
+                        style={{ marginTop: "1.5rem" }}
+                        onClick={() => {
+                          setIsModalOpen(false);
+                        }}
+                      >
+                        Finalizar
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        Apunta la cámara al código QR de la placa que deseas
+                        vincular.
+                      </p>
+                      <div
+                        id="qr-scanner-container"
+                        style={{ width: "100%", marginTop: "20px" }}
+                      ></div>
+                      <button
+                        className="nfc-button"
+                        style={{ marginTop: "1.5rem" }}
+                        onClick={() => setModalView("select")}
+                      >
+                        Volver
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
               {modalView === "nfc" && (

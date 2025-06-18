@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import supabase from "../supabase";
+import Loader from "../components/Loader";
 
 const ProtectedRoute: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -29,7 +30,7 @@ const ProtectedRoute: React.FC = () => {
 
   if (isLoading) {
     // You can replace this with a loading spinner or component
-    return <div>Cargando...</div>;
+    return <Loader />;
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;

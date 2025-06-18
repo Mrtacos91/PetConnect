@@ -107,7 +107,7 @@ const ForgotPassword: React.FC = () => {
       <div className="forgot-password-container">
         <div className="logo-container">
           <img
-            src="/public/images/logo.png"
+            src="/public/images/Logo.png"
             alt="PetConnect Logo"
             className="logo"
             onClick={() => navigate("/")}
