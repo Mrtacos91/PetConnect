@@ -16,6 +16,7 @@ const CarnetPage = lazy(() => import("./pages/CarnetPage"));
 const Recardatorios = lazy(() => import("./pages/Recardatorios"));
 const Config = lazy(() => import("./pages/Config"));
 const Calendar = lazy(() => import("./pages/Calendar"));
+const Micuenta = lazy(() => import("./pages/Micuenta"));
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => <Loader />;
@@ -105,6 +106,14 @@ const App: React.FC = () => {
             element={
               <Suspense fallback={<LoadingFallback />}>
                 <Config />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/Micuenta"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Micuenta />
               </Suspense>
             }
           />

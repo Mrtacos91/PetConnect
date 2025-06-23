@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         <ul className="sidebar-menu">
           <li
             className="sidebar-menu-item"
-            onClick={() => navigate("/micuenta")}
+            onClick={() => navigate("/Micuenta")}
           >
             <div className="sidebar-menu-link">
               <FaUser className="sidebar-icon" />
