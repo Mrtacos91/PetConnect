@@ -472,7 +472,8 @@ const Paseos: React.FC = () => {
       console.error("Error al enviar notificación push:", error);
       showNotification(
         "error",
-        `Error al enviar notificación push: ${error instanceof Error ? error.message : "Error desconocido"
+        `Error al enviar notificación push: ${
+          error instanceof Error ? error.message : "Error desconocido"
         }`
       );
       return false;
@@ -703,14 +704,14 @@ const Paseos: React.FC = () => {
           prev.map((a, idx) =>
             idx === index
               ? {
-                ...a,
-                id: updatedAlarm.id.toString(),
-                name: updatedAlarm.title,
-                days: updatedAlarm.days,
-                time: dayjs(updatedAlarm.hour, "HH:mm"),
-                active: updatedAlarm.active,
-                lastNotification: undefined, // Resetear la última notificación
-              }
+                  ...a,
+                  id: updatedAlarm.id.toString(),
+                  name: updatedAlarm.title,
+                  days: updatedAlarm.days,
+                  time: dayjs(updatedAlarm.hour, "HH:mm"),
+                  active: updatedAlarm.active,
+                  lastNotification: undefined, // Resetear la última notificación
+                }
               : a
           )
         );
@@ -968,7 +969,7 @@ const Paseos: React.FC = () => {
         renderSkeletonLoader()
       ) : (
         <>
-          <h2 className="paseos-title">Programar Actividades</h2>
+          <h2 className="paseos-title">Programar Paseos</h2>
           <div className="paseos-container">
             {alarms.map((alarm, idx) => (
               <div key={alarm.id} className="paseos-alarm-card minimal">
@@ -994,8 +995,9 @@ const Paseos: React.FC = () => {
                   {daysOfWeek.map((day) => (
                     <button
                       key={day.id}
-                      className={`day-button ${alarm.days.includes(day.id) ? "selected" : ""
-                        }`}
+                      className={`day-button ${
+                        alarm.days.includes(day.id) ? "selected" : ""
+                      }`}
                       onClick={() => toggleDay(idx, day.id)}
                     >
                       {day.id}
@@ -1059,7 +1061,7 @@ const Paseos: React.FC = () => {
                     className="save-button"
                     onClick={() => schedulePaseo(idx)}
                   >
-                    Programar Actividad
+                    Programar Paseo
                   </button>
                   <button
                     className="test-button"
