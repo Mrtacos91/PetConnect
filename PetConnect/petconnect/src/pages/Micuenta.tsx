@@ -130,18 +130,22 @@ const MiCuenta = () => {
     };
 
     return (
-        <div className="account-container">
-            <header className="account-header">
-                <BackButton />
+        <div className="mi-cuenta-container">
+            <header className="mi-cuenta-header">
                 <h1>Mi Cuenta</h1>
                 <ThemeToggle />
-            </header>
 
-            <main className="account-content">
-                <div className="profile-section">
+            </header>
+            <div className="BackBt-CP">
+                <BackButton />
+            </div>
+
+
+            <main className="mi-cuenta-content">
+                <div className="mi-cuenta-profile-section">
                     {editMode ? (
-                        <form onSubmit={handleSubmit} className="account-form">
-                            <div className="form-group">
+                        <form onSubmit={handleSubmit} className="mi-cuenta-form">
+                            <div className="mi-cuenta-form-group">
                                 <label>
                                     <FaUser /> Nombre completo
                                 </label>
@@ -154,7 +158,7 @@ const MiCuenta = () => {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="mi-cuenta-form-group">
                                 <label>
                                     <FaEnvelope /> Email
                                 </label>
@@ -168,7 +172,7 @@ const MiCuenta = () => {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className="mi-cuenta-form-group">
                                 <label>
                                     <FaPhone /> Teléfono
                                 </label>
@@ -180,10 +184,10 @@ const MiCuenta = () => {
                                 />
                             </div>
 
-                            <div className="form-actions">
+                            <div className="mi-cuenta-form-actions">
                                 <button
                                     type="button"
-                                    className="cancel-button"
+                                    className="mi-cuenta-cancel-button"
                                     onClick={() => setEditMode(false)}
                                     disabled={loading}
                                 >
@@ -191,7 +195,7 @@ const MiCuenta = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="save-button"
+                                    className="mi-cuenta-save-button"
                                     disabled={loading}
                                 >
                                     {loading ? "Guardando..." : (
@@ -203,27 +207,27 @@ const MiCuenta = () => {
                             </div>
                         </form>
                     ) : (
-                        <div className="profile-info">
+                        <div className="mi-cuenta-profile-info">
                             <h2>{userData.full_name}</h2>
-                            <div className="info-item">
+                            <div className="mi-cuenta-info-item">
                                 <FaEnvelope />
                                 <span>{userData.email}</span>
                             </div>
-                            <div className="info-item">
+                            <div className="mi-cuenta-info-item">
                                 <FaPhone />
                                 <span>{userData.phone || "No especificado"}</span>
                             </div>
 
-                            <div className="profile-actions">
+                            <div className="mi-cuenta-profile-actions">
                                 <button
                                     onClick={() => setEditMode(true)}
-                                    className="edit-button"
+                                    className="mi-cuenta-edit-button"
                                 >
                                     <FaPencilAlt /> Editar perfil
                                 </button>
                                 <button
                                     onClick={handleLogout}
-                                    className="logout-button"
+                                    className="mi-cuenta-logout-button"
                                 >
                                     <FaSignOutAlt /> Cerrar sesión
                                 </button>
@@ -232,12 +236,12 @@ const MiCuenta = () => {
                     )}
                 </div>
 
-                <div className="danger-zone">
+                <div className="mi-cuenta-danger-zone">
                     <h3>Zona peligrosa</h3>
                     <p>Estas acciones no pueden deshacerse</p>
                     <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="delete-account-button"
+                        className="mi-cuenta-delete-account-button"
                     >
                         <FaTrash /> Eliminar cuenta permanentemente
                     </button>
@@ -245,20 +249,20 @@ const MiCuenta = () => {
             </main>
 
             {showDeleteModal && (
-                <div className="modal-overlay">
-                    <div className="confirmation-modal">
+                <div className="mi-cuenta-modal-overlay">
+                    <div className="mi-cuenta-confirmation-modal">
                         <h3>¿Estás seguro de eliminar tu cuenta?</h3>
                         <p>Esta acción eliminará todos tus datos y no podrá revertirse.</p>
-                        <div className="modal-actions">
+                        <div className="mi-cuenta-modal-actions">
                             <button
                                 onClick={() => setShowDeleteModal(false)}
-                                className="cancel-button"
+                                className="mi-cuenta-cancel-button"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={handleDeleteAccount}
-                                className="confirm-delete-button"
+                                className="mi-cuenta-confirm-delete-button"
                                 disabled={loading}
                             >
                                 {loading ? "Eliminando..." : "Sí, eliminar cuenta"}

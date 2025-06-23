@@ -1,4 +1,4 @@
-.account-container {
+.mi-cuenta-container {
     width: 100%;
     padding: 2rem;
     margin: 0 auto;
@@ -10,7 +10,7 @@
 }
 
 /* ===== Header ===== */
-.account-header {
+.mi-cuenta-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -18,17 +18,21 @@
     max-width: 1440px;
     margin-left: auto;
     margin-right: auto;
+    position: relative;
 }
 
-.account-header h1 {
+.mi-cuenta-header h1 {
     font-size: 2rem;
     color: var(--text-primary);
     font-weight: 600;
     margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* ===== Main Content ===== */
-.account-content {
+.mi-cuenta-content {
     max-width: 800px;
     margin: 0 auto;
     display: flex;
@@ -37,7 +41,7 @@
 }
 
 /* ===== Profile Section ===== */
-.profile-section {
+.mi-cuenta-profile-section {
     background: var(--card-background);
     border-radius: 12px;
     padding: 2rem;
@@ -45,13 +49,13 @@
 }
 
 /* ===== Avatar Container ===== */
-.avatar-container {
+.mi-cuenta-avatar-container {
     display: flex;
     justify-content: center;
     margin-bottom: 2rem;
 }
 
-.avatar-wrapper {
+.mi-cuenta-avatar-wrapper {
     position: relative;
     width: 120px;
     height: 120px;
@@ -62,18 +66,18 @@
     transition: all 0.3s ease;
 }
 
-.avatar-wrapper:hover {
+.mi-cuenta-avatar-wrapper:hover {
     transform: scale(1.03);
     border-color: var(--accent-color);
 }
 
-.profile-avatar {
+.mi-cuenta-profile-avatar {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.avatar-placeholder {
+.mi-cuenta-avatar-placeholder {
     width: 100%;
     height: 100%;
     background: var(--bg-secondary);
@@ -83,7 +87,7 @@
     color: var(--text-secondary);
 }
 
-.edit-overlay {
+.mi-cuenta-edit-overlay {
     position: absolute;
     bottom: 5px;
     right: 5px;
@@ -98,23 +102,23 @@
     transition: all 0.3s ease;
 }
 
-.avatar-wrapper:hover .edit-overlay {
+.mi-cuenta-avatar-wrapper:hover .mi-cuenta-edit-overlay {
     background: var(--accent-color);
     transform: scale(1.1);
 }
 
-.hidden-file-input {
+.mi-cuenta-hidden-file-input {
     display: none;
 }
 
 /* ===== Form Styles ===== */
-.account-form {
+.mi-cuenta-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.form-group {
+.mi-cuenta-form-group {
     position: relative;
     padding-top: 1.5rem;
     margin-bottom: 1rem;
@@ -122,11 +126,11 @@
     transition: border-color 0.3s ease;
 }
 
-.form-group:focus-within {
+.mi-cuenta-form-group:focus-within {
     border-color: var(--accent-color);
 }
 
-.form-group label {
+.mi-cuenta-form-group label {
     position: absolute;
     top: 0;
     left: 0;
@@ -138,7 +142,7 @@
     gap: 0.5rem;
 }
 
-.form-group input {
+.mi-cuenta-form-group input {
     width: 100%;
     padding: 0.5rem 0;
     font-size: 1rem;
@@ -149,23 +153,23 @@
     transition: all 0.3s ease;
 }
 
-.form-group input::placeholder {
+.mi-cuenta-form-group input::placeholder {
     color: transparent;
 }
 
 /* ===== Profile Info (View Mode) ===== */
-.profile-info {
+.mi-cuenta-profile-info {
     text-align: center;
 }
 
-.profile-info h2 {
+.mi-cuenta-profile-info h2 {
     font-size: 1.5rem;
     color: var(--text-primary);
     margin-bottom: 1.5rem;
     font-weight: 600;
 }
 
-.info-item {
+.mi-cuenta-info-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -174,23 +178,23 @@
     color: var(--text-primary);
 }
 
-.info-item:last-of-type {
+.mi-cuenta-info-item:last-of-type {
     border-bottom: none;
 }
 
-.info-item svg {
+.mi-cuenta-info-item svg {
     color: var(--text-secondary);
     flex-shrink: 0;
 }
 
 /* ===== Form Actions ===== */
-.form-actions {
+.mi-cuenta-form-actions {
     display: flex;
     gap: 1rem;
     margin-top: 1.5rem;
 }
 
-.profile-actions {
+.mi-cuenta-profile-actions {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -198,11 +202,11 @@
 }
 
 /* ===== Buttons ===== */
-.save-button,
-.edit-button,
-.logout-button,
-.cancel-button,
-.delete-account-button {
+.mi-cuenta-save-button,
+.mi-cuenta-edit-button,
+.mi-cuenta-logout-button,
+.mi-cuenta-cancel-button,
+.mi-cuenta-delete-account-button {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 8px;
@@ -217,70 +221,70 @@
     gap: 0.5rem;
 }
 
-.save-button {
+.mi-cuenta-save-button {
     background: var(--button-bg);
     color: white;
     flex: 1;
 }
 
-.save-button:hover:not(:disabled) {
+.mi-cuenta-save-button:hover:not(:disabled) {
     opacity: 0.9;
     transform: translateY(-2px);
 }
 
-.save-button:disabled {
+.mi-cuenta-save-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
 }
 
-.cancel-button {
+.mi-cuenta-cancel-button {
     background: var(--bg-secondary);
     color: var(--text-primary);
     border: 1px solid var(--border-color);
     flex: 1;
 }
 
-.cancel-button:hover:not(:disabled) {
+.mi-cuenta-cancel-button:hover:not(:disabled) {
     background: var(--bg-tertiary);
     transform: translateY(-2px);
 }
 
-.edit-button {
+.mi-cuenta-edit-button {
     background: var(--button-bg);
     color: white;
 }
 
-.edit-button:hover {
+.mi-cuenta-edit-button:hover {
     opacity: 0.9;
     transform: translateY(-2px);
 }
 
-.logout-button {
+.mi-cuenta-logout-button {
     background: transparent;
     color: var(--text-primary);
     border: 2px solid var(--border-color);
 }
 
-.logout-button:hover {
+.mi-cuenta-logout-button:hover {
     border-color: var(--accent-color);
     background: var(--accent-color);
     color: white;
     transform: translateY(-2px);
 }
 
-.delete-account-button {
+.mi-cuenta-delete-account-button {
     background: #ff4444;
     color: white;
 }
 
-.delete-account-button:hover {
+.mi-cuenta-delete-account-button:hover {
     background: #cc0000;
     transform: translateY(-2px);
 }
 
 /* ===== Danger Zone ===== */
-.danger-zone {
+.mi-cuenta-danger-zone {
     background: var(--card-background);
     border-radius: 12px;
     padding: 2rem;
@@ -288,21 +292,21 @@
     border-left: 4px solid #ff4444;
 }
 
-.danger-zone h3 {
+.mi-cuenta-danger-zone h3 {
     color: #ff4444;
     font-size: 1.25rem;
     margin: 0 0 0.5rem 0;
     font-weight: 600;
 }
 
-.danger-zone p {
+.mi-cuenta-danger-zone p {
     color: var(--text-secondary);
     margin: 0 0 1.5rem 0;
     font-size: 0.9rem;
 }
 
 /* ===== Modal Styles ===== */
-.modal-overlay {
+.mi-cuenta-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -318,7 +322,7 @@
     padding: 1rem;
 }
 
-.confirmation-modal {
+.mi-cuenta-confirmation-modal {
     background: var(--bg-primary);
     border-radius: 16px;
     padding: 2rem;
@@ -330,7 +334,7 @@
     border: 1px solid var(--border-color);
 }
 
-.confirmation-modal h3 {
+.mi-cuenta-confirmation-modal h3 {
     margin: 0 0 1rem 0;
     color: var(--text-primary);
     font-size: 1.25rem;
@@ -338,21 +342,21 @@
     text-align: center;
 }
 
-.confirmation-modal p {
+.mi-cuenta-confirmation-modal p {
     color: var(--text-secondary);
     margin: 0 0 1.5rem 0;
     line-height: 1.5;
     text-align: center;
 }
 
-.modal-actions {
+.mi-cuenta-modal-actions {
     display: flex;
     gap: 1rem;
     justify-content: center;
     margin-top: 1.5rem;
 }
 
-.confirm-delete-button {
+.mi-cuenta-confirm-delete-button {
     background: #ff4d4f;
     color: white;
     box-shadow: 0 2px 8px rgba(255, 77, 79, 0.2);
@@ -365,13 +369,13 @@
     transition: all 0.2s ease;
 }
 
-.confirm-delete-button:hover:not(:disabled) {
+.mi-cuenta-confirm-delete-button:hover:not(:disabled) {
     background: #ff7875;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
 }
 
-.confirm-delete-button:disabled {
+.mi-cuenta-confirm-delete-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
@@ -404,22 +408,22 @@
 
 /* Large desktops */
 @media (min-width: 1440px) {
-    .account-container {
+    .mi-cuenta-container {
         padding: 4rem 10%;
     }
 }
 
 /* Tablets and small desktops */
 @media (max-width: 1024px) {
-    .account-container {
+    .mi-cuenta-container {
         padding: 1.5rem 5%;
     }
 
-    .account-content {
+    .mi-cuenta-content {
         max-width: 600px;
     }
 
-    .avatar-wrapper {
+    .mi-cuenta-avatar-wrapper {
         width: 100px;
         height: 100px;
     }
@@ -427,100 +431,107 @@
 
 /* Large mobile devices */
 @media (max-width: 768px) {
-    .account-container {
+    .mi-cuenta-container {
         padding: 1.2rem 3%;
     }
 
-    .account-header h1 {
+    .mi-cuenta-header h1 {
         font-size: 1.5rem;
     }
 
-    .profile-section,
-    .danger-zone {
+    .mi-cuenta-profile-section,
+    .mi-cuenta-danger-zone {
         padding: 1.5rem;
     }
 
-    .avatar-wrapper {
+    .mi-cuenta-avatar-wrapper {
         width: 90px;
         height: 90px;
     }
 
-    .form-actions {
+    .mi-cuenta-form-actions {
         flex-direction: column;
     }
 
-    .info-item {
+    .mi-cuenta-info-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
         text-align: left;
     }
 
-    .profile-info h2 {
+    .mi-cuenta-profile-info h2 {
         font-size: 1.25rem;
     }
 
-    .modal-actions {
+    .mi-cuenta-modal-actions {
         flex-direction: column;
     }
 
-    .modal-actions button {
+    .mi-cuenta-modal-actions button {
         width: 100%;
     }
 }
 
 /* Small mobile devices */
 @media (max-width: 480px) {
-    .account-container {
+    .mi-cuenta-container {
         padding: 1rem 2%;
     }
 
-    .account-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
+    .mi-cuenta-header {
+        flex-direction: row;
+        gap: 0;
+        text-align: left;
     }
 
-    .profile-section,
-    .danger-zone {
+    .mi-cuenta-header h1 {
+        position: static;
+        transform: none;
+        margin-left: auto;
+        margin-right: auto;
+        width: fit-content;
+    }
+
+    .mi-cuenta-profile-section,
+    .mi-cuenta-danger-zone {
         padding: 1rem;
     }
 
-    .avatar-wrapper {
+    .mi-cuenta-avatar-wrapper {
         width: 80px;
         height: 80px;
     }
 
-    .edit-overlay {
+    .mi-cuenta-edit-overlay {
         width: 25px;
         height: 25px;
         bottom: 2px;
         right: 2px;
     }
 
-    .confirmation-modal {
+    .mi-cuenta-confirmation-modal {
         padding: 1.5rem;
         margin: 1rem;
     }
 
-    .form-group input {
+    .mi-cuenta-form-group input {
         font-size: 16px;
-        /* Prevent zoom on iOS */
     }
 }
 
 /* Extra small devices */
 @media (max-width: 360px) {
-    .account-container {
+    .mi-cuenta-container {
         padding: 0.5rem 1%;
     }
 
-    .profile-section,
-    .danger-zone {
+    .mi-cuenta-profile-section,
+    .mi-cuenta-danger-zone {
         padding: 0.75rem;
     }
 
-    .avatar-wrapper {
+    .mi-cuenta-avatar-wrapper {
         width: 70px;
         height: 70px;
     }
