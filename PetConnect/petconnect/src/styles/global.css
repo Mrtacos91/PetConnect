@@ -13,9 +13,11 @@ body {
   background-color: white;
   box-shadow: none;
   outline: none;
+  transition: background 0.3s ease, color 0.3s ease, filter 0.3s ease;
 }
 
 :root {
+  /* Base colors */
   --bg-default: white;
   --card-background: #ffffff;
   --text-primary: #000;
@@ -34,9 +36,17 @@ body {
   --accent-before: #0c0c0c91;
   --pet-slot: #b8860b;
   --bottom-bg: #000;
+
+  /* Color blindness filters */
+  --filter-none: none;
+  --filter-protanopia: grayscale(100%) contrast(90%) brightness(110%) sepia(40%)
+    saturate(500%) hue-rotate(-50deg);
+  --filter-deuteranopia: grayscale(50%) hue-rotate(90deg) saturate(200%);
+  --filter-tritanopia: sepia(100%) saturate(300%) hue-rotate(180deg)
+    brightness(90%) contrast(90%);
 }
 
-/* Variables para modo oscuro */
+/* Dark mode */
 .dark-mode {
   --bg-default: #1a1a1a;
   --card-background: #1a1a1a;
@@ -56,6 +66,31 @@ body {
   --bottom-bg: #000;
 }
 
+/* Color blindness filters */
+:root {
+  --filter-none: none;
+  --filter-protanopia: grayscale(100%) contrast(90%) brightness(110%) sepia(40%)
+    saturate(500%) hue-rotate(-50deg);
+  --filter-deuteranopia: grayscale(50%) hue-rotate(90deg) saturate(200%);
+  --filter-tritanopia: sepia(100%) saturate(300%) hue-rotate(180deg)
+    brightness(90%) contrast(90%);
+  --active-color-filter: var(--filter-none);
+}
+
+/* Apply filter to html element */
+html {
+  filter: var(--active-color-filter);
+  transition: filter 0.3s ease;
+}
+
+/* Make sure images and videos aren't affected by the filter */
+img,
+video,
+iframe {
+  filter: none !important;
+}
+
+/* Additional theme variables */
 :root {
   --background-color: white;
   --text-color: #000000;
@@ -76,4 +111,12 @@ body {
 
 button {
   box-shadow: none !important;
+}
+
+/* SVG filters for color blindness simulation */
+.color-blindness-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }

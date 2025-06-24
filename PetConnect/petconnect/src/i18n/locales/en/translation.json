@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "PetConnect",
+    "settings": "Settings"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish"
+  },
+  "settings": {
+    "theme": "Theme",
+    "language": "Language",
+    "currentLanguage": "Current language",
+    "selectLanguage": "Select language",
+    "languageChanged": "Language changed to",
+    "languageChangeError": "Error changing language",
+    "notifications": "Notifications",
+    "colorBlindness": "Color Blindness",
+    "fontSize": "Font Size",
+    "permissions": "Permissions",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "colorBlindModes": {
+      "none": "None",
+      "protanopia": "Protanopia",
+      "deuteranopia": "Deuteranopia",
+      "tritanopia": "Tritanopia"
+    },
+    "fontSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "permissionsModal": {
+      "title": "App Permissions",
+      "description": "To manage app permissions, please go to your device settings.",
+      "close": "Close"
+    },
+    "notificationsEnabled": "Notifications enabled",
+    "notificationsDisabled": "Notifications disabled"
+  }
+}

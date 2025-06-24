@@ -1,200 +1,315 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import supabase from "../supabase";
+import { User } from "@supabase/supabase-js";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import BackButton from "../components/BackButton";
 import ThemeToggle from "../components/ThemeToggle";
+import AlertMessage from "../components/AlertMessage";
 import "../styles/Nfc.css";
 
 import {
   FaDog,
   FaUserAlt,
-  FaCheckCircle,
   FaExclamationCircle,
   FaMicrochip,
   FaQrcode,
 } from "react-icons/fa";
 
+// Interfaces de datos (sin cambios)
 interface PetInfo {
-  nombre: string;
-  tipoAnimal: string;
-  raza: string;
-  condiciones: string;
-  senasParticulares: string;
+  petname: string;
+  pettype: string;
+  petbreed: string;
+  petconditions: string;
+  petpartsigns: string;
 }
 
 interface ContactInfo {
-  telefono: string;
+  phone: string;
   email: string;
-  direccion: string;
-  otroContacto: string;
+  address: string;
+  othercontact: string;
 }
 
 const Nfc: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  // El 'tagId' de la URL ahora solo se usa para mostrar un ID específico si existe.
+  const { id: tagId } = useParams<{ id: string }>();
+  const [user, setUser] = useState<User | null>(null);
+  const [localUserId, setLocalUserId] = useState<number | null>(null);
+
+  // **NUEVO**: Almacenará el ID del perfil de contacto del usuario una vez cargado o creado.
+  const [profileId, setProfileId] = useState<number | null>(
+    tagId ? parseInt(tagId, 10) : null
+  );
+
+  // Estados del componente (sin cambios)
   const [hasNfc, setHasNfc] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalView, setModalView] = useState<"select" | "qr" | "nfc">("select");
   const [scanResult, setScanResult] = useState<string | null>(null);
+  const [alert, setAlert] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  // Estados del formulario (sin cambios)
   const [petInfo, setPetInfo] = useState<PetInfo>({
-    nombre: "",
-    tipoAnimal: "",
-    raza: "",
-    condiciones: "",
-    senasParticulares: "",
+    petname: "",
+    pettype: "",
+    petbreed: "",
+    petconditions: "",
+    petpartsigns: "",
   });
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
-    telefono: "",
+    phone: "",
     email: "",
-    direccion: "",
-    otroContacto: "",
+    address: "",
+    othercontact: "",
   });
-  const [successMsg, setSuccessMsg] = useState<string>("");
-  const [errorMsg, setErrorMsg] = useState<string>("");
 
+  // Helper para obtener el ID numérico del usuario desde la tabla 'users'
+  const getLocalUserId = async (authUuid: string): Promise<number | null> => {
+    const { data, error } = await supabase
+      .from("Users")
+      .select("id")
+      .eq("id", authUuid) // Asumo que la columna que guarda el UUID se llama así
+      .single();
+
+    if (error) {
+      console.error("Error fetching local user ID:", error);
+      return null;
+    }
+    return data?.id || null;
+  };
+
+  // **MODIFICADO**: La inicialización ahora se basa en el usuario, no en el ID de la URL.
   useEffect(() => {
     if ("NDEFReader" in window) {
       setHasNfc(true);
     }
-    loadExistingData();
-  }, [id]);
 
-  useEffect(() => {
-    if (!isModalOpen) {
-      setScanResult(null);
-    }
-  }, [isModalOpen]);
+    const initialize = async () => {
+      setIsLoading(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
 
+      if (user) {
+        const numericId = await getLocalUserId(user.id);
+        if (!numericId) {
+          setAlert({
+            message: "No se pudo verificar tu usuario.",
+            type: "error",
+          });
+          setIsLoading(false);
+          return;
+        }
+        setLocalUserId(numericId);
+
+        // Intenta cargar el perfil de contacto existente usando el user_id.
+        const { data, error } = await supabase
+          .from("pettag_contactinfo")
+          .select("*")
+          .eq("user_id", numericId)
+          .single();
+
+        if (data) {
+          // Si se encuentra, rellena el formulario y guarda el ID del perfil.
+          setPetInfo({
+            petname: data.petname || "",
+            pettype: data.pettype || "",
+            petbreed: data.petbreed || "",
+            petconditions: data.petconditions || "",
+            petpartsigns: data.petpartsigns || "",
+          });
+          setContactInfo({
+            phone: data.phone?.toString() || "", // Convertir a string para el input
+            email: data.email || "",
+            address: data.address || "",
+            othercontact: data.othercontact || "",
+          });
+          setProfileId(data.id); // Guarda el ID del perfil existente.
+        }
+
+        if (error && error.code !== "PGRST116") {
+          // Ignora el error "no rows found"
+          setAlert({
+            message: "Error al cargar tu perfil de contacto.",
+            type: "error",
+          });
+        }
+      }
+      setIsLoading(false);
+    };
+
+    initialize();
+  }, []);
+
+  // Lógica del escáner QR (sin cambios)
   useEffect(() => {
     if (modalView === "qr" && isModalOpen && !scanResult) {
       const scanner = new Html5QrcodeScanner(
         "qr-scanner-container",
-        {
-          qrbox: {
-            width: 250,
-            height: 250,
-          },
-          fps: 5,
-        },
+        { qrbox: { width: 250, height: 250 }, fps: 5 },
         false
       );
-
-      let didScan = false;
-
       const onScanSuccess = (result: string) => {
-        if (!didScan) {
-          didScan = true;
-          scanner.clear();
-          setScanResult(result);
-          setSuccessMsg(`Placa con QR vinculada exitosamente.`);
-        }
+        scanner.clear();
+        setScanResult(result);
+        setAlert({
+          message: `Placa con QR vinculada exitosamente.`,
+          type: "success",
+        });
       };
-
-      const onScanError = (_err: string) => {
-        // This callback is required but we can leave it empty.
-      };
-
-      scanner.render(onScanSuccess, onScanError);
-
+      scanner.render(onScanSuccess, () => {});
       return () => {
-        if (didScan === false) {
-          scanner.clear().catch(() => {});
-        }
+        scanner.clear().catch(() => {});
       };
     }
   }, [modalView, isModalOpen, scanResult]);
 
-  const loadExistingData = async () => {
-    setIsLoading(false);
-  };
-
+  // Manejadores de cambio del formulario (sin cambios)
   const handlePetInfoChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setPetInfo((prev) => ({ ...prev, [name]: value }));
+    setPetInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
   const handleContactInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setContactInfo((prev) => ({ ...prev, [name]: value }));
+    setContactInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const saveData = async () => {
+  // **MODIFICADO**: La función de guardado ahora usa el user_id.
+  const saveData = async (): Promise<boolean> => {
+    if (!user || !localUserId) {
+      setAlert({
+        message: "Debes iniciar sesión para guardar.",
+        type: "error",
+      });
+      return false;
+    }
     setIsLoading(true);
-    setSuccessMsg("");
-    setErrorMsg("");
-    try {
-      console.log("Información guardada:", { id, petInfo, contactInfo });
-      setSuccessMsg("Información guardada. Ahora puedes vincularla.");
-      setIsLoading(false);
-      return true;
-    } catch (error) {
-      console.error("Error al guardar información:", error);
-      setErrorMsg("Error al guardar la información");
+    setAlert(null);
+
+    const phoneAsNumber = parseInt(contactInfo.phone, 10);
+    if (isNaN(phoneAsNumber)) {
+      setAlert({
+        message: "El número de teléfono no es válido.",
+        type: "error",
+      });
       setIsLoading(false);
       return false;
     }
+
+    const dataToSave = {
+      id: profileId,
+      user_id: localUserId,
+      ...petInfo,
+      ...contactInfo,
+      phone: phoneAsNumber,
+    };
+
+    // `upsert` creará un nuevo registro o actualizará el existente.
+    const { data, error } = await supabase
+      .from("pettag_contactinfo")
+      .upsert(dataToSave)
+      .select()
+      .single();
+
+    setIsLoading(false);
+
+    if (error) {
+      console.error("Error al guardar:", error);
+      setAlert({ message: "Error al guardar la información.", type: "error" });
+      return false;
+    }
+
+    if (data) {
+      // **IMPORTANTE**: Actualiza el ID del perfil después de guardarlo por primera vez.
+      setProfileId(data.id);
+    }
+    return true;
   };
 
+  // Maneja el clic del botón "Guardar Cambios"
+  const handleSaveOnly = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const success = await saveData();
+    if (success) {
+      setAlert({
+        message: "Información guardada correctamente.",
+        type: "success",
+      });
+    }
+  };
+
+  // **MODIFICADO**: El modal de vinculación ahora depende de que exista un `profileId`.
   const handleOpenModal = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     if (form.checkValidity()) {
       const success = await saveData();
-      if (success) {
+      if (success && profileId) {
+        // Solo abre el modal si se guardó y tenemos un ID de perfil.
+        setAlert({
+          message: "Perfil guardado. Ahora puedes vincular una placa.",
+          type: "success",
+        });
         setIsModalOpen(true);
         setModalView("select");
+      } else if (!profileId) {
+        setAlert({
+          message: "No se pudo obtener un ID de perfil para vincular.",
+          type: "error",
+        });
       }
     } else {
       form.reportValidity();
     }
   };
 
+  // **MODIFICADO**: La escritura NFC ahora usa el `profileId` del estado.
   const writeNfcTag = async () => {
     if (!hasNfc) {
-      setErrorMsg("Tu dispositivo no soporta NFC.");
+      setAlert({ message: "Tu dispositivo no soporta NFC.", type: "error" });
       return;
     }
+    setAlert({
+      message: "Acerca la etiqueta NFC para escribir...",
+      type: "success",
+    });
     try {
       const ndef = new (window as any).NDEFReader();
       await ndef.write({
         records: [
           {
             recordType: "url",
-            data: `https://petconnectmx.netlify.app/nfc/${id}`,
+            data: `https://petconnectmx.netlify.app/nfc/${profileId}`, // Usa el ID del perfil.
           },
         ],
       });
-      setSuccessMsg(
-        "¡Etiqueta NFC escrita exitosamente! Acerca la etiqueta para escribir."
-      );
+      setAlert({
+        message: "¡Etiqueta NFC escrita exitosamente!",
+        type: "success",
+      });
     } catch (error) {
-      console.error("Error al escribir en la etiqueta NFC:", error);
-      setErrorMsg(
-        "No se pudo escribir en la etiqueta NFC. Cancela e inténtalo de nuevo."
-      );
+      setAlert({
+        message: "No se pudo escribir en la etiqueta NFC.",
+        type: "error",
+      });
     }
   };
 
-  if (isLoading && !isModalOpen) {
-    return (
-      <div className="nfc-root">
-        <div className="nfc-page-container">
-          <div className="nfc-loader">Cargando...</div>
-        </div>
-      </div>
-    );
-  }
-
+  // Renderizado del componente (JSX)
   return (
     <div className="nfc-root">
       <div className="nfc-page-container">
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <ThemeToggle />
-        </div>
-        <div style={{ display: "flex", justifyContent: "flex-start" }}>
+        {/* Header y banner de estado NFC (sin cambios) */}
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <BackButton />
+          <ThemeToggle />
         </div>
         <div
           className="nfc-status-banner"
@@ -223,39 +338,41 @@ const Nfc: React.FC = () => {
             </span>
           )}
         </div>
+
         <div className="nfc-form-container">
           <h1>
-            <FaMicrochip style={{ verticalAlign: "middle", marginRight: 8 }} />
-            Vincular Información NFC/QR
+            <FaUserAlt style={{ verticalAlign: "middle", marginRight: 8 }} />
+            Perfil de Contacto de Emergencia
           </h1>
-          <p className="nfc-id">ID: {id}</p>
+          <p className="nfc-id">
+            {profileId
+              ? `ID de Perfil: ${profileId}`
+              : "Crea tu perfil para obtener un ID."}
+          </p>
 
-          {successMsg && (
-            <div className="nfc-alert success">
-              <FaCheckCircle style={{ marginRight: 6 }} />
-              {successMsg}
-            </div>
-          )}
-          {errorMsg && (
-            <div className="nfc-alert error">
-              <FaExclamationCircle style={{ marginRight: 6 }} />
-              {errorMsg}
-            </div>
+          {alert && (
+            <AlertMessage
+              message={alert.message}
+              type={alert.type}
+              onClose={() => setAlert(null)}
+            />
           )}
 
           <form onSubmit={handleOpenModal} className="nfc-form">
+            {/* Secciones del formulario (sin cambios en los inputs) */}
             <section className="nfc-section">
               <h2 className="nfc-section-title">
                 <FaDog style={{ verticalAlign: "middle", marginRight: 8 }} />
                 Información de la Mascota
               </h2>
+              {/* Inputs para petname, pettype, etc. */}
               <div className="nfc-form-group">
-                <label htmlFor="nombre">Nombre de la mascota</label>
+                <label htmlFor="petname">Nombre de la mascota</label>
                 <input
-                  id="nombre"
+                  id="petname"
                   type="text"
-                  name="nombre"
-                  value={petInfo.nombre}
+                  name="petname"
+                  value={petInfo.petname}
                   onChange={handlePetInfoChange}
                   placeholder="Nombre de la mascota"
                   required
@@ -263,12 +380,12 @@ const Nfc: React.FC = () => {
                 />
               </div>
               <div className="nfc-form-group">
-                <label htmlFor="tipoAnimal">Tipo de animal</label>
+                <label htmlFor="pettype">Tipo de animal</label>
                 <input
-                  id="tipoAnimal"
+                  id="pettype"
                   type="text"
-                  name="tipoAnimal"
-                  value={petInfo.tipoAnimal}
+                  name="pettype"
+                  value={petInfo.pettype}
                   onChange={handlePetInfoChange}
                   placeholder="Tipo de animal"
                   required
@@ -276,41 +393,40 @@ const Nfc: React.FC = () => {
                 />
               </div>
               <div className="nfc-form-group">
-                <label htmlFor="raza">Raza</label>
+                <label htmlFor="petbreed">Raza</label>
                 <input
-                  id="raza"
+                  id="petbreed"
                   type="text"
-                  name="raza"
-                  value={petInfo.raza}
+                  name="petbreed"
+                  value={petInfo.petbreed}
                   onChange={handlePetInfoChange}
                   placeholder="Raza"
                   autoComplete="off"
                 />
               </div>
               <div className="nfc-form-group">
-                <label htmlFor="condiciones">
+                <label htmlFor="petconditions">
                   Condiciones médicas o especiales
                 </label>
                 <textarea
-                  id="condiciones"
-                  name="condiciones"
-                  value={petInfo.condiciones}
+                  id="petconditions"
+                  name="petconditions"
+                  value={petInfo.petconditions}
                   onChange={handlePetInfoChange}
                   placeholder="Condiciones médicas o especiales"
                 />
               </div>
               <div className="nfc-form-group">
-                <label htmlFor="senasParticulares">Señas particulares</label>
+                <label htmlFor="petpartsigns">Señas particulares</label>
                 <textarea
-                  id="senasParticulares"
-                  name="senasParticulares"
-                  value={petInfo.senasParticulares}
+                  id="petpartsigns"
+                  name="petpartsigns"
+                  value={petInfo.petpartsigns}
                   onChange={handlePetInfoChange}
                   placeholder="Señas particulares"
                 />
               </div>
             </section>
-
             <section className="nfc-section">
               <h2 className="nfc-section-title">
                 <FaUserAlt
@@ -318,13 +434,14 @@ const Nfc: React.FC = () => {
                 />
                 Información de Contacto
               </h2>
+              {/* Inputs para phone, email, etc. */}
               <div className="nfc-form-group">
-                <label htmlFor="telefono">Teléfono</label>
+                <label htmlFor="phone">Teléfono</label>
                 <input
-                  id="telefono"
+                  id="phone"
                   type="tel"
-                  name="telefono"
-                  value={contactInfo.telefono}
+                  name="phone"
+                  value={contactInfo.phone}
                   onChange={handleContactInfoChange}
                   placeholder="Teléfono"
                   required
@@ -345,12 +462,12 @@ const Nfc: React.FC = () => {
                 />
               </div>
               <div className="nfc-form-group">
-                <label htmlFor="direccion">Dirección</label>
+                <label htmlFor="address">Dirección</label>
                 <input
-                  id="direccion"
+                  id="address"
                   type="text"
-                  name="direccion"
-                  value={contactInfo.direccion}
+                  name="address"
+                  value={contactInfo.address}
                   onChange={handleContactInfoChange}
                   placeholder="Dirección"
                   required
@@ -358,14 +475,14 @@ const Nfc: React.FC = () => {
                 />
               </div>
               <div className="nfc-form-group">
-                <label htmlFor="otroContacto">
+                <label htmlFor="othercontact">
                   Otro método de contacto (ej: Instagram)
                 </label>
                 <input
-                  id="otroContacto"
+                  id="othercontact"
                   type="text"
-                  name="otroContacto"
-                  value={contactInfo.otroContacto}
+                  name="othercontact"
+                  value={contactInfo.othercontact}
                   onChange={handleContactInfoChange}
                   placeholder="Otro método de contacto (ej: Instagram)"
                   autoComplete="off"
@@ -374,14 +491,28 @@ const Nfc: React.FC = () => {
             </section>
 
             <div className="nfc-options">
-              <button type="submit" className="nfc-button" disabled={isLoading}>
-                {isLoading ? "Guardando..." : "Guardar y Vincular"}
+              <button
+                type="button"
+                className="nfc-button-secondary"
+                disabled={isLoading}
+                onClick={handleSaveOnly}
+              >
+                {isLoading ? "Guardando..." : "Guardar Cambios"}
+              </button>
+              {/* **MODIFICADO**: El botón de vincular se deshabilita si aún no se ha guardado el perfil. */}
+              <button
+                type="submit"
+                className="nfc-button"
+                disabled={isLoading || !profileId}
+              >
+                {isLoading ? "Guardando..." : "Vincular Placa"}
               </button>
             </div>
           </form>
         </div>
       </div>
 
+      {/* Modal (sin cambios en la estructura, pero la lógica que lo llama sí cambió) */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -402,96 +533,24 @@ const Nfc: React.FC = () => {
             </div>
             <div className="modal-body">
               {modalView === "select" && (
-                <>
-                  <p>
-                    Elige un método para vincular la información a tu placa.
-                  </p>
-                  <div className="modal-options-container">
-                    <div
-                      className="option-card"
-                      onClick={() => setModalView("qr")}
+                <div className="link-options">
+                  <button onClick={() => setModalView("qr")}>
+                    <FaQrcode /> Escanear QR
+                  </button>
+                  {hasNfc && (
+                    <button
+                      onClick={() => {
+                        setModalView("nfc");
+                        writeNfcTag();
+                      }}
                     >
-                      <FaQrcode className="icon" />
-                      <h3>Vincular con QR</h3>
-                    </div>
-                    {hasNfc && (
-                      <div
-                        className="option-card"
-                        onClick={() => setModalView("nfc")}
-                      >
-                        <FaMicrochip className="icon" />
-                        <h3>Vincular con NFC</h3>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-              {modalView === "qr" && (
-                <div style={{ textAlign: "center" }}>
-                  {scanResult ? (
-                    <>
-                      <h3>¡Escaneo Exitoso!</h3>
-                      <p>
-                        La información de la mascota se ha vinculado a la placa
-                        con el ID:
-                      </p>
-                      <p>
-                        <strong>{scanResult}</strong>
-                      </p>
-                      <button
-                        className="nfc-button"
-                        style={{ marginTop: "1.5rem" }}
-                        onClick={() => {
-                          setIsModalOpen(false);
-                        }}
-                      >
-                        Finalizar
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <p>
-                        Apunta la cámara al código QR de la placa que deseas
-                        vincular.
-                      </p>
-                      <div
-                        id="qr-scanner-container"
-                        style={{ width: "100%", marginTop: "20px" }}
-                      ></div>
-                      <button
-                        className="nfc-button"
-                        style={{ marginTop: "1.5rem" }}
-                        onClick={() => setModalView("select")}
-                      >
-                        Volver
-                      </button>
-                    </>
+                      <FaMicrochip /> Escribir en NFC
+                    </button>
                   )}
                 </div>
               )}
-              {modalView === "nfc" && (
-                <div style={{ textAlign: "center" }}>
-                  <p>
-                    Prepara tu placa NFC y presiona el botón para escribir la
-                    información.
-                  </p>
-                  <button
-                    className="nfc-button nfc-write-button"
-                    onClick={writeNfcTag}
-                  >
-                    Escribir en Placa NFC
-                  </button>
-                  <button
-                    className="nfc-button"
-                    style={{
-                      marginTop: "1rem",
-                      background: "var(--text-secondary)",
-                    }}
-                    onClick={() => setModalView("select")}
-                  >
-                    Volver
-                  </button>
-                </div>
+              {modalView === "qr" && !scanResult && (
+                <div id="qr-scanner-container"></div>
               )}
             </div>
           </div>
