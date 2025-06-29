@@ -41,6 +41,9 @@ const LocationMap: React.FC<LocationMapProps> = ({
   const [houseAddress, setHouseAddress] = useState<string>("");
   const [petAddress, setPetAddress] = useState<string>("");
   const [isAddressLoading, setIsAddressLoading] = useState(false);
+  // Nombre de la mascota asociada al dispositivo
+  const [petName, setPetName] = useState<string>(name);
+  const petNameRef = useRef<string>(name);
   const [notifications, setNotifications] = useState<
     Array<{
       id: string;
@@ -78,6 +81,38 @@ const LocationMap: React.FC<LocationMapProps> = ({
         // Si el usuario tiene un dispositivo asociado
         const hasGpsDevice = !!userData.device;
         setHasGpsDevice(hasGpsDevice);
+        // Obtener la mascota asociada a este dispositivo
+        if (userData.device) {
+          console.log("Buscando mascota con device_id:", userData.device);
+
+          // Solo actualizar si el nombre actual es el predeterminado
+          if (petNameRef.current === name) {
+            try {
+              // Buscar directamente la mascota con este device_id
+              const { data: petData, error } = await supabase
+                .from("Pets")
+                .select("pet_name")
+                .eq("device_id", userData.device)
+                .single();
+
+              if (error) {
+                console.error("Error en la consulta de mascota:", error);
+              } else if (petData?.pet_name) {
+                console.log("Mascota encontrada:", petData.pet_name);
+                petNameRef.current = petData.pet_name;
+                setPetName(petData.pet_name);
+              } else {
+                console.log("No se encontró mascota con este device_id");
+              }
+            } catch (err) {
+              console.error("Error obteniendo mascota:", err);
+            }
+          }
+        } else {
+          console.log("No hay dispositivo configurado");
+          petNameRef.current = name;
+          setPetName(name);
+        }
         if (hasGpsDevice) {
           // Obtener los datos de ubicación más recientes para ese dispositivo
           const { data: locationData, error: locationError } = await supabase
@@ -839,7 +874,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
               icon={customIcon}
             >
               <Popup>
-                {name} está aquí <br />
+                {petName} está aquí <br />
                 {hasGpsDevice === false
                   ? "No hay dispositivo GPS conectado"
                   : isAddressLoading
@@ -876,7 +911,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
             </div>
             <div className="pet-location-info">
               <p>
-                <strong>Nombre de la mascota:</strong> {name}
+                <strong>Nombre de la mascota:</strong> {petName}
               </p>
               {hasGpsDevice === false ? (
                 <p>

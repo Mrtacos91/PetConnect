@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../styles/LinkDevice.css";
-import { FaLink, FaQrcode } from "react-icons/fa";
+import { FaLink, FaQrcode, FaPaw } from "react-icons/fa";
 import ConfigureDevice from "./ConfigureDevice";
+import PetSelectModal from "./PetSelectModal";
 import supabase from "../supabase";
 
 interface LinkDeviceProps {}
@@ -11,6 +12,7 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [showConfigPopup, setShowConfigPopup] = useState(false);
   const [artificialLoading, setArtificialLoading] = useState(true);
+  const [showPetModal, setShowPetModal] = useState(false);
 
   // Referencia para almacenar el ID del dispositivo anterior
   const prevDeviceId = useRef<string | null>(null);
@@ -84,6 +86,14 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
     setShowConfigPopup(true);
   };
 
+  // Función para abrir el modal de selección de mascota
+  // Función para abrir el modal de selección de mascota
+  const handleOpenPetModal = () => {
+    if (deviceId) {
+      setShowPetModal(true);
+    }
+  };
+
   // Función para manejar el éxito en la configuración del dispositivo
   const handleDeviceConfigured = (newDeviceId: string) => {
     setDeviceId(newDeviceId);
@@ -114,6 +124,14 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
               {deviceId ? "Cambiar dispositivo" : "Configurar dispositivo"}{" "}
               <FaLink />
             </button>
+            {deviceId && (
+              <button
+                className="linkdevice-card__button"
+                onClick={handleOpenPetModal}
+              >
+                Asignar dispositivo a mascota <FaPaw />
+              </button>
+            )}
           </div>
 
           {/* Información del dispositivo */}
@@ -148,6 +166,13 @@ const LinkDevice: React.FC<LinkDeviceProps> = () => {
         isOpen={showConfigPopup}
         onClose={() => setShowConfigPopup(false)}
         onSuccess={handleDeviceConfigured}
+      />
+
+      {/* Modal para asignar collar a mascota */}
+      <PetSelectModal
+        isOpen={showPetModal}
+        onClose={() => setShowPetModal(false)}
+        deviceId={deviceId || ""}
       />
     </div>
   );

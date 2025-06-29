@@ -10,6 +10,7 @@ export interface PetData {
   pet_type: string;
   pet_breed: string;
   pet_age: number;
+  device_id?: string | null;
   image_pet?: string | null;
 }
 
