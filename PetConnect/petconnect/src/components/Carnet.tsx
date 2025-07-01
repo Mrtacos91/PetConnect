@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../styles/Carnet.css";
-import { FaTrashAlt, FaEye, FaDownload, FaTimes } from "react-icons/fa";
+import { FaTrashAlt, FaEye, FaDownload, FaTimes, FaPlus } from "react-icons/fa";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import BackButton from "./BackButton";
 
 interface VaccinationRecord {
   id: number;
@@ -27,16 +26,34 @@ interface CarnetProps {
   loading?: boolean;
   petName?: string;
   petSpecies?: string;
+  onCreateNewCarnet?: () => void;
+  carnetId?: number;
+  onUpdateCarnet?: (id: number, petName: string, petSpecies: string) => void;
+  onDeleteCarnet?: (id: number) => void;
 }
 
 const Carnet: React.FC<CarnetProps> = ({
   loading = false,
   petName = "Firulais",
   petSpecies = "Canino",
+  onCreateNewCarnet,
+  carnetId,
+  onUpdateCarnet,
+  onDeleteCarnet,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(loading);
   const [showPreview, setShowPreview] = useState(false);
+  const [petNameValue, setPetNameValue] = useState(petName);
+  const [petSpeciesValue, setPetSpeciesValue] = useState(petSpecies);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [carnetToDelete, setCarnetToDelete] = useState<number | null>(null);
+
+  // Actualizar los estados cuando cambien las props
+  useEffect(() => {
+    setPetNameValue(petName);
+    setPetSpeciesValue(petSpecies);
+  }, [petName, petSpecies]);
   const [records, setRecords] = useState<VaccinationRecord[]>([
     {
       id: 1,
@@ -66,6 +83,17 @@ const Carnet: React.FC<CarnetProps> = ({
 
   const handleSave = () => {
     setIsEditing(false);
+    // Guardar cambios y notificar al componente padre si existe la función onUpdateCarnet
+    if (onUpdateCarnet && carnetId) {
+      onUpdateCarnet(carnetId, petNameValue, petSpeciesValue);
+    }
+    // Aquí también se podrían guardar los cambios en una base de datos o enviar a un API
+  };
+
+  const handleCreateNewCarnet = () => {
+    if (onCreateNewCarnet) {
+      onCreateNewCarnet();
+    }
   };
 
   const handleChange = (
@@ -125,7 +153,9 @@ const Carnet: React.FC<CarnetProps> = ({
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
         pdf.save(
-          `carnet_vacunacion_${petName.toLowerCase().replace(/\s+/g, "_")}.pdf`
+          `carnet_vacunacion_${petNameValue
+            .toLowerCase()
+            .replace(/\s+/g, "_")}.pdf`
         );
       });
     }
@@ -141,9 +171,6 @@ const Carnet: React.FC<CarnetProps> = ({
 
   return (
     <div className="carnet-container" ref={carnetRef}>
-      <div className="carnet-backbt">
-        <BackButton />
-      </div>
       <div className="carnet-header">
         <h2 className="carnet-title">Carnet de Vacunación</h2>
         <div className="carnet-actions">
@@ -158,6 +185,57 @@ const Carnet: React.FC<CarnetProps> = ({
               <button className="edit-button" onClick={handleEdit}>
                 Editar
               </button>
+              <button
+                className="carnet-action-button add-button"
+                onClick={handleCreateNewCarnet}
+              >
+                <FaPlus /> <span className="button-text">Nuevo Carnet</span>
+              </button>
+              {onDeleteCarnet && carnetId && (
+                <>
+                  <button
+                    className="carnet-action-button delete-button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setCarnetToDelete(carnetId);
+                      setShowDeleteConfirm(true);
+                    }}
+                  >
+                    <FaTrashAlt /> <span className="button-text">Eliminar</span>
+                  </button>
+                  {showDeleteConfirm && (
+                    <div className="delete-confirm-overlay">
+                      <div className="delete-confirm-dialog">
+                        <h3>¿Estás seguro?</h3>
+                        <p>¿Deseas eliminar este carnet de forma permanente?</p>
+                        <div className="delete-confirm-buttons">
+                          <button
+                            className="cancel-button-carnet"
+                            onClick={() => setShowDeleteConfirm(false)}
+                          >
+                            Cancelar
+                          </button>
+                          <button
+                            className="confirm-delete-button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (carnetToDelete) {
+                                onDeleteCarnet(carnetToDelete);
+                                setShowDeleteConfirm(false);
+                                setCarnetToDelete(null);
+                              }
+                            }}
+                          >
+                            Sí, eliminar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </>
           ) : (
             <>
@@ -173,12 +251,43 @@ const Carnet: React.FC<CarnetProps> = ({
       </div>
 
       <div className="carnet-pet-info">
-        <p>
-          <strong>Mascota:</strong> {petName}
-        </p>
-        <p>
-          <strong>Especie:</strong> {petSpecies}
-        </p>
+        {isEditing ? (
+          <>
+            <div className="form-field">
+              <label>
+                <strong>Mascota:</strong>
+              </label>
+              <input
+                type="text"
+                className="input-field"
+                value={petNameValue}
+                onChange={(e) => setPetNameValue(e.target.value)}
+                placeholder="Nombre de la mascota"
+              />
+            </div>
+            <div className="form-field">
+              <label>
+                <strong>Especie:</strong>
+              </label>
+              <input
+                type="text"
+                className="input-field"
+                value={petSpeciesValue}
+                onChange={(e) => setPetSpeciesValue(e.target.value)}
+                placeholder="Especie de la mascota"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <p>
+              <strong>Mascota:</strong> {petNameValue}
+            </p>
+            <p>
+              <strong>Especie:</strong> {petSpeciesValue}
+            </p>
+          </>
+        )}
       </div>
 
       <div className="carnet-table-container">
@@ -474,10 +583,10 @@ const Carnet: React.FC<CarnetProps> = ({
               <h2>Carnet de Vacunación</h2>
               <div className="pdf-pet-info">
                 <p>
-                  <strong>Mascota:</strong> {petName}
+                  <strong>Mascota:</strong> {petNameValue}
                 </p>
                 <p>
-                  <strong>Especie:</strong> {petSpecies}
+                  <strong>Especie:</strong> {petSpeciesValue}
                 </p>
               </div>
               <table className="pdf-table">

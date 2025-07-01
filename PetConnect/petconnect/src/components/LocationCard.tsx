@@ -4,6 +4,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import supabase from "../supabase";
 import { Session } from "@supabase/supabase-js";
 
+
 // 📌 Propiedades del componente
 interface LocationCardProps {
   name: string;
@@ -133,6 +134,8 @@ const LocationCard: React.FC<LocationCardProps> = ({
   const [lastLocation, setLastLocation] = useState<string>("");
   const [locationError, setLocationError] = useState<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [petName, setPetName] = useState<string>(name);
+  const petNameRef = useRef<string>(name);
 
   // Referencias para almacenar los valores previos
   const prevLatitude = useRef<string | null>(null);
@@ -206,6 +209,35 @@ const LocationCard: React.FC<LocationCardProps> = ({
 
       // Si el usuario tiene un dispositivo asociado
       if (userData.device) {
+        // Obtener la mascota asociada a este dispositivo
+        try {
+          // Solo actualizar si el nombre actual es el predeterminado o es diferente
+          if (petNameRef.current === name || petNameRef.current !== petName) {
+            // Buscar directamente la mascota con este device_id
+            const { data: petData, error } = await supabase
+              .from("Pets")
+              .select("pet_name")
+              .eq("device_id", userData.device)
+              .single();
+
+            if (error) {
+              console.error("Error en la consulta de mascota:", error);
+            } else if (petData?.pet_name) {
+              console.log("Mascota encontrada:", petData.pet_name);
+              petNameRef.current = petData.pet_name;
+              setPetName(petData.pet_name);
+            } else {
+              console.log("No se encontró mascota con este device_id");
+              // Si no hay mascota vinculada, mantener el nombre predeterminado
+              if (petNameRef.current !== name) {
+                petNameRef.current = name;
+                setPetName(name);
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Error obteniendo mascota:", err);
+        }
         // Obtener los datos de ubicación más recientes para ese dispositivo
         const { data: locationData, error: locationError } = await supabase
           .from("LocationGps")
@@ -365,7 +397,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
           {/* Información de la ubicación */}
           <div className="location-card__info">
             <p>
-              🐾 <strong>{name}</strong>
+              🐾 <strong>{petName}</strong>
             </p>
             <p>
               📍 <strong>Ubicación actual:</strong> {location}

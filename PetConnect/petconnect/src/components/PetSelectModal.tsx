@@ -26,11 +26,11 @@ const PetSelectModal: React.FC<PetSelectModalProps> = ({
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Cargar las mascotas del usuario cuando se abra el modal
+  // Cargar las mascotas del usuario y verificar cuál tiene asignado el dispositivo
   useEffect(() => {
     if (!isOpen) return;
 
-    const fetchPets = async () => {
+    const fetchPetsAndLinkedPet = async () => {
       setLoading(true);
       setMessage(null);
       try {
@@ -44,9 +44,22 @@ const PetSelectModal: React.FC<PetSelectModalProps> = ({
           setMessage("Usuario no encontrado.");
           return;
         }
+        
+        // Obtener la lista de mascotas
         const petList = await getAllPetsByUserId(localId);
         setPets(petList);
-        if (petList.length > 0) {
+        
+        // Buscar si alguna mascota ya tiene este dispositivo asignado
+        const { data: linkedPet } = await supabase
+          .from("Pets")
+          .select("id")
+          .eq("device_id", deviceId)
+          .single();
+        
+        // Establecer la mascota seleccionada (si hay una vinculada, la selecciona; si no, la primera de la lista)
+        if (linkedPet?.id) {
+          setSelectedPetId(linkedPet.id);
+        } else if (petList.length > 0) {
           setSelectedPetId(petList[0].id || null);
         }
       } catch (error) {
@@ -57,20 +70,30 @@ const PetSelectModal: React.FC<PetSelectModalProps> = ({
       }
     };
 
-    fetchPets();
-  }, [isOpen]);
+    fetchPetsAndLinkedPet();
+  }, [isOpen, deviceId]);
 
   // Vincular el dispositivo a la mascota seleccionada
   const handleSave = async () => {
     if (!selectedPetId) return;
+    
+    // Si la mascota seleccionada ya tiene este dispositivo asignado, no hacer nada
+    const selectedPet = pets.find(pet => pet.id === selectedPetId);
+    if (selectedPet?.device_id === deviceId) {
+      setMessage("Esta mascota ya tiene asignado este dispositivo.");
+      return;
+    }
+    
     setSaving(true);
     setMessage(null);
     try {
       // Limpiar cualquier vínculo previo para este dispositivo
-      await supabase
+      const { error: clearError } = await supabase
         .from("Pets")
         .update({ device_id: null })
         .eq("device_id", deviceId);
+
+      if (clearError) throw clearError;
 
       // Asignar el dispositivo a la mascota seleccionada
       const { error } = await supabase
@@ -80,9 +103,20 @@ const PetSelectModal: React.FC<PetSelectModalProps> = ({
 
       if (error) throw error;
 
+      // Actualizar el estado local para reflejar el cambio
+      setPets(pets.map(pet => 
+        pet.id === selectedPetId 
+          ? { ...pet, device_id: deviceId } 
+          : { ...pet, device_id: pet.device_id === deviceId ? null : pet.device_id }
+      ));
+
       setMessage("¡Dispositivo vinculado correctamente!");
       // Cerrar modal tras breve confirmación
-      setTimeout(onClose, 1500);
+      setTimeout(() => {
+        onClose();
+        // Recargar la página para actualizar los datos
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error al vincular dispositivo:", error);
       setMessage("Error al vincular dispositivo.");
@@ -121,14 +155,37 @@ const PetSelectModal: React.FC<PetSelectModalProps> = ({
                     marginBottom: "8px",
                     cursor: "pointer",
                     background:
-                      selectedPetId === pet.id
-                        ? "rgba(255,255,255,0.1)"
+                      pet.device_id === deviceId
+                        ? "rgba(46, 204, 113, 0.2)" // Verde más suave para la mascota vinculada
+                        : selectedPetId === pet.id
+                        ? "rgba(255,255,255,0.1)" // Gris claro para la seleccionada
                         : "transparent",
+                    border:
+                      pet.device_id === deviceId
+                        ? "1px solid #2ecc71" // Borde verde para la mascota vinculada
+                        : "1px solid transparent",
                     borderRadius: "6px",
+                    transition: "all 0.2s ease",
                   }}
                   onClick={() => setSelectedPetId(pet.id!)}
                 >
-                  <FaPaw /> <span>{pet.pet_name}</span>
+                  <FaPaw 
+                    style={{ 
+                      color: pet.device_id === deviceId ? "#2ecc71" : "inherit" 
+                    }} 
+                  />
+                  <span>{pet.pet_name}
+                    {pet.device_id === deviceId && (
+                      <span style={{
+                        fontSize: '0.8em',
+                        marginLeft: '8px',
+                        color: '#2ecc71',
+                        fontWeight: 'bold'
+                      }}>
+                        (Vinculada)
+                      </span>
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>
