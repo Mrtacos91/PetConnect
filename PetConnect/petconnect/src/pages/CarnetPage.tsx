@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Carnet from "../components/Carnet";
-import ThemeToggle from "../components/ThemeToggle";
 import { FaPlus } from "react-icons/fa";
 import BackButton from "../components/BackButton";
 
@@ -81,7 +80,6 @@ const CarnetPage: React.FC = () => {
         ))}
       </div>
 
-      <ThemeToggle />
     </div>
   );
 };

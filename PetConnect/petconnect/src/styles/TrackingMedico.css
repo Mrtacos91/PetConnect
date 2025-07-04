@@ -451,6 +451,103 @@
   }
 }
 
+/* Modal de confirmación para eliminar */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.delete-modal {
+  background: var(--background-color);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  animation: slideUp 0.4s ease-out;
+  border: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+.delete-modal-icon {
+  font-size: 3rem;
+  color: #e11d48;
+  margin-bottom: 1rem;
+}
+
+.delete-modal h4 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.delete-modal p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.delete-modal-cancel,
+.delete-modal-confirm {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.delete-modal-cancel {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.delete-modal-confirm {
+  background-color: #e11d48;
+  color: white;
+}
+
+.delete-modal-cancel:hover {
+  background-color: rgba(229, 231, 235, 0.2);
+  transform: translateY(-2px);
+}
+
+.delete-modal-confirm:hover {
+  background-color: #be123c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(225, 29, 72, 0.3);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .tracking-medico1 {

@@ -3,6 +3,7 @@ import supabase from "../supabase"; // Asegúrate que esta ruta sea correcta
 import "../styles/TrackingMedico.css";
 import "../styles/style.css";
 import { useNavigate } from "react-router-dom";
+import { getAllPetsByUserId, PetData } from "../services/pet-service";
 
 interface MedicalRecord {
   id: number;
@@ -11,6 +12,7 @@ interface MedicalRecord {
   description: string;
   veterinarian: string;
   user_id: number;
+  petname?: string;
 }
 
 const TrackingMedico = () => {
@@ -22,12 +24,16 @@ const TrackingMedico = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
+  const [userPets, setUserPets] = useState<PetData[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
 
   const [newRecord, setNewRecord] = useState({
     date: "",
     type: "",
     description: "",
     veterinarian: "",
+    petname: "",
   });
 
   const [editingRecord, setEditingRecord] = useState<null | number>(null);
@@ -105,6 +111,7 @@ const TrackingMedico = () => {
       const user_id = await checkUser();
       if (user_id) {
         fetchMedicalRecords(user_id);
+        fetchUserPets(user_id.toString());
       } else {
         setIsLoading(false);
       }
@@ -112,6 +119,17 @@ const TrackingMedico = () => {
 
     initializeData();
   }, [navigate]);
+  
+  // Cargar las mascotas del usuario
+  const fetchUserPets = async (userId: string) => {
+    try {
+      const pets = await getAllPetsByUserId(userId);
+      setUserPets(pets);
+    } catch (error) {
+      console.error("Error al cargar las mascotas:", error);
+      showNotification("Error al cargar las mascotas", "error");
+    }
+  };
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -130,7 +148,7 @@ const TrackingMedico = () => {
       return;
     }
 
-    if (!newRecord.date || !newRecord.type || !newRecord.description) {
+    if (!newRecord.date || !newRecord.type || !newRecord.description || !newRecord.petname) {
       showNotification(
         "Por favor, completa todos los campos obligatorios",
         "error"
@@ -146,6 +164,7 @@ const TrackingMedico = () => {
           type: newRecord.type,
           description: newRecord.description,
           veterinarian: newRecord.veterinarian || null, // Maneja campo opcional
+          petname: newRecord.petname, // Nombre de la mascota seleccionada
           user_id: userId // Usamos el user_id obtenido del checkUser
         }])
         .select();
@@ -195,26 +214,37 @@ const TrackingMedico = () => {
     }
   };
 
+  // Abrir modal de confirmación para eliminar
+  const openDeleteModal = (id: number) => {
+    setRecordToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  // Cerrar modal de confirmación
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setRecordToDelete(null);
+  };
+
   // Eliminar registro de Supabase
-  const deleteRecord = async (id: number) => {
-    const confirmDelete = window.confirm(
-      "¿Seguro que quieres eliminar este registro?"
-    );
-    if (!confirmDelete) return;
+  const deleteRecord = async () => {
+    if (!recordToDelete) return;
 
     try {
       const { error } = await supabase
         .from("medical_records")
         .delete()
-        .eq("id", id);
+        .eq("id", recordToDelete);
 
       if (error) throw error;
 
-      setMedicalRecords(medicalRecords.filter((record) => record.id !== id));
+      setMedicalRecords(medicalRecords.filter((record) => record.id !== recordToDelete));
       showNotification("Registro médico eliminado con éxito", "success");
+      closeDeleteModal();
     } catch (error) {
       console.error("Error al eliminar registro médico:", error);
       showNotification("Error al eliminar el registro médico", "error");
+      closeDeleteModal();
     }
   };
 
@@ -226,6 +256,7 @@ const TrackingMedico = () => {
         type: recordToEdit.type,
         description: recordToEdit.description,
         veterinarian: recordToEdit.veterinarian || "",
+        petname: recordToEdit.petname || "",
       });
       setEditingRecord(id);
     }
@@ -236,7 +267,7 @@ const TrackingMedico = () => {
   };
 
   const resetForm = () => {
-    setNewRecord({ date: "", type: "", description: "", veterinarian: "" });
+    setNewRecord({ date: "", type: "", description: "", veterinarian: "", petname: "" });
     setEditingRecord(null);
   };
 
@@ -300,6 +331,24 @@ const TrackingMedico = () => {
                 onChange={handleInputChange}
                 required
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="petname">Mascota:</label>
+              <select
+                id="petname"
+                name="petname"
+                value={newRecord.petname}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Selecciona una mascota</option>
+                {userPets.map((pet) => (
+                  <option key={pet.id} value={pet.pet_name}>
+                    {pet.pet_name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
@@ -373,6 +422,10 @@ const TrackingMedico = () => {
                     <div className="record-info">
                       <h4>{record.type}</h4>
                       <p>
+                        <span className="icon">🐾</span>
+                        <strong>Mascota:</strong> {record.petname}
+                      </p>
+                      <p>
                         <strong>Fecha:</strong> {record.date}
                       </p>
                       <p>
@@ -399,7 +452,7 @@ const TrackingMedico = () => {
                         Editar
                       </button>
                       <button
-                        onClick={() => deleteRecord(record.id)}
+                        onClick={() => openDeleteModal(record.id)}
                         className="btn-borrar"
                         aria-label="Eliminar registro"
                       >
@@ -414,6 +467,21 @@ const TrackingMedico = () => {
             )}
           </div>
         </>
+      )}
+
+      {/* Modal de confirmación para eliminar */}
+      {deleteModalOpen && (
+        <div className="delete-modal-overlay" onClick={closeDeleteModal}>
+          <div className="delete-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-modal-icon">⚠️</div>
+            <h4>Confirmar eliminación</h4>
+            <p>¿Estás seguro que deseas eliminar este registro médico? Esta acción no se puede deshacer.</p>
+            <div className="delete-modal-buttons">
+              <button className="delete-modal-cancel" onClick={closeDeleteModal}>Cancelar</button>
+              <button className="delete-modal-confirm" onClick={deleteRecord}>Eliminar</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -4,7 +4,6 @@ import supabase from "../supabase";
 import { User } from "@supabase/supabase-js";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import BackButton from "../components/BackButton";
-import ThemeToggle from "../components/ThemeToggle";
 import AlertMessage from "../components/AlertMessage";
 import "../styles/Nfc.css";
 
@@ -305,12 +304,8 @@ const Nfc: React.FC = () => {
   // Renderizado del componente (JSX)
   return (
     <div className="nfc-root">
+      <BackButton />
       <div className="nfc-page-container">
-        {/* Header y banner de estado NFC (sin cambios) */}
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <BackButton />
-          <ThemeToggle />
-        </div>
         <div
           className="nfc-status-banner"
           style={{
@@ -338,7 +333,6 @@ const Nfc: React.FC = () => {
             </span>
           )}
         </div>
-
         <div className="nfc-form-container">
           <h1>
             <FaUserAlt style={{ verticalAlign: "middle", marginRight: 8 }} />
@@ -490,7 +484,7 @@ const Nfc: React.FC = () => {
               </div>
             </section>
 
-            <div className="nfc-options">
+            <div className="nfc-button-container">
               <button
                 type="button"
                 className="nfc-button-secondary"
@@ -499,7 +493,6 @@ const Nfc: React.FC = () => {
               >
                 {isLoading ? "Guardando..." : "Guardar Cambios"}
               </button>
-              {/* **MODIFICADO**: El botón de vincular se deshabilita si aún no se ha guardado el perfil. */}
               <button
                 type="submit"
                 className="nfc-button"

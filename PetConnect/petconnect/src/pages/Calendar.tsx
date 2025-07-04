@@ -10,9 +10,6 @@ import {
   FaSave,
   FaTimes,
 } from "react-icons/fa";
-import Sidebar from "../components/Sidebar";
-import ThemeToggle from "../components/ThemeToggle";
-import MenuButton from "../components/MenuButton";
 import BackButton from "../components/BackButton";
 import supabase from "../supabase";
 
@@ -26,7 +23,6 @@ interface Event {
 }
 
 const Calendar: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -58,10 +54,6 @@ const Calendar: React.FC = () => {
   ];
 
   const dayNames = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
 
   const showNotification = (type: string, message: string) => {
     const id = Date.now().toString();
@@ -426,10 +418,7 @@ const Calendar: React.FC = () => {
 
   return (
     <div className="calendar-container">
-      <Sidebar isOpen={isSidebarOpen} />
-      <ThemeToggle />
-      <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
+      <BackButton route="/dashboard" />
       <div className="notification-container">
         {notifications.map((notification) => (
           <div
@@ -442,14 +431,6 @@ const Calendar: React.FC = () => {
             <div className="notification-progress-bar"></div>
           </div>
         ))}
-      </div>
-
-      <div className="back-button-container">
-        {isLoading ? (
-          <div className="skeleton-button"></div>
-        ) : (
-          <BackButton route="/dashboard" />
-        )}
       </div>
 
       <h1 className="calendar-title">

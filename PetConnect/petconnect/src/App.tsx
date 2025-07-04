@@ -5,6 +5,7 @@ import "./styles/global.css";
 import Loader from "./components/Loader";
 import Customise from "./pages/Customise";
 import Nfc from "./pages/Nfc";
+import Shop from "./pages/Shop";
 
 // Lazy load page components
 const Login = lazy(() => import("./pages/Login"));
@@ -117,8 +118,23 @@ const App: React.FC = () => {
               </Suspense>
             }
           />
-          <Route path="/nfc" element={<Nfc />} />
+          <Route
+            path="/nfc"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Nfc />
+              </Suspense>
+            }
+          />
         </Route>
+        <Route
+          path="/shop"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <Shop />
+            </Suspense>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -6,12 +6,8 @@ import "../styles/foods.css";
 import "../styles/Paseos.css";
 import "../styles/style.css";
 import "../styles/Recordatorios.css";
-import Sidebar from "../components/Sidebar";
-import MenuButton from "../components/MenuButton";
-import ThemeToggle from "../components/ThemeToggle";
 
 const Recardatorios: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [, setIsLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
 
@@ -40,25 +36,17 @@ const Recardatorios: React.FC = () => {
     return () => {};
   }, []);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
   return (
     <div className="recordatorios-root">
+      <BackButton route="/dashboard" />
       <div className="recordatorios-header">
         <div className="recordatorios-header-left">
-          <MenuButton isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-          <Sidebar isOpen={isSidebarOpen} />
-          <div className="Back-bt">
-            <BackButton route="/dashboard" />
-          </div>
+          <div className="Back-bt"></div>
         </div>
-        <div className="recordatorios-header-right">
-          <ThemeToggle />
-        </div>
+        <div className="recordatorios-header-right"></div>
       </div>
       <h1 className="recordatorios-title">Recordatorios</h1>
-      
+
       {showSkeleton ? (
         <div className="recordatorios-skeleton">
           <div className="recordatorios-skeleton-module"></div>

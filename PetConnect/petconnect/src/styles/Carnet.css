@@ -1211,6 +1211,8 @@ select.input-field {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  margin-top: 30px;
+  padding-top:  80px;
   padding-bottom: 15px;
   border-bottom: 1px solid var(--border-color);
 }

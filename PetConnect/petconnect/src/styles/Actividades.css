@@ -38,7 +38,8 @@
   margin-bottom: 1.5rem;
 }
 
-.form-container input {
+.form-container input,
+.form-container select.pet-select {
   width: 100%;
   padding: clamp(12px, 1.5vw, 15px);
   margin-bottom: 1rem;
@@ -50,13 +51,23 @@
   transition: all 0.3s ease;
 }
 
-.form-container input:focus {
+.form-container select.pet-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235b42f3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+}
+
+.form-container input:focus,
+.form-container select.pet-select:focus {
   outline: none;
   border-color: #5b42f3;
   box-shadow: 0 0 0 3px rgba(91, 66, 243, 0.1);
 }
 
-.form-container input:hover {
+.form-container input:hover,
+.form-container select.pet-select:hover {
   outline: none;
   border-color: #5b42f3;
   box-shadow: 0 0 0 3px rgba(91, 66, 243, 0.1);

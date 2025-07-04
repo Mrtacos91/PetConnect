@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaCog, FaSignOutAlt, FaPaw } from "react-icons/fa";
+import {
+  FaUser,
+  FaCog,
+  FaSignOutAlt,
+  FaPaw,
+  FaShoppingCart,
+} from "react-icons/fa";
 import supabase from "../supabase";
 import "../styles/Sidebar.css";
 import SocialMedia from "../components/SocialMedia";
@@ -76,12 +82,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
               <span className="sidebar-link-text">Mis mascotas</span>
             </div>
           </li>
+          <li className="sidebar-menu-item" onClick={() => navigate("/shop")}>
+            <div className="sidebar-menu-link">
+              <FaShoppingCart className="sidebar-icon" />
+              <span className="sidebar-link-text">Tienda</span>
+            </div>
+          </li>
           <li className="sidebar-menu-item" onClick={() => navigate("/config")}>
             <div className="sidebar-menu-link">
               <FaCog className="sidebar-icon" />
               <span className="sidebar-link-text">Configuración</span>
             </div>
           </li>
+
           <li
             className="sidebar-menu-item sidebar-logout"
             onClick={handleLogout}

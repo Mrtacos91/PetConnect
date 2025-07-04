@@ -1,4 +1,16 @@
-/* From Uiverse.io by cssbuttons-io */
+/* From Uiverse.io by cssbuttons-io - Modified for absolute positioning */
+/* Container for sticky positioning */
+.back-button-container {
+  position: sticky;
+  top: 10px;
+  left: 10px;
+  align-self: flex-start;
+  z-index: 10;
+  margin: 10px 0 0 10px;
+  width: fit-content;
+  height: 0;
+}
+
 .backBT {
   cursor: pointer;
   position: relative;

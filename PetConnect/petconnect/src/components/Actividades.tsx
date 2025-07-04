@@ -3,6 +3,7 @@ import "../styles/Actividades.css";
 import "../styles/style.css";
 import supabase from "../supabase";
 import { useNavigate } from "react-router-dom";
+import { getAllPetsByUserId, PetData } from "../services/pet-service";
 
 const Actividades = () => {
   const navigate = useNavigate();
@@ -15,15 +16,28 @@ const Actividades = () => {
   const [fechaCita, setFechaCita] = useState("");
   const [horaCita, setHoraCita] = useState("");
   const [nombreCita, setNombreCita] = useState("");
+  const [petName, setPetName] = useState(""); // Estado para el nombre de la mascota seleccionada
+  const [userPets, setUserPets] = useState<PetData[]>([]); // Estado para almacenar las mascotas del usuario
   const [editingId, setEditingId] = useState<number | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [citas, setCitas] = useState<
-    { id: number; user_id: number; Name: string; Date: string; Time: string }[]
+    { id: number; user_id: number; Name: string; Date: string; Time: string; petname?: string }[]
   >([]);
 
   const showNotification = (message: string, type: "success" | "error") => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000); // Ajustado a 5 segundos para coincidir con la animación
+  };
+
+  // Función para cargar las mascotas del usuario
+  const loadUserPets = async (userId: string) => {
+    try {
+      const pets = await getAllPetsByUserId(userId);
+      setUserPets(pets);
+    } catch (error) {
+      console.error("Error al cargar las mascotas del usuario:", error);
+      showNotification("No se pudieron cargar las mascotas.", "error");
+    }
   };
 
   useEffect(() => {
@@ -68,6 +82,9 @@ const Actividades = () => {
         const userId = localUser.id;
         setUserId(userId);
         console.log("ID del usuario local:", userId);
+
+        // Cargar las mascotas del usuario
+        await loadUserPets(userId);
 
         // Cargar las citas del usuario
         fetchEvents(userId);
@@ -157,6 +174,7 @@ const Actividades = () => {
             Name: nombreCita,
             Date: fechaCita,
             Time: horaCita,
+            petname: petName // Añadir el nombre de la mascota seleccionada
           })
           .eq("id", editingId);
 
@@ -175,6 +193,7 @@ const Actividades = () => {
             Name: nombreCita,
             Date: fechaCita,
             Time: horaCita,
+            petname: petName // Añadir el nombre de la mascota seleccionada
           },
         ]);
 
@@ -196,6 +215,7 @@ const Actividades = () => {
       setFechaCita("");
       setHoraCita("");
       setNombreCita("");
+      setPetName(""); // Limpiar el campo de mascota seleccionada
     } catch (error: any) {
       console.error("Error al guardar la cita:", error);
       showNotification(
@@ -237,11 +257,13 @@ const Actividades = () => {
     Name: string;
     Date: string;
     Time: string;
+    petname?: string;
   }) => {
     setEditingId(cita.id);
     setNombreCita(cita.Name);
     setFechaCita(cita.Date);
     setHoraCita(cita.Time);
+    setPetName(cita.petname || ""); // Establecer el nombre de la mascota si existe
   };
 
   // Renderizar el skeleton loader para las citas
@@ -254,6 +276,7 @@ const Actividades = () => {
           <div className="skeleton skeleton-input"></div>
           <div className="skeleton skeleton-input"></div>
           <div className="skeleton skeleton-input"></div>
+          <div className="skeleton skeleton-input"></div> {/* Añadir un skeleton para el selector de mascotas */}
           <div className="skeleton skeleton-button"></div>
         </div>
 
@@ -265,6 +288,7 @@ const Actividades = () => {
               <div className="skeleton skeleton-text"></div>
               <div className="skeleton skeleton-text"></div>
               <div className="skeleton skeleton-text"></div>
+              <div className="skeleton skeleton-text"></div> {/* Añadir un skeleton para el nombre de la mascota */}
             </div>
             <div className="skeleton-actions">
               <div className="skeleton skeleton-button-small"></div>
@@ -276,6 +300,7 @@ const Actividades = () => {
               <div className="skeleton skeleton-text"></div>
               <div className="skeleton skeleton-text"></div>
               <div className="skeleton skeleton-text"></div>
+              <div className="skeleton skeleton-text"></div> {/* Añadir un skeleton para el nombre de la mascota */}
             </div>
             <div className="skeleton-actions">
               <div className="skeleton skeleton-button-small"></div>
@@ -325,6 +350,12 @@ const Actividades = () => {
                 <span className="icon">⏰</span>
                 {cita.Time}
               </p>
+              {cita.petname && (
+                <p>
+                  <span className="icon">🐾</span>
+                  Mascota: {cita.petname}
+                </p>
+              )}
             </div>
             <div className="cita-actions">
               <button
@@ -409,6 +440,23 @@ const Actividades = () => {
               />
             </div>
 
+            <div className="form-group">
+              <label htmlFor="petName">Mascota:</label>
+              <select
+                id="petName"
+                value={petName}
+                onChange={(e) => setPetName(e.target.value)}
+                className="pet-select"
+              >
+                <option value="">Selecciona una mascota</option>
+                {userPets.map((pet) => (
+                  <option key={pet.id} value={pet.pet_name}>
+                    {pet.pet_name} ({pet.pet_type})
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="form-actions">
               <button onClick={handleAgendarCita} className="boton">
                 {editingId ? "Actualizar Cita" : "Agendar Cita"}
@@ -420,6 +468,7 @@ const Actividades = () => {
                     setNombreCita("");
                     setFechaCita("");
                     setHoraCita("");
+                    setPetName("");
                   }}
                   className="btn-cancelar"
                 >
