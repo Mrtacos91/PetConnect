@@ -183,18 +183,18 @@ const Shop = () => {
               ×
             </button>
 
-            <div className="modal-content">
-              <div className="modal-image">
+            <div className="modal-content-shop">
+              <div className="modal-image-shop">
                 <img src={selectedProduct.image} alt={selectedProduct.name} />
               </div>
 
-              <div className="modal-details">
+              <div className="modal-details-shop">
                 <h2>{selectedProduct.name}</h2>
                 <p className="modal-description">
                   {selectedProduct.description}
                 </p>
 
-                <div className="modal-pricing">
+                <div className="modal-pricing-shop">
                   <span className="current-price">
                     ${selectedProduct.price.toLocaleString("es-MX")} MXN
                   </span>
