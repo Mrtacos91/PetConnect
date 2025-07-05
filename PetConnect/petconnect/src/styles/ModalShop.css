@@ -1,0 +1,75 @@
+.order-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* overlay stays the same */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.order-confirm-modal {
+  background: var(--background-color);
+  width: 90%;
+  max-width: 420px;
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.35s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.order-confirm-close {
+  color: var(--text-color);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.order-confirm-icon {
+  color: var(--primary-color);
+  font-size: 3.5rem;
+  color: #2ecc71;
+  margin-bottom: 0.5rem;
+}
+
+.order-confirm-total {
+  font-weight: 600;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+}
+
+.order-confirm-btn {
+  background: var(--primary-color);
+  color: #fff;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.order-confirm-btn:hover {
+  filter: brightness(0.9);
+  background: #27ae60;
+}

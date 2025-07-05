@@ -7,10 +7,15 @@ import {
   FaCheck,
   FaPlus,
   FaMinus,
+  FaTimes,
+  FaCreditCard,
+  FaMoneyBillWave,
+  FaChevronLeft,
 } from "react-icons/fa";
 import BackButton from "../components/BackButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Shop.css";
+import ModalShop from "../components/ModalShop";
 
 interface Product {
   id: number;
@@ -26,8 +31,29 @@ interface Product {
 
 const Shop = () => {
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
+  const [cartItems, setCartItems] = useState<
+    { product: Product; quantity: number }[]
+  >([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showCart, setShowCart] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [showCardForm, setShowCardForm] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "cash" | "">("");
+  const [cardDetails, setCardDetails] = useState({
+    number: "",
+    name: "",
+    expiry: "",
+    cvv: "",
+  });
+  const [cardErrors, setCardErrors] = useState({
+    number: "",
+    name: "",
+    expiry: "",
+    cvv: "",
+  });
   const [quantity, setQuantity] = useState(1);
+  const [showOrderConfirm, setShowOrderConfirm] = useState(false);
+  const [orderTotal, setOrderTotal] = useState(0);
 
   const products: Product[] = [
     {
@@ -66,20 +92,230 @@ const Shop = () => {
     },
   ];
 
-  const addToCart = (productId: number) => {
+  const addToCart = (product: Product) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === productId);
+      const existingItem = prevCart.find((item) => item.id === product.id);
       if (existingItem) {
         return prevCart.map((item) =>
-          item.id === productId
+          item.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prevCart, { id: productId, quantity }];
+      return [...prevCart, { id: product.id, quantity }];
     });
     setQuantity(1);
-    // Show success message or notification
+    // Update cart items with full product details
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find(
+        (item) => item.product.id === product.id
+      );
+      if (existingItem) {
+        return prevItems.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      }
+      return [...prevItems, { product, quantity }];
+    });
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item.product.id !== productId)
+    );
+  };
+
+  const updateQuantity = (productId: number, newQuantity: number) => {
+    if (newQuantity < 1) return;
+
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.product.id === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      )
+    );
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => {
+      return total + item.product.price * item.quantity;
+    }, 0);
+  };
+
+  const validateCardNumber = (number: string) => {
+    // Remove all non-digit characters
+    const cleanNumber = number.replace(/\D/g, "");
+
+    // Check if the number is empty
+    if (!cleanNumber) return "Número de tarjeta requerido";
+
+    // Check if the number contains only digits
+    if (!/^\d+$/.test(cleanNumber)) return "Solo se permiten números";
+
+    // Check card length (13-19 digits for most cards)
+    if (cleanNumber.length < 13 || cleanNumber.length > 19) {
+      return "Número de tarjeta inválido";
+    }
+
+    // Luhn algorithm validation
+    let sum = 0;
+    let shouldDouble = false;
+
+    for (let i = cleanNumber.length - 1; i >= 0; i--) {
+      let digit = parseInt(cleanNumber.charAt(i));
+
+      if (shouldDouble) {
+        digit *= 2;
+        if (digit > 9) {
+          digit = (digit % 10) + 1;
+        }
+      }
+
+      sum += digit;
+      shouldDouble = !shouldDouble;
+    }
+
+    if (sum % 10 !== 0) {
+      return "Número de tarjeta inválido";
+    }
+
+    return "";
+  };
+
+  const validateExpiry = (expiry: string) => {
+    if (!expiry) return "Fecha de vencimiento requerida";
+
+    const [month, year] = expiry.split("/");
+    if (!month || !year || month.length !== 2 || year.length !== 2) {
+      return "Formato inválido (MM/YY)";
+    }
+
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+
+    if (isNaN(monthNum) || isNaN(yearNum) || monthNum < 1 || monthNum > 12) {
+      return "Fecha inválida";
+    }
+
+    if (
+      yearNum < currentYear ||
+      (yearNum === currentYear && monthNum < currentMonth)
+    ) {
+      return "La tarjeta ha expirado";
+    }
+
+    return "";
+  };
+
+  const validateCVV = (cvv: string) => {
+    if (!cvv) return "CVV requerido";
+    if (!/^\d{3,4}$/.test(cvv)) return "CVV inválido";
+    return "";
+  };
+
+  const validateName = (name: string) => {
+    if (!name.trim()) return "Nombre del titular requerido";
+    if (!/^[a-zA-Z\s]+$/.test(name))
+      return "Solo se permiten letras y espacios";
+    return "";
+  };
+
+  const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    // Format card number with spaces every 4 digits
+    if (name === "number") {
+      const cleanValue = value.replace(/\D/g, "");
+      formattedValue = cleanValue.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+
+      // Validate as user types
+      const error = validateCardNumber(cleanValue);
+      setCardErrors((prev) => ({ ...prev, number: error }));
+    }
+
+    // Format expiry date as MM/YY
+    if (name === "expiry") {
+      const cleanValue = value.replace(/\D/g, "");
+      if (cleanValue.length <= 2) {
+        formattedValue = cleanValue;
+      } else {
+        formattedValue = `${cleanValue.slice(0, 2)}/${cleanValue.slice(2, 4)}`;
+      }
+
+      // Validate as user types
+      const error = validateExpiry(formattedValue);
+      setCardErrors((prev) => ({ ...prev, expiry: error }));
+    }
+
+    // Format CVV (limit to 3-4 digits)
+    if (name === "cvv") {
+      formattedValue = value.replace(/\D/g, "").slice(0, 4);
+
+      // Validate as user types
+      const error = validateCVV(formattedValue);
+      setCardErrors((prev) => ({ ...prev, cvv: error }));
+    }
+
+    // Format cardholder name (letters and spaces only)
+    if (name === "name") {
+      formattedValue = value.replace(/[^a-zA-Z\s]/g, "");
+
+      // Validate as user types
+      const error = validateName(formattedValue);
+      setCardErrors((prev) => ({ ...prev, name: error }));
+    }
+
+    setCardDetails((prev) => ({ ...prev, [name]: formattedValue }));
+  };
+
+  const handleCardSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate all fields
+    const numberError = validateCardNumber(cardDetails.number);
+    const nameError = validateName(cardDetails.name);
+    const expiryError = validateExpiry(cardDetails.expiry);
+    const cvvError = validateCVV(cardDetails.cvv);
+
+    setCardErrors({
+      number: numberError,
+      name: nameError,
+      expiry: expiryError,
+      cvv: cvvError,
+    });
+
+    // If no errors, process payment
+    if (!numberError && !nameError && !expiryError && !cvvError) {
+      // Here you would typically send the payment details to your payment processor
+      const totalPaid = getTotalPrice();
+      setOrderTotal(totalPaid);
+      setShowOrderConfirm(true);
+      setCart([]);
+      setCartItems([]);
+      setPaymentMethod("");
+      setShowPayment(false);
+      setShowCardForm(false);
+      setShowCart(false);
+      setCardDetails({
+        number: "",
+        name: "",
+        expiry: "",
+        cvv: "",
+      });
+    }
   };
 
   const getTotalItems = () => {
@@ -106,7 +342,7 @@ const Shop = () => {
         <div className="shop-header-content">
           <h1>Tienda PetConnect</h1>
           <div className="shop-header-actions">
-            <div className="cart-icon">
+            <div className="cart-icon" onClick={() => setShowCart(true)}>
               <FaShoppingCart />
               {cart.length > 0 && (
                 <span className="cart-badge">{getTotalItems()}</span>
@@ -176,6 +412,322 @@ const Shop = () => {
         </section>
       </main>
 
+      {/* Cart Sidebar */}
+      <div className={`cart-sidebar ${showCart ? "active" : ""}`}>
+        <div className="cart-sidebar-header">
+          <button className="cart-close-btn" onClick={() => setShowCart(false)}>
+            <FaTimes />
+          </button>
+          <h2>Mi Carrito</h2>
+        </div>
+
+        <div className="cart-items-container">
+          {cartItems.length === 0 ? (
+            <div className="empty-cart">
+              <p>Tu carrito está vacío</p>
+              <button
+                className="continue-shopping-btn"
+                onClick={() => setShowCart(false)}
+              >
+                Seguir comprando
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="cart-items-list">
+                {cartItems.map((item) => (
+                  <div key={item.product.id} className="cart-item">
+                    <img
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="cart-item-image"
+                    />
+                    <div className="cart-item-details">
+                      <h4>{item.product.name}</h4>
+                      <div className="cart-item-price">
+                        ${item.product.price.toLocaleString("es-MX")} MXN
+                      </div>
+                      <div className="cart-item-quantity">
+                        <button
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity - 1)
+                          }
+                          aria-label="Reducir cantidad"
+                        >
+                          <FaMinus size={12} />
+                        </button>
+                        <span>{item.quantity}</span>
+                        <button
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity + 1)
+                          }
+                          aria-label="Aumentar cantidad"
+                        >
+                          <FaPlus size={12} />
+                        </button>
+                      </div>
+                    </div>
+                    <button
+                      className="remove-item-btn"
+                      onClick={() => removeFromCart(item.product.id)}
+                      aria-label="Eliminar producto"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="cart-summary">
+                <div className="cart-total">
+                  <span>Total:</span>
+                  <span>${getTotalPrice().toLocaleString("es-MX")} MXN</span>
+                </div>
+                <button
+                  className="checkout-btn"
+                  onClick={() => setShowPayment(true)}
+                >
+                  Proceder al pago
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <div className="payment-modal-overlay">
+          <div className="payment-modal">
+            {!showCardForm ? (
+              <>
+                <div className="payment-modal-header">
+                  <button
+                    className="back-to-cart-btn"
+                    onClick={() => setShowPayment(false)}
+                  >
+                    <FaChevronLeft /> Volver
+                  </button>
+                  <h2>Método de pago</h2>
+                  <button
+                    className="close-payment-btn"
+                    onClick={() => setShowPayment(false)}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+
+                <div className="payment-options">
+                  <div
+                    className={`payment-option ${
+                      paymentMethod === "card" ? "selected" : ""
+                    }`}
+                    onClick={() => {
+                      setPaymentMethod("card");
+                      setShowCardForm(true);
+                    }}
+                  >
+                    <FaCreditCard className="payment-icon" />
+                    <div className="payment-details">
+                      <h3>Tarjeta de crédito/débito</h3>
+                      <p>Pago seguro con tarjeta</p>
+                    </div>
+                    <div className="payment-radio">
+                      {paymentMethod === "card" && (
+                        <div className="radio-selected"></div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div
+                    className={`payment-option ${
+                      paymentMethod === "cash" ? "selected" : ""
+                    }`}
+                    onClick={() => setPaymentMethod("cash")}
+                  >
+                    <FaMoneyBillWave className="payment-icon" />
+                    <div className="payment-details">
+                      <h3>Efectivo</h3>
+                      <p>Paga al recibir tu pedido</p>
+                    </div>
+                    <div className="payment-radio">
+                      {paymentMethod === "cash" && (
+                        <div className="radio-selected"></div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="payment-summary">
+                  <div className="payment-total">
+                    <span>Total a pagar:</span>
+                    <span className="total-amount">
+                      ${getTotalPrice().toLocaleString("es-MX")} MXN
+                    </span>
+                  </div>
+                  <button
+                    className={`confirm-payment-btn ${
+                      !paymentMethod ? "disabled" : ""
+                    }`}
+                    disabled={!paymentMethod}
+                    onClick={() => {
+                      if (paymentMethod === "card") {
+                        setShowCardForm(true);
+                      } else {
+                        // Handle cash payment
+                        const totalPaid = getTotalPrice();
+                        setOrderTotal(totalPaid);
+                        setShowOrderConfirm(true);
+                        setCart([]);
+                        setCartItems([]);
+                        setPaymentMethod("");
+                        setShowPayment(false);
+                        setShowCart(false);
+                      }
+                    }}
+                  >
+                    {paymentMethod === "card"
+                      ? "Ingresar datos de pago"
+                      : "Confirmar pago"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="card-form-container">
+                <div className="card-form-header">
+                  <button
+                    className="back-to-payment-btn"
+                    onClick={() => setShowCardForm(false)}
+                  >
+                    <FaChevronLeft /> Volver
+                  </button>
+                  <h2>Pagar con tarjeta</h2>
+                  <button
+                    className="close-payment-btn"
+                    onClick={() => setShowPayment(false)}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+
+                <form onSubmit={handleCardSubmit} className="card-form">
+                  <div className="form-group">
+                    <label htmlFor="cardNumber">Número de tarjeta</label>
+                    <input
+                      type="text"
+                      id="cardNumber"
+                      name="number"
+                      value={cardDetails.number}
+                      onChange={handleCardInputChange}
+                      placeholder="1234 5678 9012 3456"
+                      maxLength={19}
+                      className={cardErrors.number ? "error" : ""}
+                    />
+                    {cardErrors.number && (
+                      <span className="error-message">{cardErrors.number}</span>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="cardName">Nombre del titular</label>
+                    <input
+                      type="text"
+                      id="cardName"
+                      name="name"
+                      value={cardDetails.name}
+                      onChange={handleCardInputChange}
+                      placeholder="Como aparece en la tarjeta"
+                      className={cardErrors.name ? "error" : ""}
+                    />
+                    {cardErrors.name && (
+                      <span className="error-message">{cardErrors.name}</span>
+                    )}
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="expiryDate">Vencimiento</label>
+                      <input
+                        type="text"
+                        id="expiryDate"
+                        name="expiry"
+                        value={cardDetails.expiry}
+                        onChange={handleCardInputChange}
+                        placeholder="MM/YY"
+                        maxLength={5}
+                        className={cardErrors.expiry ? "error" : ""}
+                      />
+                      {cardErrors.expiry && (
+                        <span className="error-message">
+                          {cardErrors.expiry}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="cvv">CVV</label>
+                      <input
+                        type="text"
+                        id="cvv"
+                        name="cvv"
+                        value={cardDetails.cvv}
+                        onChange={handleCardInputChange}
+                        placeholder="123"
+                        maxLength={4}
+                        className={cardErrors.cvv ? "error" : ""}
+                      />
+                      {cardErrors.cvv && (
+                        <span className="error-message">{cardErrors.cvv}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="card-preview">
+                    <div className="card-logo">
+                      {cardDetails.number.startsWith("4")
+                        ? "VISA"
+                        : cardDetails.number.match(/^5[1-5]/)
+                        ? "MASTERCARD"
+                        : cardDetails.number.startsWith("3[47]")
+                        ? "AMEX"
+                        : "CARD"}
+                    </div>
+                    <div className="card-number">
+                      {cardDetails.number || "•••• •••• •••• ••••"}
+                    </div>
+                    <div className="card-details">
+                      <div className="card-name">
+                        {cardDetails.name || "NOMBRE DEL TITULAR"}
+                      </div>
+                      <div className="card-expiry">
+                        {cardDetails.expiry || "••/••"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="submit-payment-btn">
+                    Pagar ${getTotalPrice().toLocaleString("es-MX")} MXN
+                  </button>
+                </form>
+
+                <div className="secure-payment">
+                  <FaShieldAlt />
+                  <span>Pago seguro con cifrado de 256 bits</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Order Confirmation Modal */}
+      <ModalShop
+        isOpen={showOrderConfirm}
+        total={orderTotal}
+        onClose={() => setShowOrderConfirm(false)}
+      />
+
+      {/* Product Detail Modal */}
       {selectedProduct && (
         <div className="product-modal-overlay" onClick={closeModal}>
           <div className="product-modal" onClick={(e) => e.stopPropagation()}>
@@ -231,8 +783,7 @@ const Shop = () => {
                 <button
                   className="add-to-cart-btn"
                   onClick={() => {
-                    addToCart(selectedProduct.id);
-                    closeModal();
+                    addToCart(selectedProduct);
                   }}
                 >
                   <FaShoppingCart /> Añadir al carrito ($
