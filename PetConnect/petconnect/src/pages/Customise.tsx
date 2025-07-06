@@ -411,7 +411,7 @@ const Customise: React.FC = () => {
           </div>
 
           <form className="customise-form" onSubmit={handleSubmit}>
-            <div className="form-group">
+            <div className="form-group-customise">
               <input
                 type="text"
                 id="petName"
@@ -427,7 +427,7 @@ const Customise: React.FC = () => {
               </label>
             </div>
 
-            <div className="form-group">
+            <div className="form-group-customise">
               <input
                 type="text"
                 id="petType"
@@ -443,7 +443,7 @@ const Customise: React.FC = () => {
               </label>
             </div>
 
-            <div className="form-group">
+            <div className="form-group-customise">
               <input
                 type="text"
                 id="petBreed"
@@ -458,7 +458,7 @@ const Customise: React.FC = () => {
               </label>
             </div>
 
-            <div className="form-group">
+            <div className="form-group-customise">
               <input
                 type="number"
                 id="petAge"
@@ -476,7 +476,7 @@ const Customise: React.FC = () => {
               </label>
             </div>
 
-            <div className="form-actions">
+            <div className="form-actions-customise">
               <button
                 type="submit"
                 className="save-button-pet"

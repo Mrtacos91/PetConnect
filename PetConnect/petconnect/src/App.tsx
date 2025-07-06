@@ -85,7 +85,14 @@ const App: React.FC = () => {
               </Suspense>
             }
           />
-          <Route path="/customise" element={<Customise />} />
+          <Route
+            path="/customise"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Customise />
+              </Suspense>
+            }
+          />
           <Route
             path="/carnet"
             element={

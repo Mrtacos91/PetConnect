@@ -73,18 +73,18 @@
 
 /* Indicadores del carrusel */
 .carousel-indicators {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 10px;
-  width: 100%;
-  padding: 8px 0;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 10px !important;
+  width: 100% !important;
+  padding: 8px 0 !important;
 }
 
 .indicator-MyPet {
-  width: 8px;
-  height: 8px;
+  width: 12px !important;
+  height: 12px !important;
   border-radius: 100%;
   background-color: var(--accent-before);
   border: none;

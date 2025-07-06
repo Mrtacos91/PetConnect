@@ -11,10 +11,12 @@ import {
   FaCreditCard,
   FaMoneyBillWave,
   FaChevronLeft,
+  FaCheckCircle,
 } from "react-icons/fa";
 import BackButton from "../components/BackButton";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Shop.css";
+import "../styles/AddToCartModal.css";
 import ModalShop from "../components/ModalShop";
 
 interface Product {
@@ -54,6 +56,9 @@ const Shop = () => {
   const [quantity, setQuantity] = useState(1);
   const [showOrderConfirm, setShowOrderConfirm] = useState(false);
   const [orderTotal, setOrderTotal] = useState(0);
+  const [showAddToCartModal, setShowAddToCartModal] = useState(false);
+  const [recentlyAddedProduct, setRecentlyAddedProduct] =
+    useState<Product | null>(null);
 
   const products: Product[] = [
     {
@@ -92,6 +97,22 @@ const Shop = () => {
     },
   ];
 
+  const handleViewCart = () => {
+    // Close all modals and show the cart
+    setShowAddToCartModal(false);
+    setSelectedProduct(null);
+    setShowCart(true);
+    // Ensure the cart is visible by scrolling to it on mobile if needed
+    if (window.innerWidth < 768) {
+      setTimeout(() => {
+        const cartElement = document.querySelector(".cart-sidebar");
+        if (cartElement) {
+          cartElement.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      }, 100);
+    }
+  };
+
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id);
@@ -104,7 +125,7 @@ const Shop = () => {
       }
       return [...prevCart, { id: product.id, quantity }];
     });
-    setQuantity(1);
+
     // Update cart items with full product details
     setCartItems((prevItems) => {
       const existingItem = prevItems.find(
@@ -119,6 +140,11 @@ const Shop = () => {
       }
       return [...prevItems, { product, quantity }];
     });
+
+    // Show add to cart modal and set the recently added product
+    setRecentlyAddedProduct(product);
+    setShowAddToCartModal(true);
+    setQuantity(1);
   };
 
   const removeFromCart = (productId: number) => {
@@ -593,8 +619,8 @@ const Shop = () => {
                 </div>
               </>
             ) : (
-              <div className="card-form-container">
-                <div className="card-form-header">
+              <div className="shop-card-form-container">
+                <div className="shop-card-form-header">
                   <button
                     className="back-to-payment-btn"
                     onClick={() => setShowCardForm(false)}
@@ -610,8 +636,8 @@ const Shop = () => {
                   </button>
                 </div>
 
-                <form onSubmit={handleCardSubmit} className="card-form">
-                  <div className="form-group">
+                <form onSubmit={handleCardSubmit} className="shop-card-form">
+                  <div className="shop-form-group">
                     <label htmlFor="cardNumber">Número de tarjeta</label>
                     <input
                       type="text"
@@ -791,6 +817,66 @@ const Shop = () => {
                     "es-MX"
                   )}{" "}
                   MXN)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add to Cart Modal */}
+      {showAddToCartModal && recentlyAddedProduct && (
+        <div
+          className="add-to-cart-modal-overlay"
+          onClick={() => setShowAddToCartModal(false)}
+        >
+          <div
+            className="add-to-cart-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="add-to-cart-close"
+              onClick={() => setShowAddToCartModal(false)}
+            >
+              ×
+            </button>
+            <div className="add-to-cart-content">
+              <div className="add-to-cart-icon">
+                <FaCheckCircle />
+              </div>
+              <h3>¡Producto agregado al carrito!</h3>
+              <div className="added-product">
+                <img
+                  src={recentlyAddedProduct.image}
+                  alt={recentlyAddedProduct.name}
+                  className="added-product-image"
+                />
+                <div className="added-product-details">
+                  <h4>{recentlyAddedProduct.name}</h4>
+                  <p className="added-product-price">
+                    ${recentlyAddedProduct.price.toLocaleString("es-MX")} MXN
+                    {recentlyAddedProduct.originalPrice && (
+                      <span className="original-price">
+                        $
+                        {recentlyAddedProduct.originalPrice.toLocaleString(
+                          "es-MX"
+                        )}
+                      </span>
+                    )}
+                  </p>
+                  <p className="added-product-quantity">Cantidad: {quantity}</p>
+                </div>
+              </div>
+              <div className="add-to-cart-actions">
+                <button
+                  className="continue-shopping"
+                  onClick={() => setShowAddToCartModal(false)}
+                >
+                  Seguir comprando
+                </button>
+                <button className="go-to-cart" onClick={handleViewCart}>
+                  Ver carrito (
+                  {cartItems.reduce((acc, item) => acc + item.quantity, 0)})
                 </button>
               </div>
             </div>
