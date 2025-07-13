@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { FaCheckCircle, FaTimesCircle, FaTimes } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaTimes,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 import "../styles/style.css";
 
 interface AlertMessageProps {
   message: string;
-  type: "success" | "error";
+  type: "success" | "error" | "warning";
   onClose?: () => void;
 }
 
@@ -42,7 +47,13 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
       <div className={`notification-item ${type}`}>
         <div className="notification-content">
           <span className="notification-icon">
-            {type === "success" ? <FaCheckCircle /> : <FaTimesCircle />}
+            {type === "success" ? (
+              <FaCheckCircle />
+            ) : type === "error" ? (
+              <FaTimesCircle />
+            ) : (
+              <FaExclamationTriangle />
+            )}
           </span>
           <span className="notification-text">{message}</span>
         </div>

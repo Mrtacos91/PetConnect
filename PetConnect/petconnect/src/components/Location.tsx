@@ -556,7 +556,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
       setIsOutsideSafeZone(true);
       showNotification(
         "warning",
-        `¡${name} ha salido de la zona segura! Está a ${Math.round(
+        `¡${petName} ha salido de la zona segura! Está a ${Math.round(
           distance
         )} metros de casa.`
       );
@@ -683,12 +683,9 @@ const LocationMap: React.FC<LocationMapProps> = ({
       }
     }
 
+    // Toggle edit mode: when entering edit mode, we no longer reset the pet's
+    // position so that only the house (safe-zone center) can be moved.
     setIsEditMode(!isEditMode);
-    if (!isEditMode) {
-      setPetLocation({ lat: latitude, lng: longitude });
-      setHouseLocation({ lat: latitude, lng: longitude });
-      setSafeZoneRadius(100);
-    }
   };
 
   const handleMapClick = (e: LeafletMouseEvent) => {

@@ -3,6 +3,11 @@ import { useParams } from "react-router-dom";
 import supabase from "../supabase";
 import { User } from "@supabase/supabase-js";
 import { Html5QrcodeScanner } from "html5-qrcode";
+import {
+  getCurrentUser,
+  getLocalUserId as getLocalUserIdFromService,
+  getAllPetsByUserId,
+} from "../services/pet-service";
 import BackButton from "../components/BackButton";
 import AlertMessage from "../components/AlertMessage";
 import "../styles/Nfc.css";
@@ -13,6 +18,7 @@ import {
   FaExclamationCircle,
   FaMicrochip,
   FaQrcode,
+  FaEye,
 } from "react-icons/fa";
 
 // Interfaces de datos (sin cambios)
@@ -22,6 +28,13 @@ interface PetInfo {
   petbreed: string;
   petconditions: string;
   petpartsigns: string;
+}
+
+interface Pet {
+  id: string;
+  pet_name: string;
+  pet_type: string;
+  pet_breed: string;
 }
 
 interface ContactInfo {
@@ -35,7 +48,7 @@ const Nfc: React.FC = () => {
   // El 'tagId' de la URL ahora solo se usa para mostrar un ID específico si existe.
   const { id: tagId } = useParams<{ id: string }>();
   const [user, setUser] = useState<User | null>(null);
-  const [localUserId, setLocalUserId] = useState<number | null>(null);
+  const [localUserId, setLocalUserId] = useState<string | null>(null);
 
   // **NUEVO**: Almacenará el ID del perfil de contacto del usuario una vez cargado o creado.
   const [profileId, setProfileId] = useState<number | null>(
@@ -46,14 +59,19 @@ const Nfc: React.FC = () => {
   const [hasNfc, setHasNfc] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalView, setModalView] = useState<"select" | "qr" | "nfc">("select");
+  const [modalView, setModalView] = useState<"select" | "qr" | "nfc" | "view">(
+    "select"
+  );
   const [scanResult, setScanResult] = useState<string | null>(null);
+  const [publicUrl, setPublicUrl] = useState<string>("");
   const [alert, setAlert] = useState<{
     message: string;
     type: "success" | "error";
   } | null>(null);
 
   // Estados del formulario (sin cambios)
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [selectedPet, setSelectedPet] = useState<string>("");
   const [petInfo, setPetInfo] = useState<PetInfo>({
     petname: "",
     pettype: "",
@@ -68,19 +86,19 @@ const Nfc: React.FC = () => {
     othercontact: "",
   });
 
-  // Helper para obtener el ID numérico del usuario desde la tabla 'users'
-  const getLocalUserId = async (authUuid: string): Promise<number | null> => {
-    const { data, error } = await supabase
-      .from("Users")
-      .select("id")
-      .eq("id", authUuid) // Asumo que la columna que guarda el UUID se llama así
-      .single();
-
-    if (error) {
-      console.error("Error fetching local user ID:", error);
+  // Helper para obtener el ID del usuario desde la tabla 'Users' usando el email
+  const getLocalUserId = async (): Promise<string | null> => {
+    try {
+      const user = await getCurrentUser();
+      if (!user || !user.email) {
+        console.error("No user logged in or email not available");
+        return null;
+      }
+      return await getLocalUserIdFromService(user.email);
+    } catch (error) {
+      console.error("Error getting local user ID:", error);
       return null;
     }
-    return data?.id || null;
   };
 
   // **MODIFICADO**: La inicialización ahora se basa en el usuario, no en el ID de la URL.
@@ -97,22 +115,23 @@ const Nfc: React.FC = () => {
       setUser(user);
 
       if (user) {
-        const numericId = await getLocalUserId(user.id);
-        if (!numericId) {
+        const userId = await getLocalUserId();
+        if (!userId) {
           setAlert({
-            message: "No se pudo verificar tu usuario.",
+            message:
+              "No se pudo verificar tu usuario. Por favor inicia sesión nuevamente.",
             type: "error",
           });
           setIsLoading(false);
           return;
         }
-        setLocalUserId(numericId);
+        setLocalUserId(userId);
 
         // Intenta cargar el perfil de contacto existente usando el user_id.
         const { data, error } = await supabase
           .from("pettag_contactinfo")
           .select("*")
-          .eq("user_id", numericId)
+          .eq("user_id", userId)
           .single();
 
         if (data) {
@@ -170,7 +189,72 @@ const Nfc: React.FC = () => {
     }
   }, [modalView, isModalOpen, scanResult]);
 
-  // Manejadores de cambio del formulario (sin cambios)
+  // Cargar las mascotas del usuario
+  useEffect(() => {
+    const loadPets = async () => {
+      if (!localUserId) return;
+
+      try {
+        const userPets = await getAllPetsByUserId(localUserId);
+        setPets(userPets);
+
+        // Si solo hay una mascota, seleccionarla por defecto
+        if (userPets.length === 1) {
+          handlePetSelect(userPets[0].id);
+        }
+      } catch (error) {
+        console.error("Error al cargar las mascotas:", error);
+        setAlert({
+          message:
+            "Error al cargar las mascotas. Por favor, inténtalo de nuevo.",
+          type: "error",
+        });
+      }
+    };
+
+    loadPets();
+  }, [localUserId]);
+
+  // Manejador para cuando se selecciona una mascota
+  const handlePetSelect = (petId: string) => {
+    setSelectedPet(petId);
+    // Actualizar inmediatamente la info de la mascota para reflejarla en los inputs
+    const pet = pets.find((p) => p.id?.toString() === petId);
+    if (pet) {
+      setPetInfo((prev) => ({
+        ...prev,
+        petname: pet.pet_name,
+        pettype: pet.pet_type,
+        petbreed: pet.pet_breed,
+      }));
+    }
+  };
+
+  // Sincronizar la información de la mascota seleccionada en tiempo real
+  useEffect(() => {
+    if (!selectedPet) {
+      // Limpiar campos si no hay mascota seleccionada
+      setPetInfo((prev) => ({
+        ...prev,
+        petname: "",
+        pettype: "",
+        petbreed: "",
+      }));
+      return;
+    }
+
+    const pet = pets.find((p) => p.id?.toString() === selectedPet);
+    if (pet) {
+      setPetInfo((prev) => ({
+        ...prev,
+        petname: pet.pet_name,
+        pettype: pet.pet_type,
+        petbreed: pet.pet_breed,
+      }));
+    }
+  }, [selectedPet, pets]); // Mantiene sincronización si cambia lista de mascotas o selección
+
+  // Manejador para los demás campos del formulario
   const handlePetInfoChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -180,68 +264,153 @@ const Nfc: React.FC = () => {
     setContactInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // **MODIFICADO**: La función de guardado ahora usa el user_id.
+  // Función mejorada para guardar los datos del perfil
   const saveData = async (): Promise<boolean> => {
-    if (!user || !localUserId) {
+    // Verificar autenticación
+    if (!user) {
       setAlert({
         message: "Debes iniciar sesión para guardar.",
         type: "error",
       });
       return false;
     }
+
+    // Obtener el ID de usuario local si no está disponible
+    const userId = localUserId || (await getLocalUserId());
+    if (!userId) {
+      setAlert({
+        message:
+          "No se pudo verificar tu usuario. Por favor inicia sesión nuevamente.",
+        type: "error",
+      });
+      return false;
+    }
+    setLocalUserId(userId);
+
     setIsLoading(true);
     setAlert(null);
 
-    const phoneAsNumber = parseInt(contactInfo.phone, 10);
-    if (isNaN(phoneAsNumber)) {
+    try {
+      // Validar y formatear el teléfono
+      let phoneNumber: number | null = null;
+      if (contactInfo.phone) {
+        const cleanPhone = contactInfo.phone.replace(/\D/g, "");
+        phoneNumber = parseInt(cleanPhone, 10);
+        if (isNaN(phoneNumber)) {
+          throw new Error("El número de teléfono no es válido.");
+        }
+      }
+
+      // 1. Verificar si ya existe un perfil para este usuario
+      const { data: existingProfile } = await supabase
+        .from("pettag_contactinfo")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      // 2. Preparar los datos para guardar
+      const dataToSave = {
+        ...(existingProfile?.id && { id: existingProfile.id }), // Solo incluir ID si existe
+        user_id: userId,
+        ...petInfo,
+        email: contactInfo.email || user.email || "",
+        address: contactInfo.address,
+        othercontact: contactInfo.othercontact,
+        ...(phoneNumber !== null && { phone: phoneNumber }),
+        updated_at: new Date().toISOString(),
+      };
+
+      // 3. Realizar la operación de guardado
+      let query = supabase.from("pettag_contactinfo");
+
+      // Usar update si existe el perfil, insert si no
+      const { data, error } = existingProfile?.id
+        ? await query
+            .update(dataToSave)
+            .eq("id", existingProfile.id)
+            .select()
+            .single()
+        : await query.insert([dataToSave]).select().single();
+
+      if (error) throw error;
+
+      // Actualizar el ID del perfil si es un nuevo registro
+      if (data && !existingProfile?.id) {
+        setProfileId(data.id);
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error al guardar el perfil:", error);
       setAlert({
-        message: "El número de teléfono no es válido.",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Error al guardar la información.",
         type: "error",
       });
+      return false;
+    } finally {
       setIsLoading(false);
-      return false;
     }
-
-    const dataToSave = {
-      id: profileId,
-      user_id: localUserId,
-      ...petInfo,
-      ...contactInfo,
-      phone: phoneAsNumber,
-    };
-
-    // `upsert` creará un nuevo registro o actualizará el existente.
-    const { data, error } = await supabase
-      .from("pettag_contactinfo")
-      .upsert(dataToSave)
-      .select()
-      .single();
-
-    setIsLoading(false);
-
-    if (error) {
-      console.error("Error al guardar:", error);
-      setAlert({ message: "Error al guardar la información.", type: "error" });
-      return false;
-    }
-
-    if (data) {
-      // **IMPORTANTE**: Actualiza el ID del perfil después de guardarlo por primera vez.
-      setProfileId(data.id);
-    }
-    return true;
   };
 
   // Maneja el clic del botón "Guardar Cambios"
+  // Generate public URL for the pet's information
+  const generatePublicUrl = () => {
+    if (!profileId) return "";
+    return `${window.location.origin}/public/pet/${profileId}`;
+  };
+
+  // Handle view plate button click
+  const handleViewPlate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!profileId) {
+      setAlert({
+        message: "Primero debes guardar la información de la placa.",
+        type: "error",
+      });
+      return;
+    }
+    setPublicUrl(generatePublicUrl());
+    setModalView("view");
+    setIsModalOpen(true);
+  };
+
+  // Handle copy URL to clipboard
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setAlert({
+        message: "¡URL copiada al portapapeles!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error al copiar la URL:", error);
+      setAlert({
+        message: "Error al copiar la URL. Intenta de nuevo.",
+        type: "error",
+      });
+    }
+  };
+
+  // Handle save button click
   const handleSaveOnly = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const success = await saveData();
     if (success) {
       setAlert({
         message: "Información guardada correctamente.",
         type: "success",
       });
+    } else {
+      setAlert({
+        message: "Error al guardar la información.",
+        type: "error",
+      });
     }
+    setIsLoading(false);
   };
 
   // **MODIFICADO**: El modal de vinculación ahora depende de que exista un `profileId`.
@@ -360,42 +529,59 @@ const Nfc: React.FC = () => {
                 Información de la Mascota
               </h2>
               {/* Inputs para petname, pettype, etc. */}
-              <div className="nfc-form-group">
-                <label htmlFor="petname">Nombre de la mascota</label>
+              <div className="form-group">
+                <label htmlFor="pet-select">
+                  <FaDog className="input-icon" /> Selecciona una Mascota
+                </label>
+                <select
+                  id="pet-select"
+                  value={selectedPet}
+                  onChange={(e) => handlePetSelect(e.target.value)}
+                  className="pet-select"
+                  required
+                >
+                  <option value="">-- Selecciona una mascota --</option>
+                  {pets.map((pet) => (
+                    <option key={pet.id} value={pet.id}>
+                      {pet.pet_name} ({pet.pet_breed} - {pet.pet_type})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaDog className="input-icon" /> Nombre de la Mascota
+                </label>
                 <input
-                  id="petname"
                   type="text"
-                  name="petname"
                   value={petInfo.petname}
-                  onChange={handlePetInfoChange}
-                  placeholder="Nombre de la mascota"
-                  required
-                  autoComplete="off"
+                  readOnly
+                  className="read-only"
                 />
               </div>
-              <div className="nfc-form-group">
-                <label htmlFor="pettype">Tipo de animal</label>
+
+              <div className="form-group">
+                <label>
+                  <FaDog className="input-icon" /> Tipo de Animal
+                </label>
                 <input
-                  id="pettype"
                   type="text"
-                  name="pettype"
                   value={petInfo.pettype}
-                  onChange={handlePetInfoChange}
-                  placeholder="Tipo de animal"
-                  required
-                  autoComplete="off"
+                  readOnly
+                  className="read-only"
                 />
               </div>
-              <div className="nfc-form-group">
-                <label htmlFor="petbreed">Raza</label>
+
+              <div className="form-group">
+                <label>
+                  <FaDog className="input-icon" /> Raza
+                </label>
                 <input
-                  id="petbreed"
                   type="text"
-                  name="petbreed"
                   value={petInfo.petbreed}
-                  onChange={handlePetInfoChange}
-                  placeholder="Raza"
-                  autoComplete="off"
+                  readOnly
+                  className="read-only"
                 />
               </div>
               <div className="nfc-form-group">
@@ -485,21 +671,35 @@ const Nfc: React.FC = () => {
             </section>
 
             <div className="nfc-button-container">
-              <button
-                type="button"
-                className="nfc-button-secondary"
-                disabled={isLoading}
-                onClick={handleSaveOnly}
-              >
-                {isLoading ? "Guardando..." : "Guardar Cambios"}
-              </button>
-              <button
-                type="submit"
-                className="nfc-button"
-                disabled={isLoading || !profileId}
-              >
-                {isLoading ? "Guardando..." : "Vincular Placa"}
-              </button>
+              <div className="nfc-button-group">
+                <button
+                  type="submit"
+                  className="nfc-button primary"
+                  disabled={isLoading}
+                  onClick={handleSaveOnly}
+                >
+                  {isLoading ? "Guardando..." : "Guardar Cambios"}
+                </button>
+                <button
+                  type="button"
+                  className="nfc-button"
+                  onClick={handleViewPlate}
+                  disabled={!profileId}
+                >
+                  <FaEye /> Ver Placa
+                </button>
+                <button
+                  type="button"
+                  className="nfc-button"
+                  onClick={() => {
+                    setModalView("select");
+                    setIsModalOpen(true);
+                  }}
+                  disabled={!profileId}
+                >
+                  <FaMicrochip /> Vincular Placa NFC/QR
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -536,6 +736,7 @@ const Nfc: React.FC = () => {
                         setModalView("nfc");
                         writeNfcTag();
                       }}
+                      className="nfc-button"
                     >
                       <FaMicrochip /> Escribir en NFC
                     </button>
@@ -544,6 +745,39 @@ const Nfc: React.FC = () => {
               )}
               {modalView === "qr" && !scanResult && (
                 <div id="qr-scanner-container"></div>
+              )}
+              {modalView === "view" && (
+                <div className="nfc-modal-body">
+                  <h2>URL Pública de la Placa</h2>
+                  <p style={{ color: "var(--text-primary)" }}>
+                    Comparte este enlace para que otros vean la información de
+                    contacto de tu mascota:
+                  </p>
+                  <div className="public-url-container">
+                    <input
+                      type="text"
+                      value={publicUrl}
+                      readOnly
+                      className="public-url-input"
+                      onClick={(e) => (e.target as HTMLInputElement).select()}
+                    />
+                    <button
+                      className="copy-url-button"
+                      onClick={handleCopyUrl}
+                      title="Copiar al portapapeles"
+                    >
+                      Copiar
+                    </button>
+                  </div>
+                  <div
+                    className="public-url-note"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    <FaExclamationCircle /> Esta URL es pública. Cualquiera con
+                    este enlace podrá ver la información de contacto de tu
+                    mascota.
+                  </div>
+                </div>
               )}
             </div>
           </div>

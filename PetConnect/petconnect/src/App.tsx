@@ -5,6 +5,7 @@ import "./styles/global.css";
 import Loader from "./components/Loader";
 import Customise from "./pages/Customise";
 import Nfc from "./pages/Nfc";
+import PublicPet from "./pages/PublicPet";
 import Shop from "./pages/Shop";
 
 // Lazy load page components
@@ -139,6 +140,15 @@ const App: React.FC = () => {
           element={
             <Suspense fallback={<LoadingFallback />}>
               <Shop />
+            </Suspense>
+          }
+        />
+        {/* Ruta pública para ver la placa */}
+        <Route
+          path="/public/pet/:id"
+          element={
+            <Suspense fallback={<LoadingFallback />}>
+              <PublicPet />
             </Suspense>
           }
         />
