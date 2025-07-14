@@ -454,7 +454,7 @@ const Nfc: React.FC = () => {
         records: [
           {
             recordType: "url",
-            data: `https://petconnectmx.netlify.app/nfc/${profileId}`, // Usa el ID del perfil.
+            data: generatePublicUrl(), // Escribe la URL pública del perfil para abrirlo al escanear NFC.
           },
         ],
       });

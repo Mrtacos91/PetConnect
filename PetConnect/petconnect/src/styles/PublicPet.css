@@ -29,7 +29,7 @@
   word-break: break-word;
 }
 
-.public-pet-container h2 {
+.public-pet-title-h2 {
   margin-top: 2rem;
   margin-bottom: 0.75rem;
   font-size: 1.2rem;
@@ -38,14 +38,14 @@
   padding-bottom: 0.4rem;
 }
 
-.public-pet-container p {
+.public-pet-title-p {
   margin: 0.45rem 0;
   line-height: 1.45;
   font-size: 1rem;
   color: var(--text-secondary);
 }
 
-.public-pet-container strong {
+.public-pet-title-p-strong {
   color: var(--text-primary);
   font-weight: 600;
 }

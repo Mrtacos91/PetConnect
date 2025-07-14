@@ -37,7 +37,112 @@
   flex-direction: row;
   z-index: 10;
 }
+/* No GPS Container */
+.no-gps-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+  width: 100%;
+  margin: 0 auto;
+}
 
+.no-gps-content {
+  background: var(--card-background);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.no-gps-content:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+}
+
+.no-gps-icon {
+  margin: 0 auto 1.5rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 152, 0, 0.1);
+  border-radius: 50%;
+  color: var(--primary-color);
+}
+
+.no-gps-icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.no-gps-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.no-gps-message {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-size: 1.05rem;
+}
+
+.no-gps-button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.no-gps-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.no-gps-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .no-gps-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .no-gps-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .no-gps-title {
+    font-size: 1.3rem;
+  }
+
+  .no-gps-message {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+}
 /* Estilo para el panel de control */
 .control-panel {
   display: flex;

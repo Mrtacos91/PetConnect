@@ -63,41 +63,53 @@ const PublicPet: React.FC = () => {
       <ThemeToggle />
       <div className="public-pet-container">
         <h1 className="public-pet-title">{petData.petname}</h1>
-        <p>
-          <strong>Tipo:</strong> {petData.pettype}
+        <p className="public-pet-title-p">
+          <strong className="public-pet-title-p-strong">Tipo:</strong>{" "}
+          {petData.pettype}
         </p>
-        <p>
-          <strong>Raza:</strong> {petData.petbreed}
+        <p className="public-pet-title-p">
+          <strong className="public-pet-title-p-strong">Raza:</strong>{" "}
+          {petData.petbreed}
         </p>
         {petData.petconditions && (
-          <p>
-            <strong>Condiciones:</strong> {petData.petconditions}
+          <p className="public-pet-title-p">
+            <strong className="public-pet-title-p-strong">Condiciones:</strong>{" "}
+            {petData.petconditions}
           </p>
         )}
         {petData.petpartsigns && (
-          <p>
-            <strong>Señas particulares:</strong> {petData.petpartsigns}
+          <p className="public-pet-title-p">
+            <strong className="public-pet-title-p-strong">
+              Señas particulares:
+            </strong>{" "}
+            {petData.petpartsigns}
           </p>
         )}
-        <h2>Contacto</h2>
+        <h2 className="public-pet-title-h2">Contacto</h2>
         {petData.phone && (
-          <p>
-            <strong>Teléfono:</strong> {petData.phone}
+          <p className="public-pet-title-p">
+            <strong className="public-pet-title-p-strong">Teléfono:</strong>{" "}
+            {petData.phone}
           </p>
         )}
         {petData.email && (
-          <p>
-            <strong>Email:</strong> {petData.email}
+          <p className="public-pet-title-p">
+            <strong className="public-pet-title-p-strong">Email:</strong>{" "}
+            {petData.email}
           </p>
         )}
         {petData.address && (
-          <p>
-            <strong>Dirección:</strong> {petData.address}
+          <p className="public-pet-title-p">
+            <strong className="public-pet-title-p-strong">Dirección:</strong>{" "}
+            {petData.address}
           </p>
         )}
         {petData.othercontact && (
-          <p>
-            <strong>Otro contacto:</strong> {petData.othercontact}
+          <p className="public-pet-title-p">
+            <strong className="public-pet-title-p-strong">
+              Otro contacto:
+            </strong>{" "}
+            {petData.othercontact}
           </p>
         )}
       </div>

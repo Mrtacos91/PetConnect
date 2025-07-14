@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import { Icon, Map as LeafletMap, LeafletMouseEvent } from "leaflet";
 import { FaCheck, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import "../styles/LocationMap.css";
 import "../styles/style.css";
+import "../styles/ConfDevice.css";
 import supabase from "../supabase";
+import ConfigureDevice from "./ConfigureDevice";
 
 // Caché para almacenar direcciones por coordenadas
 const addressCache: Record<string, string> = {};
@@ -51,6 +53,8 @@ const LocationMap: React.FC<LocationMapProps> = ({
       message: string;
     }>
   >([]);
+
+  const [showConfigureDevice, setShowConfigureDevice] = useState(false);
 
   useEffect(() => {
     const fetchLocationData = async () => {
@@ -705,6 +709,64 @@ const LocationMap: React.FC<LocationMapProps> = ({
     }
     return () => {};
   }, [mapRef, isEditMode, handleMapClick]);
+
+  const handleDeviceConfigured = useCallback((deviceId: string) => {
+    setShowConfigureDevice(false);
+    setHasGpsDevice(true);
+    showNotification(
+      "success",
+      `Dispositivo ${deviceId} configurado correctamente`
+    );
+    // Recargar la página para actualizar los datos
+    window.location.reload();
+  }, []);
+
+  // Mostrar mensaje si no hay dispositivo GPS vinculado y no está cargando
+  if (!isLoading && hasGpsDevice === false) {
+    return (
+      <>
+        <div className="no-gps-container">
+          <div className="no-gps-content">
+            <div className="no-gps-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M12 8v4"></path>
+                <path d="M12 16h.01"></path>
+              </svg>
+            </div>
+            <h3 className="no-gps-title">Dispositivo GPS no conectado</h3>
+            <p className="no-gps-message">
+              Para ver la ubicación de tu mascota en tiempo real, necesitas
+              vincular un dispositivo GPS.
+            </p>
+            <button
+              className="no-gps-button"
+              onClick={() => setShowConfigureDevice(true)}
+            >
+              Vincular dispositivo GPS
+            </button>
+          </div>
+        </div>
+
+        {/* Modal de configuración de dispositivo */}
+        <ConfigureDevice
+          isOpen={showConfigureDevice}
+          onClose={() => setShowConfigureDevice(false)}
+          onSuccess={handleDeviceConfigured}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="location-map-container">

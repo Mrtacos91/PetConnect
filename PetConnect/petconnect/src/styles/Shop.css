@@ -2,16 +2,26 @@
 .cart-sidebar {
   position: fixed;
   top: 0;
-  right: -400px;
+  right: -100%;
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
   height: 100vh;
   background: var(--card-background);
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-  transition: right 0.3s ease;
+  transition: right 0.3s ease, transform 0.3s ease;
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 768px) {
+  .cart-sidebar {
+    right: -400px;
+    max-width: 400px;
+  }
 }
 
 .cart-sidebar.active {
@@ -413,95 +423,59 @@
 }
 
 /* Payment Form Styles */
-.shop-card-form-container {
+.payment-form {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.form-group {
   display: flex;
   flex-direction: column;
-  height: 100%;
-}
-
-.shop-card-form-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  background: var(--primary-color);
-  color: white;
-}
-
-.shop-card-form-header h2 {
-  margin: 0;
-  font-size: 1.4rem;
-  font-weight: 600;
-  text-align: center;
-  flex: 1;
-}
-
-.back-to-payment-btn {
-  display: flex;
-  align-items: center;
   gap: 0.5rem;
-  background: none;
-  border: none;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.5rem;
-  z-index: 1;
 }
 
-.shop-card-form {
-  padding: 1.5rem;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.shop-form-group {
-  margin-bottom: 1.25rem;
-}
-
-.shop-form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--text-color);
+.form-group label {
+  font-weight: 600;
   font-size: 0.95rem;
+  color: var(--text-color);
 }
 
-.shop-form-group input {
+.form-control {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  background: var(--card-background);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: var(--input-background);
   color: var(--text-color);
 }
 
-.shop-form-group input:focus {
+.form-control:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
 }
 
-.shop-form-group input.error {
-  border-color: var(--danger-color);
-}
-
-.error-message {
-  color: var(--danger-color);
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-  display: block;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .payment-form {
+    gap: 1rem;
+  }
+  
+  .form-group {
+    gap: 0.4rem;
+  }
+  
+  .form-control {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+  }
 }
 
 /* Card Preview */
@@ -1598,6 +1572,41 @@ html {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  min-height: 56px; /* Better touch target size */
+  font-size: 1rem; /* Slightly smaller on mobile */
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 767px) {
+  .add-to-cart-btn {
+    padding: 1rem 0.75rem;
+    font-size: 0.95rem;
+  }
+  
+  /* Ensure all interactive elements have minimum touch target size */
+  button, [role="button"], .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve form inputs for touch */
+  input, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    min-height: 44px;
+    padding: 0.75rem;
+  }
+  
+  /* Better spacing for mobile */
+  .product-card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Improve modal touch handling */
+  .modal-overlay {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .add-to-cart-btn::before {
@@ -1857,22 +1866,69 @@ html {
   }
 }
 
-/* Responsive styles for shop components */
-@media (max-width: 768px) {
-  .shop-header-content {
-    flex-direction: column;
-    gap: 1rem;
-    padding-bottom: 1.5rem;
-  }
-  .shop-header h1 {
-    font-size: 1.5rem;
-  }
-  .features-banner {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
+/* Base mobile styles */
+.shop-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+}
+
+.shop-header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.features-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+/* Tablet styles */
+@media (min-width: 600px) {
   .products-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .features-banner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .shop-header-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .features-banner {
+    padding: 1.5rem;
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1440px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
