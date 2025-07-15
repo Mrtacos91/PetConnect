@@ -356,39 +356,34 @@ const Nfc: React.FC = () => {
       const onScanSuccess = async (result: string) => {
         scanner.clear();
 
-        // Verificar si la URL escaneada es válida
-        let urlToSet = result.trim();
+        // Guardar la URL absoluta escaneada
+        const urlToSet = result.trim();
 
-        // Si no comienza con http:// o https://, agregar https://
-        if (!urlToSet.match(/^https?:\/\//i)) {
-          urlToSet = "https://" + urlToSet;
-        }
-
-        // Validar que sea una URL válida
+        // Validar que sea una URL absoluta válida
         try {
           new URL(urlToSet);
-          setScanResult(urlToSet);
-          setAlert({
-            message: `URL escaneada exitosamente y guardada en tu perfil.`,
-            type: "success",
-          });
-
-          // Actualizar la URL pública con la URL escaneada
-          setPublicUrl(urlToSet);
-
-          // Guardar la URL en la base de datos
-          await updateUrlAsigned(urlToSet);
-
-          // Cerrar automáticamente después de 1.5 segundos
-          setTimeout(() => {
-            setIsModalOpen(false);
-          }, 1500);
         } catch (e) {
           setAlert({
-            message: `La URL escaneada no es válida: ${result}`,
+            message: `El QR debe contener una URL absoluta válida, por ejemplo: https://petconnectmx.netlify.app/public/pet/1`,
             type: "error",
           });
+          return;
         }
+
+        setScanResult(urlToSet);
+        setAlert({
+          message: `URL escaneada exitosamente y guardada en tu perfil.`,
+          type: "success",
+        });
+
+        setPublicUrl(urlToSet);
+
+        // Guardar la URL absoluta en la base de datos
+        await updateUrlAsigned(urlToSet);
+
+        setTimeout(() => {
+          setIsModalOpen(false);
+        }, 1500);
       };
 
       scanner.render(onScanSuccess, () => {});

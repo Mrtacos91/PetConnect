@@ -24,14 +24,14 @@ const PublicPet: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Usar solo el path para la búsqueda
-      const currentPath = window.location.pathname;
+      // Usar la URL absoluta para la búsqueda
+      const currentUrl = window.location.origin + window.location.pathname;
       const { data, error } = await supabase
         .from("pettag_contactinfo")
         .select(
           "petname, pettype, petbreed, petconditions, petpartsigns, phone, email, address, othercontact"
         )
-        .eq("url_asigned", currentPath)
+        .eq("url_asigned", currentUrl)
         .single();
 
       if (error) {
