@@ -19,6 +19,7 @@ const Recardatorios = lazy(() => import("./pages/Recardatorios"));
 const Config = lazy(() => import("./pages/Config"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Micuenta = lazy(() => import("./pages/Micuenta"));
+const PetHealthControl = lazy(() => import("./pages/PetHealthControl"));
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => <Loader />;
@@ -85,6 +86,14 @@ const App: React.FC = () => {
             element={
               <Suspense fallback={<LoadingFallback />}>
                 <Dashboard />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/pet-health"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <PetHealthControl />
               </Suspense>
             }
           />

@@ -162,43 +162,27 @@ const Calendar: React.FC = () => {
     return new Date(date.getFullYear(), date.getMonth(), 0).getDate();
   };
 
+  // Utilidad para comparar fechas solo por año, mes y día (ignora horas)
+  function isSameDay(dateA: Date, dateB: Date) {
+    return (
+      dateA.getFullYear() === dateB.getFullYear() &&
+      dateA.getMonth() === dateB.getMonth() &&
+      dateA.getDate() === dateB.getDate()
+    );
+  }
+
   const handleDateClick = (day: number, isCurrentMonth: boolean) => {
     if (isCurrentMonth) {
-      // Crear la fecha en hora local sin problemas de zona horaria
       const newDate = new Date(
-        Date.UTC(
-          currentMonth.getFullYear(),
-          currentMonth.getMonth(),
-          day,
-          12, // Hora fija (mediodía) para evitar problemas
-          0,
-          0,
-          0
-        )
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        day
       );
-
       setSelectedDate(newDate);
 
       const eventForDay = events.find((event) => {
-        const eventDate =
-          typeof event.date === "string" ? new Date(event.date) : event.date;
-        const utcEventDate = new Date(
-          Date.UTC(
-            eventDate.getFullYear(),
-            eventDate.getMonth(),
-            eventDate.getDate(),
-            12,
-            0,
-            0,
-            0
-          )
-        );
-
-        return (
-          utcEventDate.getDate() === newDate.getDate() &&
-          utcEventDate.getMonth() === newDate.getMonth() &&
-          utcEventDate.getFullYear() === newDate.getFullYear()
-        );
+        const eventDate = typeof event.date === "string" ? new Date(event.date) : event.date;
+        return isSameDay(eventDate, newDate);
       });
 
       if (eventForDay) {
@@ -266,23 +250,18 @@ const Calendar: React.FC = () => {
     }
 
     try {
-      // Crear fecha UTC para evitar problemas de zona horaria
-      const utcDate = new Date(
-        Date.UTC(
-          selectedDate.getFullYear(),
-          selectedDate.getMonth(),
-          selectedDate.getDate(),
-          12,
-          0,
-          0,
-          0
-        )
+      // Guardar la fecha en local (00:00:00) para evitar problemas de zona horaria
+      const localDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        0, 0, 0, 0
       );
 
       const eventData = {
         title: eventTitle,
         description: eventDescription,
-        date: utcDate.toISOString(),
+        date: localDate.toISOString(),
         user_id: userId,
       };
 
@@ -300,7 +279,7 @@ const Calendar: React.FC = () => {
               ? {
                   ...event,
                   ...eventData,
-                  date: utcDate,
+                  date: localDate,
                 }
               : event
           )
@@ -318,7 +297,7 @@ const Calendar: React.FC = () => {
             ...events,
             {
               ...data[0],
-              date: new Date(data[0].date),
+              date: localDate,
             },
           ]);
         }
@@ -370,21 +349,13 @@ const Calendar: React.FC = () => {
         currentMonth.getMonth(),
         day
       );
-      const isToday = new Date().toDateString() === date.toDateString();
+      const isToday = isSameDay(new Date(), date);
       const isSelected =
-        selectedDate &&
-        selectedDate.getDate() === day &&
-        selectedDate.getMonth() === currentMonth.getMonth() &&
-        selectedDate.getFullYear() === currentMonth.getFullYear();
+        selectedDate && isSameDay(selectedDate, date);
 
       const hasEvent = events.some((event) => {
-        const eventDate =
-          typeof event.date === "string" ? new Date(event.date) : event.date;
-        return (
-          eventDate.getDate() === day &&
-          eventDate.getMonth() === currentMonth.getMonth() &&
-          eventDate.getFullYear() === currentMonth.getFullYear()
-        );
+        const eventDate = typeof event.date === "string" ? new Date(event.date) : event.date;
+        return isSameDay(eventDate, date);
       });
 
       days.push(

@@ -1,0 +1,169 @@
+/* Card principal estilo CarnetCard */
+.safety-pet-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px auto 0 auto;
+  box-shadow: 0 4px 10px var(--shadow-default);
+  max-width: 400px;
+  width: 100%;
+  align-items: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+.safety-pet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px var(--shadow-hover);
+}
+.safety-pet-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 15px;
+}
+.safety-pet-card-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color, #4a6fa5);
+  margin-bottom: 15px;
+  background: var(--circle-animation);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.safety-pet-card-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.safety-pet-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+}
+.safety-pet-card-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.safety-pet-card-btn {
+  background: var(--button-bg);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  padding: 14px 0;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 8px;
+}
+.safety-pet-card-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  background: var(--button-bg);
+}
+@media (max-width: 768px) {
+  .safety-pet-card {
+    max-width: 94vw;
+    padding: 16px 10px 18px 10px;
+    margin: 16px auto 28px auto;
+  }
+  .safety-pet-card-icon {
+    font-size: 2.2rem;
+  }
+  .safety-pet-card-title {
+    font-size: 1.3rem;
+  }
+  .safety-pet-card-text {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+  .safety-pet-card-btn {
+    padding: 12px 0;
+    font-size: 0.98rem;
+  }
+}
+@media (max-width: 480px) {
+  .safety-pet-card {
+    max-width: 98vw;
+    padding: 12px 4px 14px 4px;
+    margin: 10px auto 18px auto;
+  }
+  .safety-pet-card-icon {
+    font-size: 2rem;
+  }
+  .safety-pet-card-title {
+    font-size: 1.2rem;
+  }
+  .safety-pet-card-text {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  .safety-pet-card-btn {
+    padding: 10px 0;
+    font-size: 0.95rem;
+  }
+}
+
+/* Skeleton Loader para SafetyPetCard */
+.skeleton-container-safety {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.skeleton-safety-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin: 0 auto 15px auto;
+  background: linear-gradient(90deg, var(--skeleton-gradient-start, #f0f0f0) 25%, var(--skeleton-gradient-mid, #e0e0e0) 50%, var(--skeleton-gradient-start, #f0f0f0) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading-safety 1.5s infinite;
+}
+.skeleton-safety-title {
+  width: 70%;
+  height: 24px;
+  border-radius: 8px;
+  margin: 0 auto 10px auto;
+  background: linear-gradient(90deg, var(--skeleton-gradient-start, #f0f0f0) 25%, var(--skeleton-gradient-mid, #e0e0e0) 50%, var(--skeleton-gradient-start, #f0f0f0) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading-safety 1.5s infinite;
+}
+.skeleton-safety-desc {
+  width: 90%;
+  height: 40px;
+  border-radius: 8px;
+  margin: 0 auto 15px auto;
+  background: linear-gradient(90deg, var(--skeleton-gradient-start, #f0f0f0) 25%, var(--skeleton-gradient-mid, #e0e0e0) 50%, var(--skeleton-gradient-start, #f0f0f0) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading-safety 1.5s infinite;
+}
+.skeleton-safety-btn {
+  width: 100%;
+  height: 45px;
+  border-radius: 20px;
+  margin-bottom: 0;
+  background: linear-gradient(90deg, var(--skeleton-gradient-start, #f0f0f0) 25%, var(--skeleton-gradient-mid, #e0e0e0) 50%, var(--skeleton-gradient-start, #f0f0f0) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading-safety 1.5s infinite;
+}
+@keyframes skeleton-loading-safety {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

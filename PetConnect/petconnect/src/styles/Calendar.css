@@ -295,14 +295,36 @@
   transform: scale(1.05);
 }
 
+.calendar-day.has-event {
+  background-color: #fff7d6 !important; /* amarillo pastel más notorio */
+  border: 2px solid #ffd700 !important; /* dorado más fuerte */
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.13);
+  position: relative;
+  color: #7a5a00 !important;
+}
+.calendar-day.has-event.selected {
+  background-color: #ffd700 !important;
+  color: #fff !important;
+  border: 2.5px solid #ff7e36 !important;
+}
+.calendar-day.has-event.today {
+  background-color: #ffe082 !important;
+  border: 2.5px solid #1890ff !important;
+  color: #7a5a00 !important;
+}
 .calendar-day.has-event::after {
   content: "";
   position: absolute;
-  bottom: 5px;
-  width: 6px;
-  height: 6px;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
   background-color: #ff7e36;
   border-radius: 50%;
+  box-shadow: 0 0 6px #ffd700, 0 0 2px #ff7e36;
+  border: 2px solid #fff7d6;
+  z-index: 2;
 }
 
 .calendar-day:hover:not(.prev-month):not(.next-month) {

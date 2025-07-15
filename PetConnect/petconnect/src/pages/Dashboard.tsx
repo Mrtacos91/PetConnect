@@ -11,7 +11,6 @@ import ThemeToggle from "../components/ThemeToggle";
 
 // Componentes lazy
 const MyPetCard = lazy(() => import("../components/MyPetCard"));
-const Actividades = lazy(() => import("../components/Actividades"));
 const LocationCard = lazy(() => import("../components/LocationCard"));
 const FoundDoctorCard = lazy(() => import("../components/FoundDoctorCard"));
 const FoundHotelCard = lazy(() => import("../components/FoundHotelCard"));
@@ -20,12 +19,12 @@ const WelcomeCard = lazy(() => import("../components/WelcomeCard"));
 const ActivitiesCard = lazy(() => import("../components/ActivitiesCard"));
 const AssistantCard = lazy(() => import("../components/AssistantCard"));
 const Location = lazy(() => import("../components/Location"));
-const TrackingMedico = lazy(() => import("../components/TrackingMedico"));
 const CalendarCard = lazy(() => import("../components/CalendarCard"));
 const LinkDevice = lazy(() => import("../components/LinkDevice"));
 const CarnetCard = lazy(() => import("../components/CarnetCard"));
 const RecordatoriosCard = lazy(() => import("../components/RecordatoriosCard"));
 const MyNfcCard = lazy(() => import("../components/MyNfcCard"));
+const SafetyPetCard = lazy(() => import("../components/SafetyPetCard"));
 
 // Componente de carga para Suspense
 const LoadingFallback = () => (
@@ -169,8 +168,7 @@ const Dashboard: React.FC = () => {
         return (
           <Suspense fallback={<LoadingFallback />}>
             <section className="actividad-section">
-              <Actividades />
-              <TrackingMedico />
+              <SafetyPetCard />
               <RecordatoriosCard />
               <CalendarCard />
               <CarnetCard />
