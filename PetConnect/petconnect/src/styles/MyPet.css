@@ -76,35 +76,72 @@
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  gap: 14px !important;
-  margin-top: 10px !important;
+  gap: clamp(8px, 3vw, 14px) !important;
+  margin-top: clamp(8px, 2vw, 16px) !important;
   width: 100% !important;
-  padding: 8px 0 !important;
+  padding: clamp(4px, 1vw, 8px) 0 !important;
+  flex-wrap: wrap;
 }
 
 .indicator-MyPet {
-  width: 12px !important;
-  height: 12px !important;
-  border-radius: 100%;
+  width: clamp(10px, 3.5vw, 14px) !important;
+  height: clamp(10px, 3.5vw, 14px) !important;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 50%;
   background-color: var(--accent-before);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 0;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
   opacity: 0.7;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-tap-highlight-color: transparent;
 }
 
-.indicator-MyPet:hover {
-  opacity: 0.9;
-  transform: scale(1.1);
+@media (hover: hover) and (pointer: fine) {
+  .indicator-MyPet:hover {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
 }
 
 .indicator-MyPet.active {
   background-color: var(--accent-color);
   transform: scale(1.4);
   opacity: 1;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Mejoras de accesibilidad en dispositivos táctiles */
+@media (max-width: 768px) {
+  .indicator-MyPet {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .indicator-MyPet.active {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .carousel-indicators {
+    gap: 6px !important;
+  }
+
+  .indicator-MyPet {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .indicator-MyPet.active {
+    width: 12px !important;
+    height: 12px !important;
+  }
 }
 
 /* Botón para agregar mascota */
