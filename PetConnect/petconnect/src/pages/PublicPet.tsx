@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import supabase from "../supabase";
 import Loader from "../components/Loader";
@@ -19,20 +18,20 @@ interface PublicPetData {
 }
 
 const PublicPet: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
   const [petData, setPetData] = useState<PublicPetData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!id) return;
+      // Usar solo el path para la búsqueda
+      const currentPath = window.location.pathname;
       const { data, error } = await supabase
         .from("pettag_contactinfo")
         .select(
           "petname, pettype, petbreed, petconditions, petpartsigns, phone, email, address, othercontact"
         )
-        .eq("id", id)
+        .eq("url_asigned", currentPath)
         .single();
 
       if (error) {
@@ -43,7 +42,7 @@ const PublicPet: React.FC = () => {
       setLoading(false);
     };
     fetchData();
-  }, [id]);
+  }, []);
 
   if (loading) return <Loader />;
 
