@@ -328,7 +328,24 @@ const Nfc: React.FC = () => {
     };
   }, [isReading, nfcReader]);
 
-  // Lógica del escáner QR (sin cambios)
+  // Función para actualizar la URL asignada en la base de datos
+  const updateUrlAsigned = async (url: string) => {
+    if (!user || !localUserId) return;
+    try {
+      await supabase
+        .from("pettag_contactinfo")
+        .update({ url_asigned: url, updated_at: new Date().toISOString() })
+        .eq("user_id", localUserId);
+    } catch (error) {
+      console.error("Error actualizando url_asigned:", error);
+      setAlert({
+        message: "Error al guardar la URL escaneada en la base de datos.",
+        type: "error",
+      });
+    }
+  };
+
+  // Lógica del escáner QR
   useEffect(() => {
     if (modalView === "qr" && isModalOpen && !scanResult) {
       const scanner = new Html5QrcodeScanner(
@@ -336,20 +353,50 @@ const Nfc: React.FC = () => {
         { qrbox: { width: 250, height: 250 }, fps: 5 },
         false
       );
-      const onScanSuccess = (result: string) => {
+      const onScanSuccess = async (result: string) => {
         scanner.clear();
-        setScanResult(result);
-        setAlert({
-          message: `Placa con QR vinculada exitosamente.`,
-          type: "success",
-        });
+
+        // Verificar si la URL escaneada es válida
+        let urlToSet = result.trim();
+
+        // Si no comienza con http:// o https://, agregar https://
+        if (!urlToSet.match(/^https?:\/\//i)) {
+          urlToSet = "https://" + urlToSet;
+        }
+
+        // Validar que sea una URL válida
+        try {
+          new URL(urlToSet);
+          setScanResult(urlToSet);
+          setAlert({
+            message: `URL escaneada exitosamente y guardada en tu perfil.`,
+            type: "success",
+          });
+
+          // Actualizar la URL pública con la URL escaneada
+          setPublicUrl(urlToSet);
+
+          // Guardar la URL en la base de datos
+          await updateUrlAsigned(urlToSet);
+
+          // Cerrar automáticamente después de 1.5 segundos
+          setTimeout(() => {
+            setIsModalOpen(false);
+          }, 1500);
+        } catch (e) {
+          setAlert({
+            message: `La URL escaneada no es válida: ${result}`,
+            type: "error",
+          });
+        }
       };
+
       scanner.render(onScanSuccess, () => {});
       return () => {
         scanner.clear().catch(() => {});
       };
     }
-  }, [modalView, isModalOpen, scanResult]);
+  }, [modalView, isModalOpen, scanResult, user, localUserId]);
 
   // Cargar las mascotas del usuario
   useEffect(() => {
@@ -518,25 +565,94 @@ const Nfc: React.FC = () => {
   };
 
   // Maneja el clic del botón "Guardar Cambios"
-  // Generate public URL for the pet's information
-  const generatePublicUrl = () => {
+  // Obtener la URL asignada de la base de datos
+  const generatePublicUrl = async (): Promise<string> => {
+    // Si ya hay un resultado de escaneo, usarlo
+    if (scanResult) {
+      return scanResult;
+    }
+
+    // Si no hay profileId, retornar cadena vacía
     if (!profileId) return "";
-    return `${window.location.origin}/public/pet/${profileId}`;
+
+    try {
+      // Obtener la URL asignada de la base de datos
+      const { data: contactInfo, error } = await supabase
+        .from("pettag_contactinfo")
+        .select("url_asigned")
+        .eq("id", profileId)
+        .single();
+
+      if (error) {
+        console.error("Error al obtener la URL asignada:", error);
+        return "";
+      }
+
+      return contactInfo?.url_asigned || "";
+    } catch (error) {
+      console.error("Error al obtener la URL asignada:", error);
+      return "";
+    }
   };
 
   // Handle view plate button click
-  const handleViewPlate = (e: React.MouseEvent) => {
+  const handleViewPlate = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!profileId) {
+    setIsLoading(true);
+
+    try {
+      // Si hay un resultado de escaneo, mostrarlo directamente
+      if (scanResult) {
+        setPublicUrl(scanResult);
+        setModalView("view");
+        setIsModalOpen(true);
+        return;
+      }
+
+      // Si no hay resultado de escaneo, verificar el perfil
+      if (!profileId) {
+        setAlert({
+          message:
+            "Primero debes guardar la información de la placa o escanear un código QR.",
+          type: "error",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Verificar si hay una URL asignada en la base de datos
+      const { data: contactInfo, error } = await supabase
+        .from("pettag_contactinfo")
+        .select("url_asigned")
+        .eq("id", profileId)
+        .single();
+
+      if (error) throw error;
+
+      if (!contactInfo?.url_asigned) {
+        setAlert({
+          message:
+            "No hay una URL asignada a esta mascota. Por favor, escanea un código QR primero.",
+          type: "error",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Si hay URL asignada, mostrarla
+      setPublicUrl(contactInfo.url_asigned || generatePublicUrl());
+      setModalView("view");
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error al verificar la URL asignada:", error);
       setAlert({
-        message: "Primero debes guardar la información de la placa.",
+        message:
+          "Error al verificar la información de la placa. Intenta de nuevo.",
         type: "error",
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-    setPublicUrl(generatePublicUrl());
-    setModalView("view");
-    setIsModalOpen(true);
   };
 
   // Handle copy URL to clipboard
@@ -600,35 +716,98 @@ const Nfc: React.FC = () => {
     }
   };
 
-  // **MODIFICADO**: La escritura NFC ahora usa el `profileId` del estado.
+  // **MODIFICADO**: La escritura NFC ahora usa la URL escaneada
   const writeNfcTag = async () => {
     if (!hasNfc) {
       setAlert({ message: "Tu dispositivo no soporta NFC.", type: "error" });
       return;
     }
-    setAlert({
-      message: "Acerca la etiqueta NFC para escribir...",
-      type: "success",
-    });
+
+    setIsLoading(true);
+
     try {
+      // Verificar si hay un perfil guardado
+      if (!profileId) {
+        setAlert({
+          message: "Primero debes guardar la información de la mascota.",
+          type: "error",
+        });
+        return;
+      }
+
+      // Usar la URL escaneada si existe, de lo contrario mostrar error
+      if (!scanResult) {
+        setAlert({
+          message: "No hay una URL escaneada. Primero escanea un código QR.",
+          type: "error",
+        });
+        return;
+      }
+
+      // Validar la URL
+      let urlToWrite = scanResult.trim();
+      if (!urlToWrite.match(/^https?:\/\//i)) {
+        urlToWrite = "https://" + urlToWrite;
+      }
+
+      try {
+        new URL(urlToWrite);
+      } catch (e) {
+        setAlert({
+          message: "La URL escaneada no es válida.",
+          type: "error",
+        });
+        return;
+      }
+
+      // Actualizar la URL asignada en la base de datos
+      const { error: updateError } = await supabase
+        .from("pettag_contactinfo")
+        .update({
+          url_asigned: urlToWrite,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", profileId);
+
+      if (updateError) {
+        console.error("Error al actualizar la URL asignada:", updateError);
+        throw updateError;
+      }
+
+      setAlert({
+        message: "Acerca la etiqueta NFC para escribir...",
+        type: "success",
+      });
+
       const ndef = new (window as any).NDEFReader();
+
+      // Escribir la URL en la etiqueta NFC
       await ndef.write({
         records: [
           {
             recordType: "url",
-            data: `https://petconnectmx.netlify.app/nfc/${profileId}`, // Usa el ID del perfil.
+            data: urlToWrite,
           },
         ],
       });
+
       setAlert({
         message: "¡Etiqueta NFC escrita exitosamente!",
         type: "success",
       });
+
+      // Cerrar el modal después de escribir exitosamente
+      setTimeout(() => {
+        setIsModalOpen(false);
+      }, 1500);
     } catch (error) {
+      console.error("Error al escribir en la etiqueta NFC:", error);
       setAlert({
         message: "No se pudo escribir en la etiqueta NFC.",
         type: "error",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
