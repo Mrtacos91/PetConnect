@@ -284,8 +284,8 @@ const Customise: React.FC = () => {
   };
 
   return (
-    <div className="customise-page">
-      <div className="BackBt-CP">
+    <div className="customise-main-page">
+      <div className="customise-backbt-cp">
         <BackButton />
       </div>
       <div>
@@ -293,46 +293,46 @@ const Customise: React.FC = () => {
       </div>
 
       {/* Contenedor de notificaciones */}
-      <div className="notification-container">
+      <div className="customise-notification-container">
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className={`notification-item ${notification.type}`}
+            className={`customise-notification-item ${notification.type}`}
           >
-            <div className="notification-content">
-              <div className="notification-icon">
+            <div className="customise-notification-content">
+              <div className="customise-notification-icon">
                 {notification.type === "success" ? <FaCheck /> : <FaTimes />}
               </div>
-              <div className="notification-text">{notification.message}</div>
+              <div className="customise-notification-text">{notification.message}</div>
             </div>
             <div
-              className="notification-close"
+              className="customise-notification-close"
               onClick={() => closeNotification(notification.id)}
             >
               <FaTimes />
             </div>
-            <div className="notification-progress-bar"></div>
+            <div className="customise-notification-progress-bar"></div>
           </div>
         ))}
       </div>
 
-      <main className="dashboard">
-        <div className="customise-container">
-          <div className="pet-navigation">
+      <main className="customise-dashboard">
+        <div className="customise-main-container">
+          <div className="customise-pet-navigation">
             <button
               type="button"
-              className="pet-nav-btn"
+              className="customise-pet-nav-btn"
               onClick={goToPreviousPet}
               disabled={currentPetIndex === 0}
             >
               <FaArrowLeft />
             </button>
 
-            <div className="paw-indicators">
+            <div className="customise-paw-indicators">
               {[0, 1, 2].map((index) => (
                 <div
                   key={index}
-                  className={`paw-indicator ${
+                  className={`customise-paw-indicator ${
                     index < userPets.length ? "active" : ""
                   } ${index === currentPetIndex ? "current" : ""}`}
                   onClick={() => {
@@ -349,7 +349,7 @@ const Customise: React.FC = () => {
 
             <button
               type="button"
-              className="pet-nav-btn"
+              className="customise-pet-nav-btn"
               onClick={goToNextPet}
               disabled={
                 (currentPetIndex === userPets.length && userPets.length >= 3) ||
@@ -361,7 +361,7 @@ const Customise: React.FC = () => {
             </button>
           </div>
 
-          <div className="pet-slot-indicators">
+          <div className="customise-pet-slot-indicators">
             {[
               ...Array(
                 Math.min(3, userPets.length + (userPets.length < 3 ? 1 : 0))
@@ -369,7 +369,7 @@ const Customise: React.FC = () => {
             ].map((_, index) => (
               <div
                 key={index}
-                className={`pet-slot ${
+                className={`customise-pet-slot ${
                   currentPetIndex === index ? "active" : ""
                 }`}
                 onClick={() => {
@@ -388,15 +388,15 @@ const Customise: React.FC = () => {
           </div>
 
           {/* Imagen de la mascota */}
-          <div className="pet-photo-wrapper">
-            <label htmlFor="petPhoto" className="pet-photo-label">
-              <div className="pet-photo-circle">
+          <div className="customise-pet-photo-wrapper">
+            <label htmlFor="petPhoto" className="customise-pet-photo-label">
+              <div className="customise-pet-photo-circle">
                 {photoPreview ? (
-                  <img src={photoPreview} alt="Mascota" className="pet-photo" />
+                  <img src={photoPreview} alt="Mascota" className="customise-pet-photo" />
                 ) : (
-                  <span className="upload-text">📷</span>
+                  <span className="customise-upload-text">📷</span>
                 )}
-                <div className="edit-icon-customise">
+                <div className="customise-edit-icon">
                   <FaPencilAlt />
                 </div>
               </div>
@@ -406,63 +406,63 @@ const Customise: React.FC = () => {
               id="petPhoto"
               accept="image/*"
               onChange={handlePhotoChange}
-              className="hidden-file-input"
+              className="customise-hidden-file-input"
             />
           </div>
 
           <form className="customise-form" onSubmit={handleSubmit}>
-            <div className="form-group-customise">
+            <div className="customise-form-group">
               <input
                 type="text"
                 id="petName"
-                className="form__field"
+                className="customise-form__field"
                 value={petName}
                 onChange={(e) => setPetName(e.target.value)}
                 placeholder=" "
                 autoComplete="off"
                 required
               />
-              <label htmlFor="petName" className="form__label">
+              <label htmlFor="petName" className="customise-form__label">
                 Nombre
               </label>
             </div>
 
-            <div className="form-group-customise">
+            <div className="customise-form-group">
               <input
                 type="text"
                 id="petType"
-                className="form__field"
+                className="customise-form__field"
                 value={petType}
                 onChange={(e) => setPetType(e.target.value)}
                 placeholder=" "
                 autoComplete="off"
                 required
               />
-              <label htmlFor="petType" className="form__label">
+              <label htmlFor="petType" className="customise-form__label">
                 Tipo de mascota
               </label>
             </div>
 
-            <div className="form-group-customise">
+            <div className="customise-form-group">
               <input
                 type="text"
                 id="petBreed"
-                className="form__field"
+                className="customise-form__field"
                 value={petBreed}
                 onChange={(e) => setPetBreed(e.target.value)}
                 placeholder=" "
                 autoComplete="off"
               />
-              <label htmlFor="petBreed" className="form__label">
+              <label htmlFor="petBreed" className="customise-form__label">
                 Raza
               </label>
             </div>
 
-            <div className="form-group-customise">
+            <div className="customise-form-group">
               <input
                 type="number"
                 id="petAge"
-                className="form__field"
+                className="customise-form__field"
                 value={petAge}
                 onChange={(e) => setPetAge(e.target.value)}
                 placeholder=" "
@@ -471,15 +471,15 @@ const Customise: React.FC = () => {
                 max="30"
                 step="0.5"
               />
-              <label htmlFor="petAge" className="form__label">
+              <label htmlFor="petAge" className="customise-form__label">
                 Edad (años)
               </label>
             </div>
 
-            <div className="form-actions-customise">
+            <div className="customise-form-actions">
               <button
                 type="submit"
-                className="save-button-pet"
+                className="customise-save-button"
                 disabled={loading}
               >
                 {loading ? "Guardando..." : "Guardar cambios"}
@@ -489,7 +489,7 @@ const Customise: React.FC = () => {
                 userPets[currentPetIndex]?.id && (
                   <button
                     type="button"
-                    className="delete-pet-button"
+                    className="customise-delete-pet-button"
                     onClick={() => setShowDeleteModal(true)}
                     disabled={loading}
                   >
@@ -503,23 +503,23 @@ const Customise: React.FC = () => {
 
       {/* Modal de confirmación para eliminar mascota */}
       {showDeleteModal && (
-        <div className="modal-overlay">
-          <div className="delete-modal">
+        <div className="customise-modal-overlay">
+          <div className="customise-delete-modal">
             <h3>¿Estás seguro que quieres eliminar esta mascota?</h3>
             <p>
               Esta acción no se puede deshacer y se eliminarán todos los datos
               de la mascota.
             </p>
-            <div className="modal-buttons">
+            <div className="customise-modal-buttons">
               <button
-                className="cancel-button"
+                className="customise-cancel-button"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={deleting}
               >
                 Cancelar
               </button>
               <button
-                className="confirm-delete-button"
+                className="customise-confirm-delete-button"
                 onClick={handleDeletePet}
                 disabled={deleting}
               >
