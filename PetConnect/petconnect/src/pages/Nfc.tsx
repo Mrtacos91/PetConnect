@@ -1129,7 +1129,11 @@ const Nfc: React.FC = () => {
 
       {/* Modal (sin cambios en la estructura, pero la lógica que lo llama sí cambió) */}
       {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+        <div className="modal-overlay" onClick={() => {
+          // Si se cierra el modal mientras está en modo QR, limpiar scanResult para permitir reintentos
+          if (modalView === "qr") setScanResult(null);
+          setIsModalOpen(false);
+        }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2 style={{ color: "#ffffff" }}>
@@ -1145,7 +1149,11 @@ const Nfc: React.FC = () => {
               </h2>
               <button
                 className="modal-close-button"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  // Si se cierra el modal desde la X en modo QR, limpiar scanResult
+                  if (modalView === "qr") setScanResult(null);
+                  setIsModalOpen(false);
+                }}
               >
                 &times;
               </button>
