@@ -65,13 +65,13 @@ const Shop = () => {
       id: 1,
       name: "Collar Inteligente PetConnect",
       description:
-        "Collar con tecnología NFC para la identificación segura de tu mascota. Resistente al agua y duradero.",
+        "Collar con tecnología GPS para la localización segura de tu mascota. Resistente al agua y duradero.",
       price: 599,
       originalPrice: 799,
       image: "/images/collar_demo.png",
       features: [
-        "Tecnología NFC integrada",
-        "Resistente al agua IP67",
+        "Tecnología GPS integrada",
+        "Resistente al agua",
         "Ajustable para todo tipo de razas",
         "Material hipoalergénico",
         "Diseño elegante y cómodo",
@@ -755,48 +755,48 @@ const Shop = () => {
 
       {/* Product Detail Modal */}
       {selectedProduct && (
-        <div className="product-modal-overlay" onClick={closeModal}>
-          <div className="product-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="close-modal" onClick={closeModal}>
+        <div className="shop-modal-overlay" onClick={closeModal}>
+          <div className="shop-item-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="shop-close-modal" onClick={closeModal}>
               ×
             </button>
 
-            <div className="modal-content-shop">
-              <div className="modal-image-shop">
+            <div className="shop-modal-content">
+              <div className="shop-modal-image">
                 <img src={selectedProduct.image} alt={selectedProduct.name} />
               </div>
 
-              <div className="modal-details-shop">
+              <div className="shop-modal-details">
                 <h2>{selectedProduct.name}</h2>
-                <p className="modal-description">
+                <p className="shop-modal-description">
                   {selectedProduct.description}
                 </p>
 
-                <div className="modal-pricing-shop">
-                  <span className="current-price">
+                <div className="shop-modal-pricing">
+                  <span className="shop-current-price">
                     ${selectedProduct.price.toLocaleString("es-MX")} MXN
                   </span>
                   {selectedProduct.originalPrice && (
-                    <span className="original-price">
-                      ${selectedProduct.originalPrice.toLocaleString("es-MX")}{" "}
+                    <span className="shop-original-price">
+                      ${selectedProduct.originalPrice.toLocaleString("es-MX")} {" "}
                       MXN
                     </span>
                   )}
                 </div>
 
-                <div className="features-list">
+                <div className="shop-features-list">
                   <h4>Características:</h4>
                   <ul>
                     {selectedProduct.features.map((feature, index) => (
                       <li key={index}>
-                        <FaCheck className="feature-check" />
+                        <FaCheck className="shop-feature-check" />
                         {feature}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="quantity-selector">
+                <div className="shop-quantity-selector">
                   <button onClick={decrementQuantity} disabled={quantity <= 1}>
                     <FaMinus />
                   </button>
@@ -807,7 +807,7 @@ const Shop = () => {
                 </div>
 
                 <button
-                  className="add-to-cart-btn"
+                  className="shop-add-to-cart-btn"
                   onClick={() => {
                     addToCart(selectedProduct);
                   }}
@@ -815,7 +815,7 @@ const Shop = () => {
                   <FaShoppingCart /> Añadir al carrito ($
                   {(selectedProduct.price * quantity).toLocaleString(
                     "es-MX"
-                  )}{" "}
+                  )} {" "}
                   MXN)
                 </button>
               </div>
