@@ -332,16 +332,59 @@ const Nfc: React.FC = () => {
   const updateUrlAsigned = async (url: string) => {
     if (!user || !localUserId) return;
     try {
+      // Verificar si la URL ya está asignada a otro usuario
+      const { data: existing, error: checkError } = await supabase
+        .from("pettag_contactinfo")
+        .select("user_id, id")
+        .eq("url_asigned", url)
+        .maybeSingle();
+      if (checkError) {
+        throw checkError;
+      }
+      if (existing && existing.user_id !== localUserId) {
+        setAlert({
+          message: "Esta URL ya está vinculada a otro perfil. Debes desvincularla primero antes de asignarla a tu mascota.",
+          type: "error",
+        });
+        return false;
+      }
       await supabase
         .from("pettag_contactinfo")
         .update({ url_asigned: url, updated_at: new Date().toISOString() })
         .eq("user_id", localUserId);
+      return true;
     } catch (error) {
       console.error("Error actualizando url_asigned:", error);
       setAlert({
         message: "Error al guardar la URL escaneada en la base de datos.",
         type: "error",
       });
+      return false;
+    }
+  };
+
+  // Función para desvincular la URL
+  const unlinkUrl = async () => {
+    if (!user || !localUserId) return;
+    setIsLoading(true);
+    try {
+      await supabase
+        .from("pettag_contactinfo")
+        .update({ url_asigned: null, updated_at: new Date().toISOString() })
+        .eq("user_id", localUserId);
+      setAlert({
+        message: "URL desvinculada exitosamente.",
+        type: "success",
+      });
+      setPublicUrl("");
+      setScanResult(null);
+    } catch (error) {
+      setAlert({
+        message: "Error al desvincular la URL.",
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -350,7 +393,7 @@ const Nfc: React.FC = () => {
     if (modalView === "qr" && isModalOpen && !scanResult) {
       const scanner = new Html5QrcodeScanner(
         "qr-scanner-container",
-        { qrbox: { width: 250, height: 250 }, fps: 5 },
+        { qrbox: { width: 250, height: 250 }, fps: 5, facingMode: { exact: "environment" } },
         false
       );
       const onScanSuccess = async (result: string) => {
@@ -1089,7 +1132,7 @@ const Nfc: React.FC = () => {
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>
+              <h2 style={{ color: "#ffffff" }}>
                 {modalView === "select"
                   ? "Vincular Placa"
                   : modalView === "qr"
@@ -1192,7 +1235,7 @@ const Nfc: React.FC = () => {
               {modalView === "view" && (
                 <div className="nfc-modal-body">
                   <h2>URL Pública de la Placa</h2>
-                  <p style={{ color: "var(--text-primary)" }}>
+                  <p style={{ color: "#ffffff" }}>
                     Comparte este enlace para que otros vean la información de
                     contacto de tu mascota:
                   </p>
@@ -1212,9 +1255,16 @@ const Nfc: React.FC = () => {
                       Copiar
                     </button>
                   </div>
+                  <button
+                    className="unlink-url-button"
+                    onClick={unlinkUrl}
+                    disabled={isLoading || !publicUrl}
+                  >
+                    Desvincular URL
+                  </button>
                   <div
                     className="public-url-note"
-                    style={{ color: "var(--text-primary)" }}
+                    style={{ color: "#ffffff" }}
                   >
                     <FaExclamationCircle /> Esta URL es pública. Cualquiera con
                     este enlace podrá ver la información de contacto de tu

@@ -890,3 +890,35 @@ button:disabled {
     padding: 10px 20px;
   }
 }
+
+.unlink-url-button {
+  background: var(--danger-color, #dc3545);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+  max-width: 250px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.unlink-url-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.unlink-url-button:hover:not(:disabled) {
+  background: #b52a37;
+  color: #fff;
+}
+@media (max-width: 480px) {
+  .unlink-url-button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px 0;
+  }
+}

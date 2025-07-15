@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/global.css";
@@ -24,6 +24,16 @@ const Micuenta = lazy(() => import("./pages/Micuenta"));
 const LoadingFallback = () => <Loader />;
 
 const App: React.FC = () => {
+  // Asegura que el tema se aplique correctamente al recargar
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, []);
+
   return (
     <Router>
       <Routes>
