@@ -343,7 +343,8 @@ const Nfc: React.FC = () => {
       }
       if (existing && existing.user_id !== localUserId) {
         setAlert({
-          message: "Esta URL ya está vinculada a otro perfil. Debes desvincularla primero antes de asignarla a tu mascota.",
+          message:
+            "Esta URL ya está vinculada a otro perfil. Debes desvincularla primero antes de asignarla a tu mascota.",
           type: "error",
         });
         return false;
@@ -393,7 +394,11 @@ const Nfc: React.FC = () => {
     if (modalView === "qr" && isModalOpen && !scanResult) {
       const scanner = new Html5QrcodeScanner(
         "qr-scanner-container",
-        { qrbox: { width: 250, height: 250 }, fps: 5, facingMode: { exact: "environment" } },
+        {
+          qrbox: { width: 250, height: 250 },
+          fps: 5,
+          facingMode: { exact: "environment" },
+        },
         false
       );
       const onScanSuccess = async (result: string) => {
@@ -604,51 +609,27 @@ const Nfc: React.FC = () => {
 
   // Maneja el clic del botón "Guardar Cambios"
   // Obtener la URL asignada de la base de datos
-  const generatePublicUrl = async (): Promise<string> => {
-    // Si ya hay un resultado de escaneo, usarlo
-    if (scanResult) {
-      return scanResult;
-    }
-
-    // Si no hay profileId, retornar cadena vacía
-    if (!profileId) return "";
-
-    try {
-      // Obtener la URL asignada de la base de datos
-      const { data: contactInfo, error } = await supabase
-        .from("pettag_contactinfo")
-        .select("url_asigned")
-        .eq("id", profileId)
-        .single();
-
-      if (error) {
-        console.error("Error al obtener la URL asignada:", error);
-        return "";
-      }
-
-      return contactInfo?.url_asigned || "";
-    } catch (error) {
-      console.error("Error al obtener la URL asignada:", error);
-      return "";
-    }
-  };
 
   // Handle view plate button click
   const handleViewPlate = async (e: React.MouseEvent) => {
     e.preventDefault();
+    console.log("Botón Ver placa clickeado");
     setIsLoading(true);
 
     try {
       // Si hay un resultado de escaneo, mostrarlo directamente
       if (scanResult) {
+        console.log("Usando scanResult:", scanResult);
         setPublicUrl(scanResult);
         setModalView("view");
         setIsModalOpen(true);
+        setIsLoading(false);
         return;
       }
 
       // Si no hay resultado de escaneo, verificar el perfil
       if (!profileId) {
+        console.log("No hay profileId");
         setAlert({
           message:
             "Primero debes guardar la información de la placa o escanear un código QR.",
@@ -658,6 +639,8 @@ const Nfc: React.FC = () => {
         return;
       }
 
+      console.log("Buscando URL asignada para profileId:", profileId);
+
       // Verificar si hay una URL asignada en la base de datos
       const { data: contactInfo, error } = await supabase
         .from("pettag_contactinfo")
@@ -665,9 +648,15 @@ const Nfc: React.FC = () => {
         .eq("id", profileId)
         .single();
 
-      if (error) throw error;
+      console.log("Resultado de la consulta:", { contactInfo, error });
+
+      if (error) {
+        console.error("Error al consultar la URL asignada:", error);
+        throw error;
+      }
 
       if (!contactInfo?.url_asigned) {
+        console.log("No se encontró URL asignada");
         setAlert({
           message:
             "No hay una URL asignada a esta mascota. Por favor, escanea un código QR primero.",
@@ -677,15 +666,17 @@ const Nfc: React.FC = () => {
         return;
       }
 
+      console.log("URL asignada encontrada:", contactInfo.url_asigned);
+
       // Si hay URL asignada, mostrarla
-      setPublicUrl(contactInfo.url_asigned || generatePublicUrl());
+      setPublicUrl(contactInfo.url_asigned);
       setModalView("view");
       setIsModalOpen(true);
     } catch (error) {
-      console.error("Error al verificar la URL asignada:", error);
+      console.error("Error en handleViewPlate:", error);
       setAlert({
         message:
-          "Error al verificar la información de la placa. Intenta de nuevo.",
+          "Error al cargar la información de la placa. Intenta de nuevo.",
         type: "error",
       });
     } finally {
@@ -727,31 +718,6 @@ const Nfc: React.FC = () => {
       });
     }
     setIsLoading(false);
-  };
-
-  // **MODIFICADO**: El modal de vinculación ahora depende de que exista un `profileId`.
-  const handleOpenModal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const form = e.currentTarget as HTMLFormElement;
-    if (form.checkValidity()) {
-      const success = await saveData();
-      if (success && profileId) {
-        // Solo abre el modal si se guardó y tenemos un ID de perfil.
-        setAlert({
-          message: "Perfil guardado. Ahora puedes vincular una placa.",
-          type: "success",
-        });
-        setIsModalOpen(true);
-        setModalView("select");
-      } else if (!profileId) {
-        setAlert({
-          message: "No se pudo obtener un ID de perfil para vincular.",
-          type: "error",
-        });
-      }
-    } else {
-      form.reportValidity();
-    }
   };
 
   // **MODIFICADO**: La escritura NFC ahora usa la URL escaneada
@@ -943,7 +909,7 @@ const Nfc: React.FC = () => {
             />
           )}
 
-          <form onSubmit={handleOpenModal} className="nfc-form">
+          <form onSubmit={(e) => e.preventDefault()} className="nfc-form">
             {/* Secciones del formulario (sin cambios en los inputs) */}
             <section className="nfc-section">
               <h2 className="nfc-section-title">
@@ -1095,29 +1061,67 @@ const Nfc: React.FC = () => {
             <div className="nfc-button-container">
               <div className="nfc-button-group">
                 <button
-                  type="submit"
+                  type="button"
                   className="nfc-button primary"
                   disabled={isLoading}
-                  onClick={handleSaveOnly}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSaveOnly(e);
+                  }}
                 >
                   {isLoading ? "Guardando..." : "Guardar Cambios"}
                 </button>
+              </div>
+              <div className="nfc-button-group" style={{ marginTop: "10px" }}>
                 <button
                   type="button"
                   className="nfc-button"
-                  onClick={handleViewPlate}
-                  disabled={!profileId}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleViewPlate(e);
+                  }}
+                  disabled={isLoading}
                 >
                   <FaEye /> Ver Placa
                 </button>
                 <button
                   type="button"
                   className="nfc-button"
-                  onClick={() => {
-                    setModalView("select");
-                    setIsModalOpen(true);
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    console.log("Botón Vincular Placa clickeado");
+                    try {
+                      // Asegurar que el perfil esté guardado antes de abrir el modal
+                      if (!profileId) {
+                        saveData().then((success) => {
+                          if (success) {
+                            setModalView("select");
+                            setIsModalOpen(true);
+                          } else {
+                            setAlert({
+                              message: "Debes guardar la información primero.",
+                              type: "error",
+                            });
+                          }
+                        });
+                      } else {
+                        setModalView("select");
+                        setIsModalOpen(true);
+                      }
+                    } catch (error) {
+                      console.error(
+                        "Error al abrir modal de vinculación:",
+                        error
+                      );
+                      setAlert({
+                        message:
+                          "Error al abrir la ventana de vinculación. Intenta de nuevo.",
+                        type: "error",
+                      });
+                    }
                   }}
-                  disabled={!profileId}
+                  disabled={isLoading}
                 >
                   <FaMicrochip /> Vincular Placa NFC/QR
                 </button>
@@ -1129,11 +1133,14 @@ const Nfc: React.FC = () => {
 
       {/* Modal (sin cambios en la estructura, pero la lógica que lo llama sí cambió) */}
       {isModalOpen && (
-        <div className="modal-overlay" onClick={() => {
-          // Si se cierra el modal mientras está en modo QR, limpiar scanResult para permitir reintentos
-          if (modalView === "qr") setScanResult(null);
-          setIsModalOpen(false);
-        }}>
+        <div
+          className="modal-overlay"
+          onClick={() => {
+            // Si se cierra el modal mientras está en modo QR, limpiar scanResult para permitir reintentos
+            if (modalView === "qr") setScanResult(null);
+            setIsModalOpen(false);
+          }}
+        >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2 style={{ color: "#ffffff" }}>
@@ -1270,10 +1277,7 @@ const Nfc: React.FC = () => {
                   >
                     Desvincular URL
                   </button>
-                  <div
-                    className="public-url-note"
-                    style={{ color: "#ffffff" }}
-                  >
+                  <div className="public-url-note" style={{ color: "#ffffff" }}>
                     <FaExclamationCircle /> Esta URL es pública. Cualquiera con
                     este enlace podrá ver la información de contacto de tu
                     mascota.
