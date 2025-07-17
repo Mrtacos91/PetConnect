@@ -1,11 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { onMessage } from "firebase/messaging";
-import {
-  VAPID_KEY,
-  messaging,
-  getOrCreateFCMToken,
-  sendPushNotificationToServer,
-} from "../../firebase";
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -52,9 +45,6 @@ interface PaseoAlarm {
   active?: boolean;
 }
 
-// Token de FCM para uso en la aplicación
-let fcmToken: string | null = null;
-
 const Paseos: React.FC = () => {
   const navigate = useNavigate();
   // Estados
@@ -74,9 +64,8 @@ const Paseos: React.FC = () => {
       message: string;
     }>
   >([]);
-  const [, setIsLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(true);
-  const [, setNotificationsEnabled] = useState<boolean>(false);
+  // Loading state is now managed by showSkeleton
   const [userId, setUserId] = useState<number | null>(null);
 
   const showNotification = useCallback(
@@ -137,7 +126,7 @@ const Paseos: React.FC = () => {
   // Cargar alarmas desde la base de datos
   const fetchAlarms = async (userIdParam: number) => {
     try {
-      setIsLoading(true);
+      // Loading state is handled by showSkeleton
       const { data, error } = await supabase
         .from("walks")
         .select("*")
@@ -162,7 +151,6 @@ const Paseos: React.FC = () => {
       console.error("Error al cargar alarmas:", error);
       showNotification("error", "Error al cargar las alarmas");
     } finally {
-      setIsLoading(false);
       setShowSkeleton(false);
     }
   };
@@ -253,289 +241,108 @@ const Paseos: React.FC = () => {
     }
   };
 
-  const setupNotifications = useCallback(async () => {
-    try {
-      // 1. Verificar si estamos en un entorno móvil
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      console.log("Configurando notificaciones...");
-      console.log(`Dispositivo: ${isMobile ? "Móvil" : "Escritorio"}`);
-
-      // 2. Verificar soporte para notificaciones
-      if (!("Notification" in window)) {
-        console.log("Este navegador no soporta notificaciones");
-        return false;
-      }
-
-      // 3. Registrar Service Worker con manejo específico para móviles
-      try {
-        let swRegistration;
-        if (isMobile) {
-          // En móviles, intentar registrar el SW con scope específico
-          swRegistration = await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js",
-            { scope: "/" }
-          );
-        } else {
-          swRegistration = await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js"
-          );
-        }
-
-        console.log("Service Worker registrado con éxito:", swRegistration);
-
-        // Esperar a que el Service Worker esté activo
-        if (swRegistration.installing || swRegistration.waiting) {
-          await new Promise<void>((resolve) => {
-            const worker = swRegistration.installing || swRegistration.waiting;
-            if (worker) {
-              worker.addEventListener("statechange", () => {
-                if (worker.state === "activated") {
-                  console.log("Service Worker completamente activado");
-                  resolve();
-                }
-              });
-            } else {
-              resolve();
-            }
-          });
-        }
-
-        // 4. Solicitar permiso de notificación con manejo específico para móviles
-        let permission = Notification.permission;
-        if (permission !== "granted" && permission !== "denied") {
-          // En móviles, mostrar un mensaje explicativo antes de solicitar permisos
-          if (isMobile) {
-            showNotification(
-              "warning",
-              "Para recibir notificaciones, por favor acepta los permisos cuando el navegador los solicite"
-            );
-          }
-          permission = await Notification.requestPermission();
-        }
-
-        if (permission !== "granted") {
-          console.log("No se ha concedido permiso para notificaciones");
-          if (isMobile) {
-            showNotification(
-              "warning",
-              "Las notificaciones están desactivadas. Para activarlas, ve a la configuración de tu navegador"
-            );
-          }
-          return false;
-        }
-
-        // 5. Obtener token FCM con manejo específico para móviles
-        console.log("Solicitando token FCM...");
-        const token = await getOrCreateFCMToken(VAPID_KEY);
-
-        if (token) {
-          console.log(
-            "Token FCM obtenido correctamente:",
-            token.substring(0, 10) + "..."
-          );
-          fcmToken = token;
-          setNotificationsEnabled(true);
-          return true;
-        } else {
-          console.warn("No se pudo obtener el token FCM");
-          if (isMobile) {
-            showNotification(
-              "warning",
-              "No se pudo configurar las notificaciones push. Intenta recargar la página"
-            );
-          }
-          return false;
-        }
-      } catch (swError) {
-        console.error("Error al registrar el Service Worker:", swError);
-        if (isMobile) {
-          showNotification(
-            "error",
-            "Error al configurar las notificaciones. Intenta usar un navegador diferente"
-          );
-        }
-        return false;
-      }
-    } catch (error) {
-      console.error("Error al configurar notificaciones:", error);
-      return false;
-    }
-  }, [showNotification]);
-
+  // Configurar notificaciones en tiempo real
   useEffect(() => {
-    const initNotifications = async () => {
-      // Intentar configurar notificaciones
-      const enabled = await setupNotifications();
+    if (!userId) return;
 
-      // Si no se pudieron configurar, mostrar mensaje
-      if (!enabled) {
-        const permission = Notification.permission;
-        if (permission === "denied") {
-          showNotification(
-            "warning",
-            "Las notificaciones están bloqueadas. Actívalas en la configuración del navegador para recibir recordatorios de paseos."
-          );
-        } else {
-          showNotification(
-            "warning",
-            "No pudimos configurar las notificaciones push. Las alarmas seguirán funcionando localmente."
-          );
-        }
-      }
-    };
-
-    initNotifications();
-
-    // Configurar listener para mensajes FCM
-    if (messaging) {
-      const unsubscribe = onMessage(messaging, (payload) => {
-        console.log("Mensaje recibido en primer plano:", payload);
-        // Mostrar notificación en primer plano
-        if (payload.notification) {
-          const title = payload.notification.title || "PetConnect";
-          const options = {
-            body: payload.notification.body,
-            icon: "/images/Logo_gradient.png",
-          };
-
-          if (Notification.permission === "granted") {
-            new Notification(title, options);
-          } else {
+    const channel = supabase
+      .channel(`walk_notifications_${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "walk_notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload: any) => {
+          const notification = payload.new;
+          if (notification) {
             showNotification(
-              "warning",
-              `${title}: ${payload.notification.body}`
+              notification.type || "success",
+              notification.message || "¡Es hora de sacar a pasear a tu mascota!"
             );
+
+            if (
+              "Notification" in window &&
+              Notification.permission === "granted"
+            ) {
+              new Notification("Recordatorio de paseo", {
+                body:
+                  notification.message ||
+                  "¡Es hora de sacar a pasear a tu mascota!",
+                icon: "/logo192.png",
+              });
+            }
           }
         }
-      });
+      )
+      .subscribe();
 
-      // Limpiar listener al desmontar
-      return () => {
-        unsubscribe();
-      };
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, showNotification]);
+
+  // Solicitar permisos de notificación
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission();
     }
-  }, [setupNotifications, showNotification]);
+  }, []);
 
-  // Función para enviar un mensaje a través de Firebase Cloud Messaging
-  const sendFirebaseCloudMessage = async (
-    title: string,
-    body: string,
-    alarm: PaseoAlarm
-  ) => {
-    if (!fcmToken) {
-      console.log("Intentando obtener token FCM...");
-      const token = await getOrCreateFCMToken();
-      if (!token) {
-        console.error("No se pudo obtener un token FCM");
-        showNotification(
-          "error",
-          "No se pudo enviar la notificación push: falta token FCM"
-        );
-        return false;
-      }
-      console.log("Token FCM obtenido correctamente");
-      fcmToken = token;
+  // Función para enviar notificación de prueba
+  const testNotification = async (alarm: PaseoAlarm) => {
+    if (!userId) {
+      showNotification("error", "No hay usuario autenticado");
+      return;
     }
 
     try {
-      const data = {
-        alarmId: alarm.id,
-        petName: alarm.name,
-        clickAction: "/paseos",
-        timestamp: new Date().toISOString(),
-      };
+      const testMessage = `¡Recordatorio de prueba! Es hora de pasear a ${alarm.name}`;
 
-      console.log(`Enviando notificación FCM para ${alarm.name}...`);
+      // Insertar notificación de prueba en Supabase
+      const { error } = await supabase.from("walk_notifications").insert([
+        {
+          user_id: userId,
+          message: testMessage,
+          type: "test",
+          created_at: new Date().toISOString(),
+        },
+      ]);
 
-      // En desarrollo, simular el envío pero registrar en consola
-      if (process.env.NODE_ENV === "production") {
-        console.log("Enviando notificación push al servidor en producción");
-        await sendPushNotificationToServer(fcmToken, title, body, data);
-        console.log("Notificación push enviada al servidor correctamente");
-      } else {
-        console.log("Simulando envío de notificación push (modo desarrollo)");
-        console.log("Datos que se enviarían:", {
-          token: fcmToken.substring(0, 10) + "...",
-          title,
-          body,
-          data,
-        });
-      }
+      if (error) throw error;
 
-      showNotification(
-        "success",
-        `Notificación push enviada para ${alarm.name}`
-      );
-      return true;
+      showNotification("success", "Notificación de prueba enviada");
     } catch (error) {
-      console.error("Error al enviar notificación push:", error);
-      showNotification(
-        "error",
-        `Error al enviar notificación push: ${error instanceof Error ? error.message : "Error desconocido"
-        }`
-      );
-      return false;
+      console.error("Error al enviar notificación de prueba:", error);
+      showNotification("error", "Error al enviar notificación de prueba");
     }
   };
 
-  // Función para enviar notificación push
-  const sendPushNotification = useCallback(
+  // Función para enviar notificación de paseo
+  const sendWalkNotification = useCallback(
     async (alarm: PaseoAlarm) => {
       if (!userId) {
         console.warn("No hay usuario autenticado para enviar notificaciones");
         return;
       }
 
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      if (Notification.permission !== "granted") {
-        console.warn("No tenemos permiso para enviar notificaciones push");
-        if (isMobile) {
-          showNotification(
-            "warning",
-            "Las notificaciones están desactivadas. Actívalas en la configuración de tu navegador"
-          );
-        }
-        return;
-      }
-
-      const title = `¡Hora de pasear a ${alarm.name}!`;
-      const body = `Es momento del paseo programado para ${alarm.name}`;
-
       try {
-        // Obtener el registro del Service Worker
-        const registration = await navigator.serviceWorker.ready;
+        // Notificación enviada a través de Supabase
+        const message = `Es momento de sacar a pasear a ${alarm.name}`;
 
-        // Opciones básicas de notificación
-        const notificationOptions = {
-          body,
-          icon: "/images/Logo_gradient.png",
-          badge: "/images/Logo_black.png",
-          tag: `paseo-${alarm.id}-${Date.now()}`, // Añadir timestamp para evitar duplicados
-          silent: false,
-          vibrate: isMobile ? [200, 100, 200] : undefined,
-          requireInteraction: true,
-          data: {
-            url: "/paseos", // URL a la que navegar cuando se hace clic en la notificación
-            alarmId: alarm.id,
-            timestamp: Date.now().toString(), // Añadir timestamp para identificar cada notificación
+        // Insertar notificación en Supabase
+        const { error } = await supabase.from("walk_notifications").insert([
+          {
+            user_id: userId,
+            message,
+            type: "reminder",
+            created_at: new Date().toISOString(),
           },
-        };
+        ]);
 
-        // Mostrar la notificación a través del Service Worker
-        await registration.showNotification(title, notificationOptions);
-
-        // Si tenemos FCM token, intentar enviar notificación push
-        if (fcmToken) {
-          await sendFirebaseCloudMessage(title, body, alarm);
-        } else {
-          console.warn(
-            "No hay token FCM disponible para enviar notificación push"
-          );
-        }
-
-        console.log(`Notificación enviada para: ${alarm.name}`);
+        if (error) throw error;
 
         // Actualizar la fecha de última notificación
         const now = dayjs().tz(TIMEZONE).format();
@@ -547,18 +354,16 @@ const Paseos: React.FC = () => {
           )
         );
 
-        console.log(`Notificación enviada para ${alarm.name} a las ${now}`);
+        console.log(`Notificación de paseo programada para ${alarm.name}`);
       } catch (error) {
-        console.error("Error al enviar notificación:", error);
-        if (isMobile) {
-          showNotification(
-            "error",
-            "Error al enviar la notificación. Intenta recargar la página"
-          );
-        }
+        console.error("Error al programar notificación de paseo:", error);
+        showNotification(
+          "error",
+          "Error al programar la notificación de paseo"
+        );
       }
     },
-    [userId, showNotification, fcmToken]
+    [userId, showNotification]
   );
 
   // Función para verificar las alarmas con mejor precisión
@@ -626,9 +431,9 @@ const Paseos: React.FC = () => {
       );
 
       // Enviar notificación una sola vez
-      sendPushNotification(alarm);
+      sendWalkNotification(alarm);
     });
-  }, [alarms, userId, sendPushNotification]);
+  }, [alarms, userId, sendWalkNotification]);
 
   // Mejorar el intervalo de verificación de alarmas
   useEffect(() => {
@@ -703,14 +508,14 @@ const Paseos: React.FC = () => {
           prev.map((a, idx) =>
             idx === index
               ? {
-                ...a,
-                id: updatedAlarm.id.toString(),
-                name: updatedAlarm.title,
-                days: updatedAlarm.days,
-                time: dayjs(updatedAlarm.hour, "HH:mm"),
-                active: updatedAlarm.active,
-                lastNotification: undefined, // Resetear la última notificación
-              }
+                  ...a,
+                  id: updatedAlarm.id.toString(),
+                  name: updatedAlarm.title,
+                  days: updatedAlarm.days,
+                  time: dayjs(updatedAlarm.hour, "HH:mm"),
+                  active: updatedAlarm.active,
+                  lastNotification: undefined, // Resetear la última notificación
+                }
               : a
           )
         );
@@ -760,37 +565,32 @@ const Paseos: React.FC = () => {
       return;
     }
 
-    if (!userId) {
-      showNotification(
-        "error",
-        "No hay usuario autenticado. Por favor, inicia sesión nuevamente."
-      );
-      return;
-    }
-
     try {
-      await sendPushNotification(alarm);
-      showNotification(
-        "success",
-        `Prueba de alarma enviada para ${alarm.name}`
-      );
+      // Mostrar notificación de prueba
+      await testNotification(alarm);
+      showNotification("success", `Notificación de prueba para ${alarm.name}`);
     } catch (error) {
-      console.error("Error al probar la alarma:", error);
-      showNotification("error", "Error al enviar la notificación de prueba");
+      console.error("Error al probar la notificación:", error);
+      showNotification("error", "Error al probar la notificación");
     }
   };
 
   // Modificar useEffect para cargar alarmas al inicio
   useEffect(() => {
-    const initializeData = async () => {
-      const user_id = await checkUser();
-      if (user_id) {
-        fetchAlarms(user_id);
+    const initialize = async () => {
+      const currentUser = await checkUser();
+      if (currentUser) {
+        await fetchAlarms(currentUser);
       }
     };
 
-    initializeData();
-  }, [navigate]);
+    initialize();
+
+    // Solicitar permisos de notificación al cargar el componente
+    if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission();
+    }
+  }, []);
 
   // Carga inicial y efecto de skeleton
   useEffect(() => {
@@ -831,7 +631,6 @@ const Paseos: React.FC = () => {
 
       // Si ha pasado menos de 2 segundos, esperar el tiempo restante
       setTimeout(() => {
-        setIsLoading(false);
         setShowSkeleton(false);
       }, remainingTime);
     };
@@ -994,8 +793,9 @@ const Paseos: React.FC = () => {
                   {daysOfWeek.map((day) => (
                     <button
                       key={day.id}
-                      className={`day-button ${alarm.days.includes(day.id) ? "selected" : ""
-                        }`}
+                      className={`day-button ${
+                        alarm.days.includes(day.id) ? "selected" : ""
+                      }`}
                       onClick={() => toggleDay(idx, day.id)}
                     >
                       {day.id}

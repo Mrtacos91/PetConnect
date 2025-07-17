@@ -1,11 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { onMessage } from "firebase/messaging";
-import {
-  VAPID_KEY,
-  messaging,
-  getOrCreateFCMToken,
-  sendPushNotificationToServer,
-} from "../../firebase";
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -19,7 +12,15 @@ import { useNavigate } from "react-router-dom";
 // Configurar dayjs para manejo de timezone (CDMX)
 dayjs.extend(utc);
 dayjs.extend(timezone);
-const TIMEZONE = "America/Mexico_City"; // Timezone para CDMX
+const TIMEZONE = "America/Mexico_City";
+
+// Función para convertir la hora local a UTC para almacenamiento
+
+// Función para convertir UTC a hora local para visualización
+const utcToLocal = (time: string | null) => {
+  if (!time) return null;
+  return dayjs.utc(time).tz(TIMEZONE);
+};
 
 const daysOfWeek = [
   { id: "L", label: "Lunes" },
@@ -31,18 +32,7 @@ const daysOfWeek = [
   { id: "D", label: "Domingo" },
 ];
 
-// Mapeo de letras de día a números de día de la semana (formato JavaScript)
-const dayLetterToNumber: Record<string, number> = {
-  L: 1, // Lunes es 1 en JavaScript (0 es Domingo)
-  M: 2, // Martes
-  m: 3, // Miércoles
-  J: 4, // Jueves
-  V: 5, // Viernes
-  S: 6, // Sábado
-  D: 0, // Domingo es 0 en JavaScript
-};
-
-interface PaseoAlarm {
+interface FoodAlarm {
   id: string;
   name: string;
   days: string[];
@@ -52,21 +42,9 @@ interface PaseoAlarm {
   active?: boolean;
 }
 
-// Token de FCM para uso en la aplicación
-let fcmToken: string | null = null;
-
-const Paseos: React.FC = () => {
+const Foods: React.FC = () => {
   const navigate = useNavigate();
-  // Estados
-  const [alarms, setAlarms] = useState<PaseoAlarm[]>([
-    {
-      id: Date.now().toString(),
-      name: "",
-      days: [],
-      time: dayjs().hour(21).minute(0),
-      active: true,
-    },
-  ]);
+  const [alarms, setAlarms] = useState<FoodAlarm[]>([]);
   const [notifications, setNotifications] = useState<
     Array<{
       id: string;
@@ -74,12 +52,10 @@ const Paseos: React.FC = () => {
       message: string;
     }>
   >([]);
-  const [, setIsLoading] = useState(true);
-  const [showSkeleton, setShowSkeleton] = useState(true);
-  const [, setNotificationsEnabled] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<number | null>(null);
 
-  // Función para mostrar notificación visual
+  // Mostrar notificación visual
   const showNotification = useCallback(
     (type: "success" | "error" | "warning", message: string) => {
       const id =
@@ -92,84 +68,295 @@ const Paseos: React.FC = () => {
     []
   );
 
-  // Función para cerrar manualmente una notificación
+  // Cerrar notificación manualmente
   const closeNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  // Obtener el user_id del usuario autenticado
-  const checkUser = async () => {
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getUser();
+  // Obtener el ID del usuario autenticado
+  const checkUser = useCallback(async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-    if (sessionError || !sessionData?.user) {
-      console.error("Error de sesión:", sessionError);
+    if (error || !user) {
+      console.error("Error de sesión:", error);
       navigate("/login");
       return null;
     }
 
     try {
-      const { data: localUser, error: localUserError } = await supabase
+      const { data: localUser, error: userError } = await supabase
         .from("Users")
         .select("id")
-        .eq("email", sessionData.user.email)
+        .eq("email", user.email)
         .single();
 
-      if (localUserError || !localUser?.id) {
-        console.error("Error al obtener el usuario local:", localUserError);
-        showNotification(
-          "error",
-          "No se encontró tu usuario local. Verifica la tabla 'Users'."
-        );
-        return null;
+      if (userError || !localUser?.id) {
+        throw new Error("Usuario no encontrado");
       }
 
-      const foundUserId = localUser.id;
-      setUserId(foundUserId);
-      console.log("ID del usuario local:", foundUserId);
-      return foundUserId;
-    } catch (e) {
-      console.error("Error al identificar el usuario:", e);
-      showNotification("error", "Error al identificar el usuario");
+      setUserId(localUser.id);
+      return localUser.id;
+    } catch (error) {
+      console.error("Error al obtener el usuario:", error);
+      showNotification("error", "Error al cargar el perfil del usuario");
       return null;
     }
-  };
+  }, [navigate, showNotification]);
+
+  // Configurar notificaciones en tiempo real
+  useEffect(() => {
+    if (!userId) return;
+
+    const channel = supabase
+      .channel(`food_notifications_${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "food_notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload: any) => {
+          const notification = payload.new;
+          if (notification) {
+            showNotification(
+              notification.type || "success",
+              notification.message || "¡Es hora de alimentar a tu mascota!"
+            );
+
+            // Personalización de la notificación push
+            if (
+              "Notification" in window &&
+              Notification.permission === "granted"
+            ) {
+              // Extraer nombre de mascota y hora si es posible
+              const match = notification.message?.match(/alimentar a ([^ ]+)/i);
+              const petName = match ? match[1] : "tu mascota";
+              const horaMatch = notification.message?.match(/a las ([0-9:apm ]+)/i);
+              const hora = horaMatch ? horaMatch[1] : "la hora programada";
+              const dias = notification.days ? `Días: ${notification.days.join(", ")}` : "";
+              new Notification(`¡Hora de comer, ${petName}!`, {
+                body:
+                  notification.message ||
+                  `¡Es hora de alimentar a ${petName} a las ${hora}! ${dias}`,
+                icon: "/public/images/logo_gradient.png", // Cambia por tu ícono preferido
+                badge: "/public/images/logo_gradient.png", // Badge opcional
+                data: {
+                  url: window.location.origin
+                }
+              });
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, showNotification]);
+
+  // Solicitar permisos de notificación
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission();
+    }
+  }, []);
 
   // Cargar alarmas desde la base de datos
-  const fetchAlarms = async (userIdParam: number) => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("food_alarms")
-        .select("*")
-        .eq("user_id", userIdParam)
-        .eq("active", true);
+  const fetchAlarms = useCallback(
+    async (userId: number) => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from("food_alarms")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("active", true);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (data) {
-        const formattedAlarms = data.map((alarm) => ({
-          id: alarm.id.toString(),
-          name: alarm.title,
-          days: alarm.days || [],
-          time: dayjs(alarm.hour, "HH:mm"),
-          lastNotification: "",
-          user_id: alarm.user_id,
-          active: alarm.active,
-        }));
-        setAlarms(formattedAlarms);
+        if (data) {
+          const formattedAlarms = data.map((alarm) => {
+            // Convertir la hora almacenada (asumida como UTC) a la zona horaria local
+            const localTime = alarm.hour
+              ? utcToLocal(`2000-01-01T${alarm.hour}:00Z`)
+              : null;
+
+            return {
+              id: alarm.id.toString(),
+              name: alarm.title,
+              days: alarm.days || [],
+              time: localTime || dayjs().tz(TIMEZONE).hour(12).minute(0),
+              lastNotification: "",
+              user_id: alarm.user_id,
+              active: alarm.active,
+            };
+          });
+          setAlarms(formattedAlarms);
+        }
+      } catch (error) {
+        console.error("Error al cargar alarmas:", error);
+        showNotification("error", "Error al cargar las alarmas");
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [showNotification]
+  );
+
+  // Inicializar datos
+  useEffect(() => {
+    const init = async () => {
+      const userId = await checkUser();
+      if (userId) {
+        await fetchAlarms(userId);
+      }
+    };
+
+    init();
+  }, [checkUser, fetchAlarms]);
+
+  // --- Lógica de chequeo local de alarmas de comida (como en Paseos) ---
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    let lastCheckDate = "";
+
+    const checkAlarms = async () => {
+      if (!userId) return;
+      const now = dayjs().tz(TIMEZONE);
+      const currentHour = now.hour();
+      const currentMinute = now.minute();
+      const currentDay = now.format("dddd");
+      const currentDayLetter = {
+        Monday: "L",
+        Tuesday: "M",
+        Wednesday: "m",
+        Thursday: "J",
+        Friday: "V",
+        Saturday: "S",
+        Sunday: "D"
+      }[currentDay];
+      const todayDate = now.format("YYYY-MM-DD");
+
+      const activeAlarms = alarms.filter(
+        (alarm) => alarm.active && alarm.time && alarm.days.length > 0 && alarm.name
+      );
+      if (activeAlarms.length === 0) return;
+
+      activeAlarms.forEach(async (alarm) => {
+        if (!alarm.time) return;
+        // ¿Es el día correcto?
+        if (!currentDayLetter || !alarm.days.includes(currentDayLetter)) return;
+        const alarmHour = alarm.time.hour();
+        const alarmMinute = alarm.time.minute();
+        // ¿Coincide la hora y minuto?
+        if (currentHour !== alarmHour || currentMinute !== alarmMinute) return;
+        // ¿Ya se notificó hoy?
+        const lastNotificationDate = alarm.lastNotification
+          ? dayjs(alarm.lastNotification).tz(TIMEZONE).format("YYYY-MM-DD")
+          : null;
+        if (lastNotificationDate === todayDate) return;
+        // Enviar notificación a través de Supabase
+        await sendFoodNotification(
+          userId,
+          `¡Es hora de alimentar a ${alarm.name} a las ${alarm.time.format("h:mm A")}`,
+          "success"
+        );
+        // Actualizar la fecha de última notificación localmente
+        setAlarms((prev) =>
+          prev.map((a) =>
+            a.id === alarm.id ? { ...a, lastNotification: now.toISOString() } : a
+          )
+        );
+      });
+    };
+
+    const startChecking = () => {
+      const now = dayjs().tz(TIMEZONE);
+      const currentDate = now.format("YYYY-MM-DD");
+      if (lastCheckDate !== currentDate) {
+        lastCheckDate = currentDate;
+        if (alarms.length > 0 && userId) {
+          checkAlarms();
+        }
+      }
+      const msUntilNextMinute = (60 - now.second()) * 1000 - now.millisecond();
+      setTimeout(() => {
+        checkAlarms();
+        intervalId = setInterval(checkAlarms, 60000);
+      }, msUntilNextMinute);
+    };
+
+    startChecking();
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alarms, userId]);
+
+  // Manejar cambios en las alarmas
+  const handleAlarmChange = (
+    index: number,
+    field: keyof FoodAlarm,
+    value: any
+  ) => {
+    setAlarms((prev) => {
+      const newAlarms = [...prev];
+      newAlarms[index] = { ...newAlarms[index], [field]: value };
+      return newAlarms;
+    });
+  };
+
+  // Alternar día de la semana
+  const toggleDay = (index: number, dayId: string) => {
+    setAlarms((prev) => {
+      const newAlarms = [...prev];
+      const alarm = { ...newAlarms[index] };
+
+      if (alarm.days.includes(dayId)) {
+        alarm.days = alarm.days.filter((d) => d !== dayId);
+      } else {
+        alarm.days = [...alarm.days, dayId];
+      }
+
+      newAlarms[index] = alarm;
+      return newAlarms;
+    });
+  };
+
+  // Agregar nueva alarma
+  const addAlarm = () => {
+    setAlarms((prev) => [
+      ...prev,
+      {
+        id: `temp_${Date.now()}`,
+        name: "",
+        days: [],
+        time: dayjs().hour(21).minute(0),
+        active: true,
+      },
+    ]);
+  };
+
+  // Eliminar alarma
+  const deleteAlarm = async (id: string) => {
+    try {
+      await deleteAlarmFromDatabase(id);
+      setAlarms((prev) => prev.filter((a) => a.id !== id));
+      showNotification("success", "Alarma eliminada correctamente");
     } catch (error) {
-      console.error("Error al cargar alarmas:", error);
-      showNotification("error", "Error al cargar las alarmas");
-    } finally {
-      setIsLoading(false);
-      setShowSkeleton(false);
+      console.error("Error al eliminar la alarma:", error);
+      showNotification("error", "Error al eliminar la alarma");
     }
   };
 
   // Guardar alarma en la base de datos
-  const saveAlarmToDatabase = async (alarm: PaseoAlarm) => {
+  const saveAlarmToDatabase = async (alarm: FoodAlarm) => {
     if (!userId) {
       showNotification("error", "No hay usuario autenticado");
       return null;
@@ -183,7 +370,7 @@ const Paseos: React.FC = () => {
             user_id: userId,
             title: alarm.name,
             days: alarm.days,
-            hour: alarm.time?.format("HH:mm"),
+            hour: alarm.time ? alarm.time.tz(TIMEZONE).format("HH:mm") : null,
             active: true,
             created_at: new Date().toISOString(),
           },
@@ -192,7 +379,18 @@ const Paseos: React.FC = () => {
 
       if (error) throw error;
 
-      showNotification("success", "Alarma guardada correctamente");
+      showNotification("success", "¡Recordatorio de comida programado!");
+
+      // Enviar notificación de confirmación
+      if (userId) {
+        await sendFoodNotification(
+          userId,
+          `Se ha programado la comida para ${
+            alarm.name
+          } a las ${alarm.time?.format("h:mm A")}`
+        );
+      }
+
       return data?.[0];
     } catch (error) {
       console.error("Error al guardar la alarma:", error);
@@ -202,7 +400,7 @@ const Paseos: React.FC = () => {
   };
 
   // Actualizar alarma en la base de datos
-  const updateAlarmInDatabase = async (alarm: PaseoAlarm) => {
+  const updateAlarmInDatabase = async (alarm: FoodAlarm) => {
     if (!userId) {
       showNotification("error", "No hay usuario autenticado");
       return null;
@@ -214,8 +412,8 @@ const Paseos: React.FC = () => {
         .update({
           title: alarm.name,
           days: alarm.days,
-          hour: alarm.time?.format("HH:mm"),
-          active: true,
+          hour: alarm.time ? alarm.time.tz(TIMEZONE).format("HH:mm") : null,
+          active: alarm.active,
         })
         .eq("id", alarm.id)
         .select();
@@ -233,442 +431,23 @@ const Paseos: React.FC = () => {
 
   // Eliminar alarma de la base de datos
   const deleteAlarmFromDatabase = async (alarmId: string) => {
-    if (!userId) {
-      showNotification("error", "No hay usuario autenticado");
-      return;
-    }
-
     try {
-      const { error } = await supabase.from("food_alarms").delete().eq("id", alarmId);
+      const { error } = await supabase
+        .from("food_alarms")
+        .delete()
+        .eq("id", alarmId);
 
       if (error) throw error;
-
-      // Actualizar el estado local eliminando la alarma
-      setAlarms((prevAlarms) =>
-        prevAlarms.filter((alarm) => alarm.id !== alarmId)
-      );
-      showNotification("success", "Alarma eliminada correctamente");
-    } catch (error) {
-      console.error("Error al eliminar la alarma:", error);
-      showNotification("error", "Error al eliminar la alarma");
-    }
-  };
-
-  const setupNotifications = useCallback(async () => {
-    try {
-      // 1. Verificar si estamos en un entorno móvil
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      console.log("Configurando notificaciones...");
-      console.log(`Dispositivo: ${isMobile ? "Móvil" : "Escritorio"}`);
-
-      // 2. Verificar soporte para notificaciones
-      if (!("Notification" in window)) {
-        console.log("Este navegador no soporta notificaciones");
-        return false;
-      }
-
-      // 3. Registrar Service Worker con manejo específico para móviles
-      try {
-        let swRegistration;
-        if (isMobile) {
-          // En móviles, intentar registrar el SW con scope específico
-          swRegistration = await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js",
-            { scope: "/" }
-          );
-        } else {
-          swRegistration = await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js"
-          );
-        }
-
-        console.log("Service Worker registrado con éxito:", swRegistration);
-
-        // Esperar a que el Service Worker esté activo
-        if (swRegistration.installing || swRegistration.waiting) {
-          await new Promise<void>((resolve) => {
-            const worker = swRegistration.installing || swRegistration.waiting;
-            if (worker) {
-              worker.addEventListener("statechange", () => {
-                if (worker.state === "activated") {
-                  console.log("Service Worker completamente activado");
-                  resolve();
-                }
-              });
-            } else {
-              resolve();
-            }
-          });
-        }
-
-        // 4. Solicitar permiso de notificación con manejo específico para móviles
-        let permission = Notification.permission;
-        if (permission !== "granted" && permission !== "denied") {
-          // En móviles, mostrar un mensaje explicativo antes de solicitar permisos
-          if (isMobile) {
-            showNotification(
-              "warning",
-              "Para recibir notificaciones, por favor acepta los permisos cuando el navegador los solicite"
-            );
-          }
-          permission = await Notification.requestPermission();
-        }
-
-        if (permission !== "granted") {
-          console.log("No se ha concedido permiso para notificaciones");
-          if (isMobile) {
-            showNotification(
-              "warning",
-              "Las notificaciones están desactivadas. Para activarlas, ve a la configuración de tu navegador"
-            );
-          }
-          return false;
-        }
-
-        // 5. Obtener token FCM con manejo específico para móviles
-        console.log("Solicitando token FCM...");
-        const token = await getOrCreateFCMToken(VAPID_KEY);
-
-        if (token) {
-          console.log("Token FCM obtenido correctamente:", token.substring(0, 10) + "...");
-          fcmToken = token;
-          setNotificationsEnabled(true);
-          return true;
-        } else {
-          console.warn("No se pudo obtener el token FCM");
-          if (isMobile) {
-            showNotification(
-              "warning",
-              "No se pudo configurar las notificaciones push. Intenta recargar la página"
-            );
-          }
-          return false;
-        }
-      } catch (swError) {
-        console.error("Error al registrar el Service Worker:", swError);
-        if (isMobile) {
-          showNotification(
-            "error",
-            "Error al configurar las notificaciones. Intenta usar un navegador diferente"
-          );
-        }
-        return false;
-      }
-    } catch (error) {
-      console.error("Error al configurar notificaciones:", error);
-      return false;
-    }
-  }, [showNotification]);
-
-  useEffect(() => {
-    const initNotifications = async () => {
-      // Intentar configurar notificaciones
-      const enabled = await setupNotifications();
-
-      // Si no se pudieron configurar, mostrar mensaje
-      if (!enabled) {
-        const permission = Notification.permission;
-        if (permission === "denied") {
-          showNotification(
-            "warning",
-            "Las notificaciones están bloqueadas. Actívalas en la configuración del navegador para recibir recordatorios de paseos."
-          );
-        } else {
-          showNotification(
-            "warning",
-            "No pudimos configurar las notificaciones push. Las alarmas seguirán funcionando localmente."
-          );
-        }
-      }
-    };
-
-    initNotifications();
-
-    // Configurar listener para mensajes FCM
-    if (messaging) {
-      const unsubscribe = onMessage(messaging, (payload) => {
-        console.log("Mensaje recibido en primer plano:", payload);
-        // Mostrar notificación en primer plano
-        if (payload.notification) {
-          const title = payload.notification.title || "PetConnect";
-          const options = {
-            body: payload.notification.body,
-            icon: "/images/Logo_gradient.png",
-          };
-
-          if (Notification.permission === "granted") {
-            new Notification(title, options);
-          } else {
-            showNotification(
-              "warning",
-              `${title}: ${payload.notification.body}`
-            );
-          }
-        }
-      });
-
-      // Limpiar listener al desmontar
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [setupNotifications, showNotification]);
-
-  // Función para enviar un mensaje a través de Firebase Cloud Messaging
-  const sendFirebaseCloudMessage = async (
-    title: string,
-    body: string,
-    alarm: PaseoAlarm
-  ) => {
-    if (!fcmToken) {
-      console.log("Intentando obtener token FCM...");
-      const token = await getOrCreateFCMToken();
-      if (!token) {
-        console.error("No se pudo obtener un token FCM");
-        showNotification(
-          "error",
-          "No se pudo enviar la notificación push: falta token FCM"
-        );
-        return false;
-      }
-      console.log("Token FCM obtenido correctamente");
-      fcmToken = token;
-    }
-
-    try {
-      const data = {
-        alarmId: alarm.id,
-        petName: alarm.name,
-        clickAction: "/paseos",
-        timestamp: new Date().toISOString()
-      };
-
-      console.log(`Enviando notificación FCM para ${alarm.name}...`);
-
-      // En desarrollo, simular el envío pero registrar en consola
-      if (process.env.NODE_ENV === "production") {
-        console.log("Enviando notificación push al servidor en producción");
-        await sendPushNotificationToServer(fcmToken, title, body, data);
-        console.log("Notificación push enviada al servidor correctamente");
-      } else {
-        console.log("Simulando envío de notificación push (modo desarrollo)");
-        console.log("Datos que se enviarían:", {
-          token: fcmToken.substring(0, 10) + "...",
-          title,
-          body,
-          data
-        });
-      }
-
-      showNotification(
-        "success",
-        `Notificación push enviada para ${alarm.name}`
-      );
       return true;
     } catch (error) {
-      console.error("Error al enviar notificación push:", error);
-      showNotification(
-        "error",
-        `Error al enviar notificación push: ${error instanceof Error ? error.message : "Error desconocido"
-        }`
-      );
-      return false;
+      console.error("Error al eliminar la alarma:", error);
+      throw error;
     }
   };
 
-  // Función para enviar notificación push
-  const sendPushNotification = useCallback(async (alarm: PaseoAlarm) => {
-    if (!userId) {
-      console.warn("No hay usuario autenticado para enviar notificaciones");
-      return;
-    }
-
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (Notification.permission !== "granted") {
-      console.warn("No tenemos permiso para enviar notificaciones push");
-      if (isMobile) {
-        showNotification(
-          "warning",
-          "Las notificaciones están desactivadas. Actívalas en la configuración de tu navegador"
-        );
-      }
-      return;
-    }
-
-    const title = `¡Hora de pasear a ${alarm.name}!`;
-    const body = `Es momento del paseo programado para ${alarm.name}`;
-
-    try {
-      // Obtener el registro del Service Worker
-      const registration = await navigator.serviceWorker.ready;
-
-      // Opciones básicas de notificación
-      const notificationOptions = {
-        body,
-        icon: "/images/Logo_gradient.png",
-        badge: "/images/Logo_black.png",
-        tag: `paseo-${alarm.id}-${Date.now()}`, // Añadir timestamp para evitar duplicados
-        silent: false,
-        vibrate: isMobile ? [200, 100, 200] : undefined,
-        requireInteraction: true,
-        data: {
-          url: '/paseos', // URL a la que navegar cuando se hace clic en la notificación
-          alarmId: alarm.id,
-          timestamp: Date.now().toString() // Añadir timestamp para identificar cada notificación
-        }
-      };
-
-      // Mostrar la notificación a través del Service Worker
-      await registration.showNotification(title, notificationOptions);
-
-      // Si tenemos FCM token, intentar enviar notificación push
-      if (fcmToken) {
-        await sendFirebaseCloudMessage(title, body, alarm);
-      } else {
-        console.warn("No hay token FCM disponible para enviar notificación push");
-      }
-
-      console.log(`Notificación enviada para: ${alarm.name}`);
-
-      // Actualizar la fecha de última notificación
-      const now = dayjs().tz(TIMEZONE).format();
-
-      // Actualizar estado local
-      setAlarms((prev) =>
-        prev.map((a) =>
-          a.id === alarm.id ? { ...a, lastNotification: now } : a
-        )
-      );
-
-      console.log(`Notificación enviada para ${alarm.name} a las ${now}`);
-    } catch (error) {
-      console.error("Error al enviar notificación:", error);
-      if (isMobile) {
-        showNotification(
-          "error",
-          "Error al enviar la notificación. Intenta recargar la página"
-        );
-      }
-    }
-  }, [userId, showNotification, fcmToken]);
-
-  // Función para verificar las alarmas con mejor precisión
-  const checkAlarms = useCallback(() => {
-    // Verificar si tenemos userId
-    if (!userId) {
-      console.log("No hay usuario autenticado para verificar alarmas");
-      return;
-    }
-
-    const now = dayjs().tz(TIMEZONE);
-    const currentHour = now.hour();
-    const currentMinute = now.minute();
-    const currentDay = now.day();
-    const todayDate = now.format("YYYY-MM-DD");
-
-    // Solo verificar si hay alarmas activas
-    const activeAlarms = alarms.filter(alarm =>
-      alarm.active &&
-      alarm.time &&
-      alarm.days.length > 0 &&
-      alarm.name
-    );
-
-    if (activeAlarms.length === 0) {
-      return;
-    }
-
-    console.log(
-      `Verificando ${activeAlarms.length} alarmas activas: ${now.format("HH:mm:ss")} - Día: ${currentDay}`
-    );
-
-    activeAlarms.forEach((alarm) => {
-      if (!alarm.time) return;
-
-      // Verificar si es el día correcto
-      const isScheduledDay = alarm.days.some(
-        (dayLetter) => dayLetterToNumber[dayLetter] === currentDay
-      );
-
-      if (!isScheduledDay) {
-        return;
-      }
-
-      const alarmHour = alarm.time.hour();
-      const alarmMinute = alarm.time.minute();
-
-      // Verificar si la hora actual coincide exactamente con la hora programada
-      if (currentHour !== alarmHour || currentMinute !== alarmMinute) {
-        return;
-      }
-
-      // Verificar si ya se envió notificación hoy
-      const lastNotificationDate = alarm.lastNotification
-        ? dayjs(alarm.lastNotification).tz(TIMEZONE).format("YYYY-MM-DD")
-        : null;
-
-      if (lastNotificationDate === todayDate) {
-        console.log(`Ya se envió notificación hoy para ${alarm.name}`);
-        return;
-      }
-
-      console.log(
-        `¡Es hora de notificar! ${alarm.name} - ${alarmHour}:${alarmMinute}`
-      );
-
-      // Enviar notificación una sola vez
-      sendPushNotification(alarm);
-    });
-  }, [alarms, userId, sendPushNotification]);
-
-  // Mejorar el intervalo de verificación de alarmas
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    let lastCheckDate = '';
-
-    const startChecking = () => {
-      console.log("Iniciando verificación de alarmas...");
-
-      const now = dayjs().tz(TIMEZONE);
-      const currentDate = now.format("YYYY-MM-DD");
-
-      // Solo verificar si es un nuevo día o si es la primera vez
-      if (lastCheckDate !== currentDate) {
-        lastCheckDate = currentDate;
-
-        // Verificar inmediatamente al iniciar
-        if (alarms.length > 0 && !showSkeleton && userId) {
-          checkAlarms();
-        }
-      }
-
-      // Calcular el próximo minuto exacto para sincronizar
-      const msUntilNextMinute = (60 - now.second()) * 1000 - now.millisecond();
-
-      // Esperar hasta el próximo minuto exacto antes de iniciar el intervalo
-      setTimeout(() => {
-        checkAlarms();
-        // Verificar cada minuto
-        intervalId = setInterval(checkAlarms, 60000);
-        console.log("Intervalo de verificación de alarmas iniciado (cada minuto)");
-      }, msUntilNextMinute);
-    };
-
-    startChecking();
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-        console.log("Intervalo de verificación de alarmas detenido");
-      }
-    };
-  }, [alarms, checkAlarms, showSkeleton, userId]);
-
-  // Modificar la función schedulePaseo para actualizar correctamente el estado
-  const schedulePaseo = async (index: number) => {
-    const alarm = alarms[index];
+  // Programar una alarma
+  const scheduleAlarm = async (alarmIndex: number) => {
+    const alarm = alarms[alarmIndex];
     if (alarm.days.length === 0 || !alarm.time || !alarm.name.trim()) {
       showNotification(
         "warning",
@@ -681,249 +460,126 @@ const Paseos: React.FC = () => {
       let updatedAlarm;
 
       if (alarm.id && !isNaN(parseInt(alarm.id))) {
-        // Actualizar alarma existente
         updatedAlarm = await updateAlarmInDatabase(alarm);
       } else {
-        // Crear nueva alarma
         updatedAlarm = await saveAlarmToDatabase(alarm);
       }
 
       if (updatedAlarm) {
-        // Actualizar el estado local con los datos de la base de datos
+        // Actualizar el estado local
         setAlarms((prev) =>
           prev.map((a, idx) =>
-            idx === index
+            idx === alarmIndex
               ? {
-                ...a,
-                id: updatedAlarm.id.toString(),
-                name: updatedAlarm.title,
-                days: updatedAlarm.days,
-                time: dayjs(updatedAlarm.hour, "HH:mm"),
-                active: updatedAlarm.active,
-                lastNotification: undefined // Resetear la última notificación
-              }
+                  ...a,
+                  id: updatedAlarm.id.toString(),
+                  name: updatedAlarm.title,
+                  days: updatedAlarm.days,
+                  time: dayjs(updatedAlarm.hour, "HH:mm"),
+                  active: updatedAlarm.active,
+                  lastNotification: undefined,
+                }
               : a
           )
         );
 
-        // Mostrar notificación de éxito
         showNotification(
           "success",
-          `Paseo "${alarm.name}" programado para ${alarm.days.join(
+          `Comida para "${alarm.name}" programada para ${alarm.days.join(
             ", "
           )} a las ${alarm.time.format("h:mm A")}`
         );
-
-        // Configurar notificación push si está habilitado
-        if (Notification.permission === "granted") {
-          const registration = await navigator.serviceWorker.ready;
-          await registration.showNotification("Paseo Programado", {
-            body: `Paseo "${alarm.name}" programado para ${alarm.days.join(
-              ", "
-            )} a las ${alarm.time.format("HH:mm")}`,
-            icon: "/images/Logo_gradient.png",
-            tag: `programado-${alarm.id}-${Date.now()}`,
-            data: {
-              url: '/paseos',
-              alarmId: alarm.id,
-              isProgrammedNotification: true
-            }
-          });
-        }
-
-        // Verificar inmediatamente si es hora de la alarma
-        checkAlarms();
       }
     } catch (error) {
-      console.error('Error al programar el paseo:', error);
-      showNotification("error", "Error al programar el paseo. Por favor, inténtalo de nuevo.");
+      console.error("Error al programar la comida:", error);
+      showNotification(
+        "error",
+        "Error al programar la comida. Por favor, inténtalo de nuevo."
+      );
     }
   };
 
-  // Función para probar la alarma
-  const testAlarm = async (index: number) => {
-    const alarm = alarms[index];
+  // Enviar notificación a través de Supabase
+  const sendFoodNotification = useCallback(
+    async (userId: number, message: string, type = "success") => {
+      try {
+        const { error } = await supabase.from("food_notifications").insert([
+          {
+            user_id: userId,
+            message,
+            type,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) throw error;
+        return true;
+      } catch (error) {
+        console.error("Error al enviar notificación:", error);
+        return false;
+      }
+    },
+    []
+  );
+
+  // Probar una alarma
+  const testAlarm = async (alarmIndex: number) => {
+    const alarm = alarms[alarmIndex];
     if (!alarm.name) {
       showNotification("warning", "Agrega un nombre para probar la alarma");
       return;
     }
 
     if (!userId) {
-      showNotification(
-        "error",
-        "No hay usuario autenticado. Por favor, inicia sesión nuevamente."
-      );
+      showNotification("error", "No hay usuario autenticado");
       return;
     }
 
     try {
-      await sendPushNotification(alarm);
-      showNotification(
-        "success",
-        `Prueba de alarma enviada para ${alarm.name}`
-      );
+      const dias = alarm.days.length > 0 ? `Días: ${alarm.days.join(", ")}` : "";
+      const hora = alarm.time ? alarm.time.format("h:mm A") : "hora no definida";
+      const testMessage = `¡Recordatorio de prueba! Es hora de alimentar a ${alarm.name} a las ${hora}. ${dias}`;
+      showNotification("success", testMessage);
+
+      // Enviar notificación a través de Supabase
+      await sendFoodNotification(userId, testMessage, "info");
+
+      // Mostrar notificación nativa si los permisos están habilitados
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(`¡Hora de comer, ${alarm.name}!`, {
+          body: `¡Es hora de alimentar a ${alarm.name} a las ${hora}! ${dias}`,
+          icon: "/public/images/logo_gradient.png", // Cambia por tu ícono preferido
+          badge: "/public/images/logo_gradient.png",
+          data: {
+            url: window.location.origin
+          }
+        });
+      }
     } catch (error) {
       console.error("Error al probar la alarma:", error);
-      showNotification("error", "Error al enviar la notificación de prueba");
+      showNotification("error", "Error al probar la alarma");
     }
   };
 
-  // Modificar useEffect para cargar alarmas al inicio
-  useEffect(() => {
-    const initializeData = async () => {
-      const user_id = await checkUser();
-      if (user_id) {
-        fetchAlarms(user_id);
-      }
-    };
-
-    initializeData();
-  }, [navigate]);
-
-  // Carga inicial y efecto de skeleton
-  useEffect(() => {
-    // Registrar el tiempo de inicio para asegurar un mínimo de 2 segundos
-    const startTime = Date.now();
-
-    // Simulate loading data
-    const loadData = async () => {
-      // Cargar alarmas guardadas desde localStorage
-      try {
-        const savedAlarms: PaseoAlarm[] = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith("paseoSchedule_")) {
-            const alarmData = JSON.parse(localStorage.getItem(key) || "{}");
-            savedAlarms.push({
-              id: key.replace("paseoSchedule_", ""),
-              name: alarmData.name || "",
-              days: alarmData.days || [],
-              time: alarmData.time ? dayjs(alarmData.time, "HH:mm") : null,
-              lastNotification: alarmData.lastNotification || "",
-              user_id: alarmData.user_id || undefined,
-              active: alarmData.active || true,
-            });
-          }
-        }
-
-        if (savedAlarms.length > 0) {
-          setAlarms(savedAlarms);
-        }
-      } catch (error) {
-        console.error("Error al cargar alarmas guardadas:", error);
-      }
-
-      // Calcular cuánto tiempo ha pasado
-      const elapsedTime = Date.now() - startTime;
-      const remainingTime = Math.max(0, 2000 - elapsedTime);
-
-      // Si ha pasado menos de 2 segundos, esperar el tiempo restante
-      setTimeout(() => {
-        setIsLoading(false);
-        setShowSkeleton(false);
-      }, remainingTime);
-    };
-
-    loadData();
-  }, []);
-
-  // Función para manejar el cambio de estado activo/inactivo
-  const handleActiveChange = async (index: number, checked: boolean) => {
-    const alarm = alarms[index];
-
-    try {
-      // Actualizar en la base de datos
-      const { error } = await supabase
-        .from("walks")
-        .update({ active: checked })
-        .eq("id", alarm.id);
-
-      if (error) throw error;
-
-      // Actualizar estado local
-      setAlarms((prev) =>
-        prev.map((a, idx) => (idx === index ? { ...a, active: checked } : a))
-      );
-
-      showNotification(
-        "success",
-        `Alarma ${checked ? "activada" : "desactivada"} correctamente`
-      );
-    } catch (error) {
-      console.error("Error al actualizar estado de la alarma:", error);
-      showNotification("error", "Error al actualizar estado de la alarma");
-    }
-  };
-
-  const handleAlarmChange = (
-    index: number,
-    field: keyof PaseoAlarm,
-    value: any
-  ) => {
-    setAlarms((prev) => {
-      const newAlarms = [...prev];
-      newAlarms[index] = {
-        ...newAlarms[index],
-        [field]: value,
-      };
-      return newAlarms;
-    });
-  };
-
-  const toggleDay = (index: number, id: string) => {
-    setAlarms((prev) => {
-      const newAlarms = [...prev];
-      const alarm = { ...newAlarms[index] };
-      if (alarm.days.includes(id)) {
-        alarm.days = alarm.days.filter((d) => d !== id);
-      } else {
-        alarm.days = [...alarm.days, id];
-      }
-      newAlarms[index] = alarm;
-      return newAlarms;
-    });
-  };
-
-  const addAlarm = () => {
-    setAlarms((prev) => [
-      ...prev,
-      {
-        id: `temp_${Date.now()}`,
-        name: "",
-        days: [],
-        time: dayjs().hour(21).minute(0),
-        active: true,
-      },
-    ]);
-  };
-
-  const deleteAlarm = async (id: string) => {
-    try {
-      await deleteAlarmFromDatabase(id);
-      setAlarms((prev) => prev.filter((a) => a.id !== id));
-    } catch (error) {
-      console.error("Error al eliminar la alarma:", error);
-      showNotification("error", "Error al eliminar la alarma");
-    }
-  };
-
-  const renderSkeletonLoader = () => (
-    <div className="paseos-container-skeleton">
-      <div className="skeleton-title"></div>
-      <div className="skeleton-days-container">
+  // Renderizar esqueleto de carga
+  const renderSkeleton = () => (
+    <div className="FOODS-container-skeleton">
+      <div className="FOODS-skeleton-title"></div>
+      <div className="FOODS-skeleton-days-container">
         {Array(7)
           .fill(0)
           .map((_, i) => (
-            <div key={i} className="skeleton-day-button"></div>
+            <div key={i} className="FOODS-skeleton-day-button"></div>
           ))}
       </div>
-      <div className="skeleton-time-picker"></div>
-      <div className="skeleton-schedule-button"></div>
+      <div className="FOODS-skeleton-time-picker"></div>
+      <div className="FOODS-skeleton-schedule-button"></div>
     </div>
   );
 
   return (
-    <div className="paseos-section">
+    <div className="FOODS-section">
+      {/* Notificaciones */}
       <div className="notification-container">
         {notifications.map((notification) => (
           <div
@@ -952,105 +608,67 @@ const Paseos: React.FC = () => {
           </div>
         ))}
       </div>
-      {showSkeleton ? (
-        renderSkeletonLoader()
+
+      {isLoading ? (
+        renderSkeleton()
       ) : (
         <>
-          <h2 className="paseos-title">Programar Comidas</h2>
-          <div className="paseos-container">
+          <h2 className="FOODS-title">Programar Comidas</h2>
+          <div>
             {alarms.map((alarm, idx) => (
-              <div key={alarm.id} className="paseos-alarm-card minimal">
+              <div key={alarm.id} className="FOODS-alarm-card">
                 <button
-                  className="delete-alarm-btn"
+                  className="FOODS-delete-alarm-btn"
+                  onClick={() => deleteAlarm(alarm.id)}
                   aria-label="Eliminar alarma"
                   title="Eliminar alarma"
-                  onClick={() => deleteAlarm(alarm.id)}
-                  type="button"
                 >
                   <FaTimes />
                 </button>
+
                 <input
                   type="text"
-                  placeholder="Nombre de tu mascota"
+                  placeholder="Nombre de la mascota"
                   value={alarm.name}
                   onChange={(e) =>
                     handleAlarmChange(idx, "name", e.target.value)
                   }
-                  className="paseos-alarm-name"
+                  className="FOODS-alarm-name"
                 />
-                <div className="days-container">
+
+                <div className="FOODS-days-container">
                   {daysOfWeek.map((day) => (
                     <button
                       key={day.id}
-                      className={`day-button ${alarm.days.includes(day.id) ? "selected" : ""
-                        }`}
+                      className={`FOODS-day-button ${
+                        alarm.days.includes(day.id) ? "selected" : ""
+                      }`}
                       onClick={() => toggleDay(idx, day.id)}
                     >
                       {day.id}
                     </button>
                   ))}
                 </div>
-                <div className="paseos-time-display-wrapper">
-                  <div
-                    className="paseos-time-display"
-                    onClick={() => {
-                      const input = document.getElementById(
-                        `paseos-time-input-${alarm.id}`
-                      );
-                      if (input) (input as HTMLElement).click();
-                    }}
-                    tabIndex={0}
-                    role="button"
-                    title="Cambiar hora"
-                  >
-                    <span className="paseos-time-hour">
-                      {alarm.time ? alarm.time.format("h:mm") : "--:--"}
-                    </span>
-                    <span className="paseos-time-ampm">
-                      {alarm.time ? alarm.time.format("A") : ""}
-                    </span>
-                  </div>
+
+                <div className="FOODS-time-picker-container">
                   <TimePicker
-                    id={`paseos-time-input-${alarm.id}`}
-                    use12Hours
-                    format="h:mm A"
                     value={alarm.time}
                     onChange={(time) => handleAlarmChange(idx, "time", time)}
-                    inputReadOnly
-                    style={{
-                      opacity: 0,
-                      width: 0,
-                      height: 0,
-                      pointerEvents: "none",
-                      position: "absolute",
-                    }}
-                    popupClassName="paseos-time-popup"
+                    format="h:mm A"
+                    use12Hours
+                    className="FOODS-time-picker"
                   />
                 </div>
-                <div className="paseos-switch-container">
-                  <label className="paseos-switch">
-                    <input
-                      type="checkbox"
-                      checked={alarm.active}
-                      onChange={(e) =>
-                        handleActiveChange(idx, e.target.checked)
-                      }
-                    />
-                    <span className="paseos-slider"></span>
-                  </label>
-                  <span className="paseos-switch-label">
-                    {alarm.active ? "Activada" : "Desactivada"}
-                  </span>
-                </div>
-                <div className="paseos-button-group">
+
+                <div className="FOODS-button-group">
                   <button
-                    className="save-button"
-                    onClick={() => schedulePaseo(idx)}
+                    className="FOODS-save-button"
+                    onClick={() => scheduleAlarm(idx)}
                   >
-                    Programar comidas
+                    Programar comida
                   </button>
                   <button
-                    className="test-button"
+                    className="FOODS-test-button"
                     onClick={() => testAlarm(idx)}
                     title="Probar alarma ahora"
                   >
@@ -1059,7 +677,8 @@ const Paseos: React.FC = () => {
                 </div>
               </div>
             ))}
-            <button className="add-alarm-btn" onClick={addAlarm}>
+
+            <button className="FOODS-add-alarm-btn" onClick={addAlarm}>
               <FaPlus />
             </button>
           </div>
@@ -1069,4 +688,4 @@ const Paseos: React.FC = () => {
   );
 };
 
-export default Paseos;
+export default Foods;
