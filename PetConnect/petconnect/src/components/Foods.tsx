@@ -512,9 +512,14 @@ const Foods: React.FC = () => {
           },
         ]);
 
-        if (error) throw error;
+        if (error) {
+          showNotification("error", `Supabase: ${error.message}`);
+          throw error;
+        }
         return true;
-      } catch (error) {
+      } catch (error: any) {
+        const msg = error?.message || error?.toString() || "Error desconocido";
+        showNotification("error", `Notificación fallida: ${msg}`);
         console.error("Error al enviar notificación:", error);
         return false;
       }
