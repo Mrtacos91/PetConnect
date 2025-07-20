@@ -42,9 +42,18 @@ const AlertMessage: React.FC<AlertMessageProps> = ({
 
   if (!visible) return null;
 
+  // Forzar estilo amarillo para warning
+  const warningStyle = type === "warning"
+    ? {
+        background: "#fffbe6",
+        color: "#333",
+        border: "1.5px solid #ffe58f"
+      }
+    : {};
+
   return (
     <div className="notification-container">
-      <div className={`notification-item ${type}`}>
+      <div className={`notification-item ${type}`} style={warningStyle}>
         <div className="notification-content">
           <span className="notification-icon">
             {type === "success" ? (

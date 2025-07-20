@@ -3,11 +3,12 @@ import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { FaPlus, FaCheck, FaTimes } from "react-icons/fa";
+import { FaPlus, FaTimes } from "react-icons/fa";
 import "../styles/Paseos.css";
 import "../styles/style.css";
 import supabase from "../supabase";
 import { useNavigate } from "react-router-dom";
+import AlertMessage from "./AlertMessage";
 
 // Configurar dayjs para manejo de timezone (CDMX)
 dayjs.extend(utc);
@@ -540,6 +541,14 @@ const Foods: React.FC = () => {
       return;
     }
 
+    // Detección básica de Chromium y WebView
+    const ua = navigator.userAgent;
+    const isChromium = /Chrome|Chromium|Edg|Brave|Opera/i.test(ua);
+    const isWebView =
+      (/wv|WebView|; wv\)/i.test(ua) ||
+        (window.navigator.userAgent.includes('Version/') && window.navigator.userAgent.includes('Mobile/'))
+      );
+
     try {
       const dias = alarm.days.length > 0 ? `Días: ${alarm.days.join(", ")}` : "";
       const hora = alarm.time ? alarm.time.format("h:mm A") : "hora no definida";
@@ -549,16 +558,56 @@ const Foods: React.FC = () => {
       // Enviar notificación a través de Supabase
       await sendFoodNotification(userId, testMessage, "info");
 
-      // Mostrar notificación nativa si los permisos están habilitados
+      // Mostrar notificación push usando Service Worker si está disponible
       if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(`¡Hora de comer, ${alarm.name}!`, {
-          body: `¡Es hora de alimentar a ${alarm.name} a las ${hora}! ${dias}`,
-          icon: "/public/images/logo_gradient.png", // Cambia por tu ícono preferido
-          badge: "/public/images/logo_gradient.png",
-          data: {
-            url: window.location.origin
+        if ("serviceWorker" in navigator) {
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.showNotification(`¡Hora de comer, ${alarm.name}!`, {
+              body: `¡Es hora de alimentar a ${alarm.name} a las ${hora}! ${dias}`,
+              icon: "/public/images/logo_gradient.png",
+              badge: "/public/images/logo_gradient.png",
+              data: { url: window.location.origin }
+            });
+            if (process.env.NODE_ENV === "development") {
+              console.log("Notificación mostrada vía Service Worker (Chromium/PWA)");
+            }
+            return;
+          } catch (err) {
+            if (process.env.NODE_ENV === "development") {
+              console.warn("Fallo Service Worker, intentando Notification directa", err);
+            }
+            // Fallback a notificación clásica si falla el Service Worker
           }
-        });
+        }
+        // Fallback a notificación clásica si no hay Service Worker o falló
+        try {
+          new Notification(`¡Hora de comer, ${alarm.name}!`, {
+            body: `¡Es hora de alimentar a ${alarm.name} a las ${hora}! ${dias}`,
+            icon: "/public/images/logo_gradient.png",
+            badge: "/public/images/logo_gradient.png",
+            data: { url: window.location.origin }
+          });
+          if (process.env.NODE_ENV === "development") {
+            console.log("Notificación mostrada vía Notification directa");
+          }
+        } catch (err2) {
+          if (isWebView) {
+            showNotification("warning", "Este WebView no soporta notificaciones push. Usa el navegador para recibir alertas.");
+          } else if (isChromium) {
+            showNotification("warning", "No se pudo mostrar la notificación push. Verifica los permisos o prueba en modo PWA.");
+          } else {
+            showNotification("warning", "No se pudo mostrar la notificación push en este dispositivo/navegador.");
+          }
+        }
+      } else {
+        if (isWebView) {
+          showNotification("warning", "Este WebView no soporta notificaciones push. Usa el navegador para recibir alertas.");
+        } else if (isChromium) {
+          showNotification("warning", "Activa los permisos de notificaciones en tu navegador para recibir alertas.");
+        } else {
+          showNotification("warning", "El navegador no permite notificaciones push o no se han concedido permisos.");
+        }
       }
     } catch (error) {
       console.error("Error al probar la alarma:", error);
@@ -584,35 +633,15 @@ const Foods: React.FC = () => {
 
   return (
     <div className="FOODS-section">
-      {/* Notificaciones */}
-      <div className="notification-container">
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            className={`notification-item ${notification.type}`}
-          >
-            <div className="notification-content">
-              <div className="notification-icon">
-                {notification.type === "success" ? (
-                  <FaCheck />
-                ) : notification.type === "error" ? (
-                  <FaTimes />
-                ) : (
-                  <FaPlus />
-                )}
-              </div>
-              <div className="notification-text">{notification.message}</div>
-            </div>
-            <div
-              className="notification-close"
-              onClick={() => closeNotification(notification.id)}
-            >
-              <FaTimes />
-            </div>
-            <div className="notification-progress-bar"></div>
-          </div>
-        ))}
-      </div>
+      {/* Notificaciones visuales usando AlertMessage */}
+      {notifications.map((notification) => (
+        <AlertMessage
+          key={notification.id}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => closeNotification(notification.id)}
+        />
+      ))}
 
       {isLoading ? (
         renderSkeleton()
