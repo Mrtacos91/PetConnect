@@ -1,817 +1,384 @@
+/* Paseos Component Styles - Modern & Responsive using CSS Variables */
+
+/* Component-specific variables with improved theming */
+:root {
+  /* Base colors */
+  --paseos-bg-primary: var(--bg-default, #ffffff);
+  --paseos-bg-secondary: var(--card-background, #f8f9fa);
+  --paseos-bg-card: var(--card-background, #ffffff);
+  --paseos-text-primary: var(--text-primary, #1a1a1a);
+  --paseos-text-secondary: var(--text-secondary, #4a5568);
+  --paseos-text-muted: var(--text-muted, #718096);
+  --paseos-border: var(--border-color, #e2e8f0);
+
+  /* Accent colors */
+  --paseos-accent: var(--accent-color, #b8860b);
+  --paseos-accent-hover: var(--accent-hover, #9a7209);
+  --paseos-accent-light: rgba(184, 134, 11, 0.1);
+
+  /* Status colors */
+  --paseos-success: #10b981;
+  --paseos-success-hover: #0d9c6e;
+  --paseos-success-light: rgba(16, 185, 129, 0.1);
+
+  --paseos-warning: #f59e0b;
+  --paseos-warning-hover: #d88e09;
+  --paseos-warning-light: rgba(245, 158, 11, 0.1);
+
+  --paseos-danger: #ef4444;
+  --paseos-danger-hover: #dc2626;
+  --paseos-danger-light: rgba(239, 68, 68, 0.1);
+
+  /* Shadows */
+  --paseos-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --paseos-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --paseos-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* Border radius */
+  --paseos-radius-sm: 0.375rem;
+  --paseos-radius-md: 0.5rem;
+  --paseos-radius-lg: 0.75rem;
+  --paseos-radius-xl: 1rem;
+
+  /* Transitions */
+  --paseos-transition: all 0.2s ease-in-out;
+}
+
+/* Dark mode overrides */
+body.dark-mode {
+  --paseos-bg-primary: #121212;
+  --paseos-bg-secondary: var(--card-background, #2d3748);
+  --paseos-bg-card: var(--card-background, #2d3748);
+  --paseos-text-primary: var(--text-primary, #f7fafc);
+  --paseos-text-secondary: var(--text-secondary, #cbd5e0);
+  --paseos-text-muted: var(--text-muted, #a0aec0);
+  --paseos-border: var(--border-color, #4a5568);
+
+  --paseos-accent-light: rgba(245, 158, 11, 0.2);
+  --paseos-success-light: rgba(16, 185, 129, 0.2);
+  --paseos-warning-light: rgba(245, 158, 11, 0.2);
+  --paseos-danger-light: rgba(239, 68, 68, 0.2);
+
+  --paseos-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --paseos-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --paseos-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+    0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* Smooth theme transitions for all interactive elements */
+* {
+  transition: background-color var(--paseos-transition),
+    color var(--paseos-transition), border-color var(--paseos-transition),
+    box-shadow var(--paseos-transition), opacity var(--paseos-transition);
+}
+
+/* Ensure smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Main Section */
 .paseos-section {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: var(--paseos-bg-primary);
+  color: var(--paseos-text-primary);
+  min-height: 30vh;
+  border-radius: var(--paseos-radius-lg);
+  box-shadow: var(--paseos-shadow-md);
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .paseos-section {
+    padding: 1rem;
+  }
+}
+
+/* Title */
+.paseos-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--paseos-text-primary);
+  margin-bottom: 2rem;
+  text-align: center;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  transition: color 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .paseos-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Container */
+.paseos-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(20px, 5vw, 30px);
-  background: var(--card-background);
-  border-radius: 30px;
-  box-shadow: 0 4px 12px var(--shadow-default);
-  width: min(95%, 600px);
-  margin: 2rem auto 4rem;
+  gap: 1.5rem;
+}
+
+/* Alarm Card */
+.paseos-alarm-card {
   position: relative;
-  transition: all 0.3s ease;
+  background: var(--paseos-bg-card);
+  border: 1px solid var(--paseos-border);
+  border-radius: var(--paseos-radius-xl);
+  padding: 1.5rem;
+  box-shadow: var(--paseos-shadow-sm);
+  transition: var(--paseos-transition);
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-.paseos-title {
-  color: var(--text-primary);
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  margin-bottom: clamp(16px, 4vw, 28px);
-  font-weight: 600;
-  text-align: center;
-  width: 100%;
+.paseos-alarm-card:hover {
+  box-shadow: var(--paseos-shadow-md);
+  border-color: var(--paseos-accent);
+  transform: translateY(-2px);
 }
 
-.days-container {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 8px;
-  margin-top: 0.2rem;
-  padding: 0;
-  background: none;
-  border-radius: 0;
-  width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
+@media (max-width: 640px) {
+  .paseos-alarm-card {
+    padding: 1rem;
+  }
 }
 
-.day-button {
-  width: clamp(36px, 8vw, 50px);
-  height: clamp(36px, 8vw, 50px);
+/* Delete Button */
+.delete-alarm-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  background: var(--paseos-danger-light);
+  color: var(--paseos-danger);
   border-radius: 50%;
-  border: none;
-  background: #ff5c5c;
-  color: #ffffff;
-  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  z-index: 10;
+  font-size: 0.75rem;
+  line-height: 1;
+  box-shadow: var(--paseos-shadow-sm);
 }
 
-@media (hover: hover) {
-  .day-button:hover {
-    transform: translateY(-2px);
-    background: #af40ff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.day-button.selected {
-  background: #af40ff;
+.delete-alarm-btn:hover {
+  background: var(--paseos-danger);
   color: white;
-  font-weight: 600;
-  box-shadow: 0 3px 8px rgba(91, 66, 243, 0.3);
-  transform: scale(1.05);
-  animation: pulse 1.5s infinite;
+  transform: scale(1.15);
+  box-shadow: var(--paseos-shadow-md);
 }
 
-.time-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--card-background);
-  gap: 16px;
-  position: relative;
+.delete-alarm-btn:active {
+  transform: scale(1);
+}
+
+.delete-alarm-btn svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+/* Input Fields */
+.paseos-alarm-name {
   width: 100%;
-  margin: 10px auto;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--paseos-border);
+  border-radius: var(--paseos-radius-md);
+  background: var(--paseos-bg-card);
+  color: var(--paseos-text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  margin-bottom: 1.5rem;
+  transition: var(--paseos-transition);
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.paseos-time-display-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1.2rem;
-  position: relative;
-}
-
-.paseos-time-display {
-  background: var(--card-background);
-  color: var(--text-primary);
-  border-radius: 24px;
-  padding: 22px 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 2.3rem;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 8px var(--shadow-default);
-  cursor: pointer;
+.paseos-alarm-name:focus {
   outline: none;
-  border: none;
-  min-width: 180px;
-  transition: box-shadow 0.2s, background 0.2s;
-  margin-bottom: 0.5rem;
-  user-select: none;
-}
-.paseos-time-display:focus,
-.paseos-time-display:hover {
-  box-shadow: 0 4px 16px #af40ff44;
+  border-color: var(--paseos-accent);
+  box-shadow: 0 0 0 3px var(--paseos-accent-light);
+  background: var(--paseos-bg-card);
 }
 
-.paseos-time-hour {
-  font-size: 2.3rem;
-  font-weight: 700;
-  margin-right: 12px;
+.paseos-alarm-name::placeholder {
+  color: var(--paseos-text-muted);
+  font-weight: 400;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
 }
 
-.paseos-time-ampm {
-  font-size: 1.3rem;
-  font-weight: 600;
-  opacity: 0.9;
-  margin-top: 4px;
+/* Focus styles for better accessibility */
+.paseos-alarm-name:focus-visible {
+  outline: 2px solid var(--paseos-accent);
+  outline-offset: 2px;
 }
 
-@media (max-width: 600px) {
-  .paseos-time-display {
-    font-size: 1.4rem;
-    padding: 14px 18px;
-    min-width: 110px;
-  }
-  .paseos-time-hour {
-    font-size: 1.4rem;
-  }
-  .paseos-time-ampm {
+/* Dark mode adjustments */
+body.dark-mode .paseos-alarm-name {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.dark-mode .paseos-alarm-name:focus {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 640px) {
+  .paseos-alarm-name {
+    padding: 0.75rem;
     font-size: 0.9rem;
   }
 }
 
-.paseos-alarm-card.minimal {
-  position: relative;
-  background: var(--card-background);
-  border-radius: 18px;
-  box-shadow: 0 1px 4px var(--shadow-default);
-  padding: 18px 12px 24px 12px;
-  margin-bottom: 2.2rem;
-  width: min(98%, 420px);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 18px;
-  border: none;
-  transition: box-shadow 0.2s;
+/* Days Container */
+.days-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.delete-alarm-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(60, 60, 80, 0.14);
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #af40ff;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  z-index: 2;
-}
-.delete-alarm-btn:hover,
-.delete-alarm-btn:focus {
-  background: rgba(175, 64, 255, 0.12);
-  color: #fff;
-}
-
-.paseos-alarm-card.minimal:focus-within,
-.paseos-alarm-card.minimal:hover {
-  box-shadow: 0 2px 12px #af40ff22;
-}
-
-.paseos-alarm-name {
-  background: transparent;
-  border: 1.5px solid var(--card-background);
-  color: var(--text-primary);
-  border-radius: 18px;
-  padding: 10px 16px;
-  font-size: 1.07rem;
-  text-align: center;
-  margin-bottom: 0;
-  margin-top: 0.3rem;
-  width: 100%;
-  box-shadow: none;
-  outline: none;
-  transition: border 0.2s, background 0.2s;
-}
-.paseos-alarm-name:focus {
-  border: 1.5px solid #af40ff;
-  background: var(--card-background);
-}
-
-.add-alarm-btn {
-  background: var(--button-bg);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 1.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px var(--shadow-default);
-  cursor: pointer;
-  margin: 0 auto;
-  margin-top: 10px;
-  transition: background 0.2s, transform 0.2s;
-}
-.add-alarm-btn:hover {
-  background: var(--button-bg);
-  transform: scale(1.08);
-}
-
-.save-button {
-  background: var(--button-bg);
-  color: #ffffff;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  border: none;
-  padding: clamp(12px, 3vw, 18px) clamp(30px, 8vw, 60px);
-  border-radius: 30px;
-  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-default);
-  width: min(80%, 250px);
-  margin: 18px auto 8px auto;
-  display: block;
-}
-
-.save-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  background: var(--button-bg);
-}
-
-.save-button:active {
-  transform: translateY(0);
-}
-
-.add-alarm-btn {
-  background: var(--button-bg);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 1.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px var(--shadow-default);
-  cursor: pointer;
-  margin: 32px auto 0 auto;
-  transition: background 0.2s, transform 0.2s;
-  position: relative;
-  z-index: 1;
-}
-.add-alarm-btn:hover {
-  background: var(--button-bg);
-  transform: scale(1.08);
-}
-
-@media (max-width: 600px) {
-  .save-button {
-    width: 95%;
-    font-size: 1rem;
-    padding: 12px 0;
-    margin: 14px auto 8px auto;
-  }
-  .add-alarm-btn {
-    width: 42px;
-    height: 42px;
-    font-size: 1.3rem;
-    margin-top: 22px;
-  }
-}
-
-.save-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  background: var(--button-bg);
-}
-
-.save-button:active {
-  transform: translateY(0);
-}
-
-/* Estilos para dispositivos móviles */
 @media (max-width: 480px) {
-  .paseos-container {
-    width: min(95%, 400px);
-    padding: clamp(14px, 3.5vw, 20px);
-    border-radius: 20px;
-    margin: 1.5rem auto 3rem;
-  }
-
   .days-container {
-    padding: clamp(10px, 2.5vw, 16px);
-    gap: clamp(6px, 1.5vw, 10px);
-  }
-
-  .day-button {
-    width: clamp(32px, 7vw, 40px);
-    height: clamp(32px, 7vw, 40px);
-  }
-
-  .time-container {
-    font-size: clamp(1.3rem, 3.5vw, 1.8rem);
-  }
-
-  .save-button {
-    width: min(90%, 220px);
-    padding: clamp(10px, 2.5vw, 14px) clamp(24px, 6vw, 40px);
+    gap: 0.25rem;
   }
 }
 
-/* Estilos para tablets */
-@media (min-width: 481px) and (max-width: 768px) {
-  .paseos-container {
-    width: min(90%, 500px);
-  }
-}
-
-/* Estilos para pantallas más grandes */
-@media (min-width: 769px) {
-  .paseos-container {
-    width: min(85%, 600px);
-    padding: clamp(25px, 6vw, 35px);
-  }
-
-  .days-container {
-    gap: clamp(10px, 2.5vw, 16px);
-  }
-
-  .day-button {
-    width: clamp(40px, 9vw, 50px);
-    height: clamp(40px, 9vw, 50px);
-  }
-}
-
-/* Animaciones para las transiciones */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes popIn {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Animación para los botones seleccionados */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 #af40ff33;
-  }
-  70% {
-    box-shadow: 0 0 0 10px #af40ff00;
-  }
-  100% {
-    box-shadow: 0 0 0 0 #af40ff00;
-  }
-}
-
-/* Estilos para el popup de éxito */
-.success-popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
-}
-
-.success-popup {
-  background: var(--card-background);
-  border-radius: 20px;
-  padding: 24px;
-  width: 90%;
-  max-width: 350px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.success-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--circle-animation);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 10px rgba(91, 66, 243, 0.3);
-}
-
-.success-popup p {
-  color: var(--text-primary);
-  font-size: 16px;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-.close-button {
-  background: var(--day-button-gradient);
-  border: none;
-  border-radius: 20px;
-  padding: 10px 24px;
-  color: var(--text-primary);
+/* Day Buttons */
+.day-button {
+  aspect-ratio: 1;
+  border: 2px solid var(--paseos-border);
+  background: var(--paseos-bg-secondary);
+  color: var(--paseos-text-secondary);
+  border-radius: var(--paseos-radius-md);
+  cursor: pointer;
   font-weight: 600;
-  cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
-}
-
-.close-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 768px) {
-  .paseos-container {
-    width: min(95%, 450px);
-    padding: clamp(16px, 4vw, 24px);
-    border-radius: 25px;
-  }
-
-  .days-container {
-    gap: clamp(6px, 1.5vw, 10px);
-    padding: clamp(10px, 2.5vw, 16px);
-    border-radius: 25px;
-  }
-
-  .day-button {
-    width: clamp(32px, 7vw, 40px);
-    height: clamp(32px, 7vw, 40px);
-    font-size: clamp(0.85rem, 2.2vw, 1rem);
-  }
-
-  .time-picker {
-    font-size: clamp(1.3rem, 3.5vw, 1.8rem);
-    border: 2px solid #af40ff33;
-    border-radius: 12px;
-    padding: 8px 12px;
-    background: var(--card-background);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .time-picker:hover,
-  .time-picker:focus {
-    border-color: #af40ff;
-    box-shadow: 0 4px 12px rgba(175, 64, 255, 0.2);
-  }
-
-  .save-button {
-    padding: clamp(8px, 2.5vw, 12px) clamp(24px, 6vw, 40px);
-    font-size: clamp(0.85rem, 2.2vw, 1rem);
-    width: min(85%, 180px);
-  }
-}
-
-@media (max-width: 480px) {
-  .paseos-container {
-    width: min(95%, 400px);
-    padding: clamp(14px, 3.5vw, 20px);
-    border-radius: 20px;
-  }
-
-  .days-container {
-    gap: clamp(4px, 1vw, 8px);
-    padding: clamp(8px, 2vw, 12px);
-    border-radius: 20px;
-  }
-
-  .day-button {
-    width: clamp(30px, 6.5vw, 36px);
-    height: clamp(30px, 6.5vw, 36px);
-    font-size: clamp(0.8rem, 2vw, 0.9rem);
-  }
-
-  .time-picker {
-    font-size: clamp(1.2rem, 3vw, 1.5rem);
-    border: 2px solid #af40ff33;
-    border-radius: 12px;
-    padding: 8px 12px;
-    background: var(--card-background);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-  }
-  
-  .time-picker:hover,
-  .time-picker:focus {
-    border-color: #af40ff;
-    box-shadow: 0 4px 12px rgba(175, 64, 255, 0.2);
-  }
-
-  .save-button {
-    padding: clamp(7px, 2vw, 10px) clamp(20px, 5vw, 32px);
-    font-size: clamp(0.8rem, 2vw, 0.9rem);
-    width: min(90%, 160px);
-    border-radius: 25px;
-  }
-}
-
-@media (max-width: 360px) {
-  .paseos-container {
-    width: 98%;
-    padding: 10px;
-    margin: 1rem auto 2rem;
-  }
-
-  .paseos-title {
-    font-size: 0.95rem;
-    margin-bottom: 10px;
-  }
-
-  .days-container {
-    color: var(--text-primary);
-    gap: 2px;
-    margin-bottom: 10px;
-    padding: 3px;
-  }
-
-  .day-button {
-    color: var(--text-primary);
-    width: 26px;
-    height: 26px;
-    font-size: 0.7rem;
-    border-width: 1px;
-  }
-
-  .time-container {
-    margin-bottom: 10px;
-    width: min(100%, 160px);
-  }
-
-  .time-picker {
-    color: var(--text-primary);
-    height: 40px;
-    font-size: 1rem;
-    border: 2px solid #af40ff33;
-    border-radius: 12px;
-    padding: 8px 12px;
-    background: var(--card-background);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    width: 100%;
-    max-width: 180px;
-  }
-  
-  .time-picker:hover,
-  .time-picker:focus {
-    border-color: #af40ff;
-    box-shadow: 0 4px 12px rgba(175, 64, 255, 0.2);
-  }
-
-  .save-button {
-    padding: 7px 16px;
-    font-size: 0.8rem;
-    width: min(100%, 160px);
-  }
-}
-
-/* Estilos para el popup del TimePicker */
-.paseos-time-popup {
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-height: 2.5rem;
+  position: relative;
   overflow: hidden;
 }
 
-.paseos-time-popup .ant-picker-panel-container {
-  background: var(--card-background);
+.day-button:hover {
+  border-color: var(--pet-slot);
+  color: var(--pet-slot);
+  transform: translateY(-1px);
 }
 
-.paseos-time-popup .ant-picker-header {
-  border-bottom: 1px solid #af40ff33;
-  padding: 12px;
+.day-button.selected {
+  background: var(--pet-slot);
+  border-color: var(--pet-slot);
+  color: var(--text-bottomnav);
+  box-shadow: var(--paseos-shadow-sm);
 }
 
-.paseos-time-popup .ant-picker-header button {
-  color: #af40ff;
+.day-button.selected:hover {
+  background: var(--paseos-border-hover);
+  border-color: var(--paseos-border-hover);
 }
 
-.paseos-time-popup .ant-picker-content th,
-.paseos-time-popup .ant-picker-content td {
-  color: var(--text-primary);
+.day-button:active {
+  transform: translateY(0);
 }
 
-.paseos-time-popup .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
-  background: #af40ff;
-}
-
-.paseos-time-popup .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
-  background: #af40ff33;
-  color: #af40ff;
-}
-
-.paseos-time-popup .ant-picker-ok button {
-  background: #af40ff;
-  border-color: #af40ff;
-}
-
-.paseos-time-popup .ant-picker-ok button:hover {
-  background: #9933cc;
-  border-color: #9933cc;
-}
-
-/* Skeleton Loading Styles */
-.paseos-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.paseos-container-skeleton {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: var(--background-color);
-  border-radius: 16px;
-  box-shadow: 0px 4px 10px var(--shadow-default);
-}
-
-@keyframes loadingAnimation {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
+@media (max-width: 480px) {
+  .day-button {
+    font-size: 0.75rem;
+    min-height: 2rem;
   }
 }
 
-.skeleton-title {
-  width: 80%;
-  height: 28px;
-  border-radius: 4px;
-  margin-bottom: 28px;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start, #f0f0f0) 25%,
-    var(--skeleton-gradient-mid, #e0e0e0) 50%,
-    var(--skeleton-gradient-start, #f0f0f0) 75%
-  );
-  background-size: 200px 100%;
-  animation: loadingAnimation 1.5s infinite;
-}
-
-.skeleton-days-container {
+/* Time Display */
+.paseos-time-display-wrapper {
+  margin-bottom: 1.5rem;
   display: flex;
-  gap: clamp(8px, 2vw, 16px);
-  margin-bottom: clamp(20px, 5vw, 30px);
-  padding: clamp(12px, 3vw, 24px);
-  background: var(--card-background);
-  border-radius: 30px;
-  width: 100%;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
-.skeleton-day-button {
-  width: clamp(36px, 8vw, 50px);
-  height: clamp(36px, 8vw, 50px);
-  border-radius: 50%;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start, #f0f0f0) 25%,
-    var(--skeleton-gradient-mid, #e0e0e0) 50%,
-    var(--skeleton-gradient-start, #f0f0f0) 75%
-  );
-  background-size: 200px 100%;
-  animation: loadingAnimation 1.5s infinite;
-}
-
-.skeleton-time-picker {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  margin: 20px 0;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start, #f0f0f0) 25%,
-    var(--skeleton-gradient-mid, #e0e0e0) 50%,
-    var(--skeleton-gradient-start, #f0f0f0) 75%
-  );
-  background-size: 200px 100%;
-  animation: loadingAnimation 1.5s infinite;
-}
-
-.skeleton-schedule-button {
-  width: 150px;
-  height: 50px;
-  border-radius: 25px;
-  margin-top: 20px;
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start, #f0f0f0) 25%,
-    var(--skeleton-gradient-mid, #e0e0e0) 50%,
-    var(--skeleton-gradient-start, #f0f0f0) 75%
-  );
-  background-size: 200px 100%;
-  animation: loadingAnimation 1.5s infinite;
-}
-
-/* Dark mode skeleton styles */
-.dark-theme .skeleton-title,
-.dark-theme .skeleton-day-button,
-.dark-theme .skeleton-time-picker,
-.dark-theme .skeleton-schedule-button {
-  background: linear-gradient(
-    90deg,
-    var(--skeleton-gradient-start) 25%,
-    var(--skeleton-gradient-mid) 50%,
-    var(--skeleton-gradient-start) 75%
-  );
-  background-size: 200px 100%;
-}
-
-.paseos-button-group {
+.paseos-time-display {
   display: flex;
-  gap: 10px;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.paseos-button-group .save-button {
-  flex: 3;
-}
-
-.paseos-button-group .test-button {
-  flex: 1;
-  background-color: #f5f5f5;
-  color: #444;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: var(--paseos-bg-secondary);
+  border: 2px solid var(--paseos-border);
+  border-radius: var(--paseos-radius-md);
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
 }
 
-.paseos-button-group .test-button:hover {
-  background-color: #e0e0e0;
+.paseos-time-display:hover {
+  border-color: var(--pet-slot);
+  background: var(--paseos-bg-card);
+  transform: translateY(-1px);
 }
 
-.paseos-button-group .test-button:active {
-  background-color: #d0d0d0;
-  transform: scale(0.98);
+.paseos-time-display:focus {
+  outline: none;
+  border-color: var(--pet-slot);
+  box-shadow: 0 0 0 3px var(--paseos-accent-light);
 }
 
-/* Estilos para el switch de activación de alarma */
+.paseos-time-hour {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--paseos-text-primary);
+  transition: color 0.3s ease;
+}
+
+.paseos-time-ampm {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--paseos-text-secondary);
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+/* Switch Container */
 .paseos-switch-container {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
+
+/* Switch */
 .paseos-switch {
-  font-size: 17px;
   position: relative;
   display: inline-block;
-  align-items: center;
-  justify-content: center;
-  width: 62px;
-  height: 35px;
+  width: 3rem;
+  height: 1.5rem;
 }
 
 .paseos-switch input {
-  opacity: 1;
+  opacity: 0;
   width: 0;
   height: 0;
 }
@@ -822,46 +389,462 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0px;
-  background: #fff;
-  transition: .4s;
-  border-radius: 30px;
-  border: 1px solid #ccc;
+  bottom: 0;
+  background: var(--paseos-bg-secondary);
+  border: 2px solid var(--paseos-border);
+  transition: all 0.3s ease;
+  border-radius: 1.5rem;
 }
 
 .paseos-slider:before {
   position: absolute;
   content: "";
-  height: 1.9em;
-  width: 1.9em;
-  border-radius: 16px;
-  left: 1.2px;
-  top: 0;
-  bottom: 0;
-  background-color: white;
-  box-shadow: 0 2px 5px #999999;
-  transition: .4s;
+  height: 1rem;
+  width: 1rem;
+  left: 0.125rem;
+  bottom: 0.125rem;
+  background: var(--paseos-text-secondary);
+  transition: all 0.3s ease;
+  border-radius: 50%;
 }
 
 .paseos-switch input:checked + .paseos-slider {
-  background-color: #5fdd54;
-  border: 1px solid transparent;
+  background: var(--pet-slot);
+  border-color: var(--pet-slot);
 }
 
 .paseos-switch input:checked + .paseos-slider:before {
-  transform: translateX(1.5em);
+  transform: translateX(1.5rem);
+  background: white;
 }
 
-/* Contenedor para el switch y su etiqueta */
-.paseos-switch-container {
+.paseos-switch:hover .paseos-slider {
+  border-color: var(--pet-slot);
+}
+
+/* Switch Label */
+.paseos-switch-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--paseos-text-secondary);
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  transition: color 0.3s ease;
+}
+
+/* Button Group */
+.paseos-button-group {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  .paseos-button-group {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* Save Button */
+.save-button {
+  padding: 0.875rem 1.5rem;
+  background: var(--button-bg);
+  color: var(--text-bottomnav);
+  border: none;
+  border-radius: var(--paseos-radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--paseos-shadow-sm);
+  letter-spacing: 0.025em;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+}
+
+.save-button:hover {
+  background: var(--pet-slot);
+  transform: translateY(-1px);
+  box-shadow: var(--paseos-shadow-md);
+}
+
+.save-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .save-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Test Button */
+.test-button {
+  padding: 0.875rem 1rem;
+  background: var(--paseos-bg-secondary);
+  color: var(--paseos-text-secondary);
+  border: 2px solid var(--paseos-border);
+  border-radius: var(--paseos-radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+}
+
+.test-button:hover {
+  background: var(--paseos-warning-light);
+  color: var(--paseos-warning);
+  border-color: var(--pet-slot);
+  transform: translateY(-1px);
+}
+
+.test-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .test-button {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Add Alarm Button */
+.add-alarm-btn {
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 2px dashed var(--paseos-border);
+  background: var(--paseos-bg-secondary);
+  color: var(--paseos-text-muted);
+  border-radius: 50%;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  justify-content: center;
+  margin: 2rem auto 0;
+  transition: all 0.3s ease;
+  font-size: 1.25rem;
 }
 
-.paseos-switch-label {
-  font-size: 0.9em;
-  color: #666;
+.add-alarm-btn:hover {
+  border-color: var(--pet-slot);
+  color: var(--pet-slot);
+  background: var(--paseos-accent-light);
+  transform: scale(1.05);
+  border-style: solid;
+}
+
+.add-alarm-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 640px) {
+  .add-alarm-btn {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1rem;
+  }
+}
+
+/* Skeleton Loading States */
+.paseos-container-skeleton {
+  background: var(--paseos-bg-card);
+  border: 1px solid var(--paseos-border);
+  border-radius: var(--paseos-radius-xl);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeleton-title {
+  height: 1.5rem;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--paseos-radius-sm);
+  margin-bottom: 1.5rem;
+  width: 60%;
+  animation: shimmer 2s infinite;
+}
+
+.skeleton-days-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-day-button {
+  aspect-ratio: 1;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--paseos-radius-md);
+  min-height: 2.5rem;
+  animation: shimmer 2s infinite;
+}
+
+.skeleton-time-picker {
+  height: 3rem;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--paseos-radius-md);
+  margin-bottom: 1.5rem;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: shimmer 2s infinite;
+}
+
+.skeleton-schedule-button {
+  height: 2.75rem;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--paseos-radius-md);
+  width: 70%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .paseos-section {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .paseos-section {
+    padding: 1rem;
+  }
+
+  .paseos-alarm-card {
+    border-radius: var(--paseos-radius-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .paseos-title {
+    font-size: 1.5rem;
+  }
+
+  .paseos-alarm-card {
+    padding: 0.875rem;
+    border-radius: var(--paseos-radius-md);
+  }
+
+  .delete-alarm-btn {
+    width: 1.25rem;
+    height: 1.25rem;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.625rem;
+  }
+
+  .delete-alarm-btn svg {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  .paseos-switch-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .paseos-time-display {
+    padding: 0.75rem 1rem;
+    min-width: 120px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .paseos-section {
+    background: white;
+    color: black;
+    box-shadow: none;
+  }
+
+  .delete-alarm-btn,
+  .test-button,
+  .add-alarm-btn {
+    display: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .paseos-alarm-card {
+    border-width: 3px;
+  }
+
+  .day-button {
+    border-width: 3px;
+  }
+
+  .save-button,
+  .test-button {
+    border-width: 2px;
+    border-style: solid;
+    border-color: currentColor;
+  }
+
+  .add-alarm-btn {
+    border-width: 3px;
+  }
+
+  .paseos-time-display {
+    border-width: 3px;
+  }
+
+  .paseos-slider {
+    border-width: 3px;
+  }
+
+  .delete-alarm-btn {
+    border: 2px solid var(--paseos-danger);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .paseos-alarm-card:hover {
+    transform: none;
+  }
+
+  .day-button:hover,
+  .save-button:hover,
+  .delete-alarm-btn:hover {
+    transform: none;
+  }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Color blindness support */
+.paseos-section {
+  filter: var(--active-color-filter, none);
+}
+
+/* Focus visible styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--paseos-accent);
+  outline-offset: 2px;
+  border-radius: var(--paseos-radius-sm);
+}
+
+/* Print styles */
+@media print {
+  .paseos-section {
+    padding: 0;
+    background: white !important;
+    color: black !important;
+  }
+
+  .paseos-alarm-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Override filter for images within the component */
+.paseos-section img,
+.paseos-section video,
+.paseos-section iframe {
+  filter: none !important;
+}
+
+/* Theme toggle animation support */
+.paseos-section * {
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Time Picker Popup Styling */
+.paseos-time-popup .ant-picker-panel {
+  background: var(--paseos-bg-card) !important;
+  border: 1px solid var(--paseos-border) !important;
+  border-radius: var(--paseos-radius-md) !important;
+  box-shadow: var(--paseos-shadow-lg) !important;
+}
+
+.paseos-time-popup .ant-picker-panel-container {
+  background: var(--paseos-bg-card) !important;
+}
+
+.paseos-time-popup .ant-picker-time-panel {
+  background: var(--paseos-bg-card) !important;
+}
+
+.paseos-time-popup .ant-picker-time-panel-column {
+  background: var(--paseos-bg-secondary) !important;
+}
+
+.paseos-time-popup .ant-picker-time-panel-cell {
+  color: var(--paseos-text-primary) !important;
+  font-family: "Poppins", Arial, Helvetica, sans-serif !important;
+}
+
+.paseos-time-popup .ant-picker-time-panel-cell:hover {
+  background: var(--paseos-accent-light) !important;
+}
+
+.paseos-time-popup .ant-picker-time-panel-cell-selected {
+  background: var(--pet-slot) !important;
+  color: white !important;
 }

@@ -3,11 +3,11 @@ import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { FaPlus, FaCheck, FaTimes } from "react-icons/fa";
+import { FaPlus, FaTimes } from "react-icons/fa";
 import "../styles/Paseos.css";
-import "../styles/style.css";
 import supabase from "../supabase";
 import { useNavigate } from "react-router-dom";
+import AlertMessage from "./AlertMessage";
 
 // Configurar dayjs para manejo de timezone (CDMX)
 dayjs.extend(utc);
@@ -246,13 +246,13 @@ const Paseos: React.FC = () => {
     if (!userId) return;
 
     const channel = supabase
-      .channel(`walk_notifications_${userId}`)
+      .channel(`food_notifications_${userId}`)
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
-          table: "walk_notifications",
+          table: "food_notifications",
           filter: `user_id=eq.${userId}`,
         },
         (payload: any) => {
@@ -301,8 +301,8 @@ const Paseos: React.FC = () => {
     try {
       const testMessage = `¡Recordatorio de prueba! Es hora de pasear a ${alarm.name}`;
 
-      // Insertar notificación de prueba en Supabase
-      const { error } = await supabase.from("walk_notifications").insert([
+      // Insertar notificación de prueba en food_notifications
+      const { error } = await supabase.from("food_notifications").insert([
         {
           user_id: userId,
           message: testMessage,
@@ -332,8 +332,8 @@ const Paseos: React.FC = () => {
         // Notificación enviada a través de Supabase
         const message = `Es momento de sacar a pasear a ${alarm.name}`;
 
-        // Insertar notificación en Supabase
-        const { error } = await supabase.from("walk_notifications").insert([
+        // Insertar notificación en food_notifications
+        const { error } = await supabase.from("food_notifications").insert([
           {
             user_id: userId,
             message,
@@ -735,34 +735,15 @@ const Paseos: React.FC = () => {
 
   return (
     <div className="paseos-section">
-      <div className="notification-container">
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            className={`notification-item ${notification.type}`}
-          >
-            <div className="notification-content">
-              <div className="notification-icon">
-                {notification.type === "success" ? (
-                  <FaCheck />
-                ) : notification.type === "error" ? (
-                  <FaTimes />
-                ) : (
-                  <FaPlus />
-                )}
-              </div>
-              <div className="notification-text">{notification.message}</div>
-            </div>
-            <div
-              className="notification-close"
-              onClick={() => closeNotification(notification.id)}
-            >
-              <FaTimes />
-            </div>
-            <div className="notification-progress-bar"></div>
-          </div>
-        ))}
-      </div>
+      {/* Notificaciones visuales usando AlertMessage */}
+      {notifications.map((notification) => (
+        <AlertMessage
+          key={notification.id}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => closeNotification(notification.id)}
+        />
+      ))}
       {showSkeleton ? (
         renderSkeletonLoader()
       ) : (

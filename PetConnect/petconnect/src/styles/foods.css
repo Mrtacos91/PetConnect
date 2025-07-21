@@ -1,286 +1,645 @@
-/* Estilos para Foods (renombrados y mejorados) */
+:root {
+  /* Light theme colors */
+  --foods-bg-primary: #ffffff;
+  --foods-bg-secondary: #f8f9fa;
+  --foods-bg-card: #ffffff;
+  --foods-text-primary: #1a1a1a;
+  --foods-text-secondary: #4a5568;
+  --foods-text-muted: #718096;
+  --foods-border: #e2e8f0;
+  --foods-border-hover: #b8860b;
+  --foods-accent: #b8860b;
+  --foods-accent-hover: #9a6e07;
+  --foods-accent-light: rgba(184, 134, 11, 0.1);
+  --foods-success: #10b981;
+  --foods-success-light: rgba(16, 185, 129, 0.1);
+  --foods-warning: #f59e0b;
+  --foods-warning-light: rgba(245, 158, 11, 0.1);
+  --foods-danger: #ef4444;
+  --foods-danger-light: rgba(239, 68, 68, 0.1);
+  --foods-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --foods-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --foods-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --foods-radius-sm: 0.375rem;
+  --foods-radius-md: 0.5rem;
+  --foods-radius-lg: 0.75rem;
+  --foods-radius-xl: 1rem;
+}
+
+/* Dark theme colors */
+body.dark-mode {
+  --foods-bg-primary: #121212;
+  --foods-bg-secondary: #1e1e1e;
+  --foods-bg-card: #1e1e1e;
+  --foods-text-primary: #f8f9fa;
+  --foods-text-secondary: #e2e8f0;
+  --foods-text-muted: #a0aec0;
+  --foods-border: #2d3748;
+  --foods-border-hover: #d4a617;
+  --foods-accent: #d4a617;
+  --foods-accent-hover: #f5c542;
+  --foods-accent-light: rgba(212, 166, 23, 0.2);
+  --foods-success: #34d399;
+  --foods-success-light: rgba(52, 211, 153, 0.2);
+  --foods-warning: #fbbf24;
+  --foods-warning-light: rgba(251, 191, 36, 0.2);
+  --foods-danger: #f87171;
+  --foods-danger-light: rgba(248, 113, 113, 0.2);
+  --foods-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --foods-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --foods-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure theme transitions work smoothly */
+.FOODS-section,
+.FOODS-alarm-card,
+.FOODS-alarm-name,
+.FOODS-day-button,
+.FOODS-save-button,
+.FOODS-test-button,
+.FOODS-add-alarm-btn {
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Main Section */
 .FOODS-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(20px, 5vw, 30px);
-  background: var(--card-background);
-  border-radius: 30px;
-  box-shadow: 0 4px 12px var(--shadow-default);
-  width: min(95%, 600px);
-  margin: 2rem auto 4rem;
-  position: relative;
-  transition: all 0.3s ease;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: var(--foods-bg-primary);
+  color: var(--foods-text-primary);
+  min-height: 30vh;
+  box-shadow: var(--foods-shadow-md);
+  border-radius: var(--foods-radius-lg);
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease, filter 0.3s ease;
 }
 
+@media (max-width: 640px) {
+  .FOODS-section {
+    padding: 1rem;
+  }
+}
+
+/* Title */
 .FOODS-title {
-  color: var(--text-primary);
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  margin-bottom: clamp(16px, 4vw, 28px);
+  font-size: 2rem;
   font-weight: 700;
+  color: var(--foods-text-primary);
+  margin-bottom: 2rem;
   text-align: center;
-  width: 100%;
-  letter-spacing: 1px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  transition: color 0.3s ease;
 }
 
-.FOODS-days-container {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 8px;
-  margin-top: 0.2rem;
-  width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
+@media (max-width: 640px) {
+  .FOODS-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
 }
 
-.FOODS-day-button {
-  width: clamp(36px, 8vw, 50px);
-  height: clamp(36px, 8vw, 50px);
-  border-radius: 50%;
-  border: 2px solid var(--accent-color);
-  background: var(--button-bg);
-  color: #fff;
-  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s, box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-.FOODS-day-button.selected {
-  background: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
-  color: #fff;
-  border: 2px solid #af40ff;
-  box-shadow: 0 3px 12px #af40ff44;
-  transform: scale(1.08);
-  animation: FOODS-pulse 1.5s infinite;
-}
-@keyframes FOODS-pulse {
-  0% { box-shadow: 0 0 0 0 #af40ff33; }
-  70% { box-shadow: 0 0 0 10px #af40ff00; }
-  100% { box-shadow: 0 0 0 0 #af40ff00; }
-}
-
+/* Alarm Card */
 .FOODS-alarm-card {
   position: relative;
-  background: var(--card-background);
-  border-radius: 22px;
-  box-shadow: 0 2px 12px var(--shadow-default);
-  padding: 22px 16px 28px 16px;
-  margin-bottom: 2.2rem;
-  width: min(98%, 420px);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 18px;
-  border: 1.5px solid var(--accent-before);
-  transition: box-shadow 0.2s, border 0.2s;
-}
-.FOODS-alarm-card:focus-within,
-.FOODS-alarm-card:hover {
-  box-shadow: 0 4px 18px #af40ff33;
-  border: 1.5px solid #af40ff;
+  background: var(--foods-bg-card);
+  border: 1px solid var(--foods-border);
+  border-radius: var(--foods-radius-xl);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--foods-shadow-sm);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
+.FOODS-alarm-card:hover {
+  box-shadow: var(--foods-shadow-md);
+  border-color: var(--foods-border-hover);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .FOODS-alarm-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Delete Button */
 .FOODS-delete-alarm-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(175, 64, 255, 0.08);
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
   border: none;
+  background: var(--foods-danger-light);
+  color: var(--foods-danger);
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #af40ff;
-  font-size: 1.1rem;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  z-index: 2;
-}
-.FOODS-delete-alarm-btn:hover,
-.FOODS-delete-alarm-btn:focus {
-  background: #af40ff22;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
 }
 
+.FOODS-delete-alarm-btn:hover {
+  background: var(--foods-danger);
+  color: white;
+  transform: scale(1.1);
+}
+
+.FOODS-delete-alarm-btn:active {
+  transform: scale(0.95);
+}
+
+/* Pet Name Input */
 .FOODS-alarm-name {
-  background: transparent;
-  border: 1.5px solid var(--accent-before);
-  color: var(--text-primary);
-  border-radius: 18px;
-  padding: 10px 16px;
-  font-size: 1.07rem;
-  text-align: center;
-  margin-bottom: 0;
-  margin-top: 0.3rem;
   width: 100%;
-  box-shadow: none;
-  outline: none;
-  transition: border 0.2s, background 0.2s;
-}
-.FOODS-alarm-name:focus {
-  border: 1.5px solid #af40ff;
-  background: var(--card-background);
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--foods-border);
+  border-radius: var(--foods-radius-md);
+  background: var(--foods-bg-secondary);
+  color: var(--foods-text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
+.FOODS-alarm-name:focus {
+  outline: none;
+  border-color: var(--pet-slot);
+  box-shadow: 0 0 0 3px var(--foods-accent-light);
+  background: var(--foods-bg-card);
+}
+
+.FOODS-alarm-name::placeholder {
+  color: var(--foods-text-muted);
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+/* Dark mode specific placeholder styling */
+body.dark-mode .FOODS-alarm-name::placeholder {
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .FOODS-alarm-name {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Days Container */
+.FOODS-days-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .FOODS-days-container {
+    gap: 0.25rem;
+  }
+}
+
+/* Day Buttons */
+.FOODS-day-button {
+  aspect-ratio: 1;
+  border: 2px solid var(--foods-border);
+  background: var(--foods-bg-secondary);
+  color: var(--foods-text-secondary);
+  border-radius: var(--foods-radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  min-height: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.FOODS-day-button:hover {
+  border-color: var(--pet-slot);
+  color: var(--pet-slot);
+  transform: translateY(-1px);
+}
+
+.FOODS-day-button.selected {
+  background: var(--pet-slot);
+  border-color: var(--pet-slot);
+  color: var(--text-bottomnav);
+  box-shadow: var(--foods-shadow-sm);
+}
+
+.FOODS-day-button.selected:hover {
+  background: var(--foods-border-hover);
+  border-color: var(--foods-border-hover);
+}
+
+.FOODS-day-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .FOODS-day-button {
+    font-size: 0.75rem;
+    min-height: 2rem;
+  }
+}
+
+/* Time Picker Container */
 .FOODS-time-picker-container {
+  margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-bottom: 0.5rem;
 }
 
 .FOODS-time-picker {
-  width: 100%;
-  max-width: 180px;
-  border-radius: 16px;
-  border: 1.5px solid var(--accent-before);
-  background: var(--card-background);
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  box-shadow: 0 1px 4px var(--shadow-default);
-  padding: 8px 0;
-  transition: border 0.2s;
-}
-.FOODS-time-picker:focus {
-  border: 1.5px solid #af40ff;
+  width: 100% !important;
+  max-width: 200px;
 }
 
+.FOODS-time-picker .ant-picker {
+  width: 100% !important;
+  padding: 0.875rem 1rem !important;
+  border: 2px solid var(--foods-border) !important;
+  border-radius: var(--foods-radius-md) !important;
+  background: var(--foods-bg-secondary) !important;
+  color: var(--foods-text-primary) !important;
+  font-size: 1rem !important;
+  font-family: "Poppins", Arial, Helvetica, sans-serif !important;
+  transition: all 0.3s ease !important;
+  box-shadow: none !important;
+}
+
+.FOODS-time-picker .ant-picker:hover {
+  border-color: var(--pet-slot) !important;
+  background: var(--foods-bg-card) !important;
+}
+
+.FOODS-time-picker .ant-picker:focus,
+.FOODS-time-picker .ant-picker.ant-picker-focused {
+  border-color: var(--pet-slot) !important;
+  box-shadow: 0 0 0 3px var(--foods-accent-light) !important;
+  background: var(--foods-bg-card) !important;
+}
+
+.FOODS-time-picker .ant-picker-input input {
+  color: var(--foods-bg-card) !important;
+  font-weight: 500 !important;
+  font-family: "Poppins", Arial, Helvetica, sans-serif !important;
+}
+
+.FOODS-time-picker .ant-picker-suffix {
+  color: var(--foods-text-muted) !important;
+  transition: color 0.3s ease !important;
+}
+
+/* Button Group */
 .FOODS-button-group {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
 }
 
-.FOODS-save-button, .FOODS-test-button {
+@media (max-width: 480px) {
+  .FOODS-button-group {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* Save Button */
+.FOODS-save-button {
+  padding: 0.875rem 1.5rem;
   background: var(--button-bg);
-  color: #fff;
+  color: var(--text-bottomnav);
   border: none;
-  border-radius: 30px;
-  font-size: 1.1rem;
+  border-radius: var(--foods-radius-md);
   font-weight: 600;
-  padding: 12px 32px;
+  font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px var(--shadow-default);
-  transition: background 0.2s, transform 0.2s;
-}
-.FOODS-save-button:hover, .FOODS-test-button:hover {
-  background: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
-  color: #fff;
-  transform: translateY(-2px) scale(1.04);
+  transition: all 0.2s ease;
+  box-shadow: var(--foods-shadow-sm);
+  letter-spacing: 0.025em;
 }
 
+.FOODS-save-button:hover {
+  background: var(--pet-slot);
+  transform: translateY(-1px);
+  box-shadow: var(--foods-shadow-md);
+}
+
+.FOODS-save-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .FOODS-save-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Test Button */
+.FOODS-test-button {
+  padding: 0.875rem 1rem;
+  background: var(--foods-bg-secondary);
+  color: var(--foods-text-secondary);
+  border: 2px solid var(--foods-border);
+  border-radius: var(--foods-radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.FOODS-test-button:hover {
+  background: var(--foods-warning-light);
+  color: var(--foods-warning);
+  border-color: var(--pet-slot);
+  transform: translateY(-1px);
+}
+
+.FOODS-test-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .FOODS-test-button {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Add Alarm Button */
 .FOODS-add-alarm-btn {
-  background: var(--button-bg);
-  color: #fff;
-  border: none;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 2px dashed var(--foods-border);
+  background: var(--foods-bg-secondary);
+  color: var(--foods-text-muted);
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 1.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px var(--shadow-default);
   cursor: pointer;
-  margin: 32px auto 0 auto;
-  transition: background 0.2s, transform 0.2s;
-  position: relative;
-  z-index: 1;
-}
-.FOODS-add-alarm-btn:hover {
-  background: linear-gradient(144deg, #af40ff, #5b42f3 50%, #00ddeb);
-  transform: scale(1.08);
-}
-
-/* Skeleton loader */
-.FOODS-container-skeleton {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: 100%;
-  padding: 20px;
-  animation: fadeIn 0.5s ease;
-}
-.FOODS-skeleton-title {
-  width: 60%;
-  height: 30px;
-  background: linear-gradient(90deg, var(--skeleton-gradient-start), var(--skeleton-gradient-mid), var(--skeleton-gradient-start));
-  background-size: 200% 100%;
-  animation: loadingAnimation 1.5s infinite;
-  border-radius: 8px;
-  margin-bottom: 30px;
-}
-.FOODS-skeleton-days-container {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 30px;
-  width: 100%;
   justify-content: center;
-  flex-wrap: wrap;
-}
-.FOODS-skeleton-day-button {
-  width: clamp(36px, 8vw, 50px);
-  height: clamp(36px, 8vw, 50px);
-  border-radius: 50%;
-  background: linear-gradient(90deg, var(--skeleton-gradient-start), var(--skeleton-gradient-mid), var(--skeleton-gradient-start));
-  background-size: 200% 100%;
-  animation: loadingAnimation 1.5s infinite;
-}
-.FOODS-skeleton-time-picker {
-  width: 180px;
-  height: 70px;
-  border-radius: 24px;
-  background: linear-gradient(90deg, var(--skeleton-gradient-start), var(--skeleton-gradient-mid), var(--skeleton-gradient-start));
-  background-size: 200% 100%;
-  animation: loadingAnimation 1.5s infinite;
-  margin-bottom: 30px;
-}
-.FOODS-skeleton-schedule-button {
-  width: 200px;
-  height: 50px;
-  border-radius: 30px;
-  background: linear-gradient(90deg, var(--skeleton-gradient-start), var(--skeleton-gradient-mid), var(--skeleton-gradient-start));
-  background-size: 200% 100%;
-  animation: loadingAnimation 1.5s infinite;
-}
-@keyframes loadingAnimation {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  margin: 2rem auto 0;
+  transition: all 0.3s ease;
+  font-size: 1.25rem;
 }
 
-@media (max-width: 600px) {
-  .FOODS-alarm-card {
-    padding: 12px 4px 18px 4px;
-    width: 99%;
-  }
-  .FOODS-save-button, .FOODS-test-button {
-    font-size: 1rem;
-    padding: 10px 0;
-  }
+.FOODS-add-alarm-btn:hover {
+  border-color: var(--pet-slot);
+  color: var(--pet-slot);
+  background: var(--foods-accent-light);
+  transform: scale(1.05);
+  border-style: solid;
+}
+
+.FOODS-add-alarm-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 640px) {
   .FOODS-add-alarm-btn {
-    width: 42px;
-    height: 42px;
-    font-size: 1.3rem;
-    margin-top: 22px;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1rem;
   }
-  .FOODS-skeleton-time-picker {
-    width: 120px;
-    height: 50px;
+}
+
+/* Skeleton Loading States */
+.FOODS-container-skeleton {
+  background: var(--foods-bg-card);
+  border: 1px solid var(--foods-border);
+  border-radius: var(--foods-radius-xl);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.FOODS-skeleton-title {
+  height: 1.5rem;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--foods-radius-sm);
+  margin-bottom: 1.5rem;
+  width: 60%;
+  animation: shimmer 2s infinite;
+}
+
+.FOODS-skeleton-days-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.FOODS-skeleton-day-button {
+  aspect-ratio: 1;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--foods-radius-md);
+  min-height: 2.5rem;
+  animation: shimmer 2s infinite;
+}
+
+.FOODS-skeleton-time-picker {
+  height: 3rem;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--foods-radius-md);
+  margin-bottom: 1.5rem;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: shimmer 2s infinite;
+}
+
+.FOODS-skeleton-schedule-button {
+  height: 2.75rem;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-gradient-start),
+    var(--skeleton-gradient-mid),
+    var(--skeleton-gradient-start)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--foods-radius-md);
+  width: 70%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
   }
-  .FOODS-skeleton-schedule-button {
-    width: 150px;
-    height: 40px;
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .FOODS-section {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .FOODS-section {
+    padding: 1rem;
+  }
+
+  .FOODS-alarm-card {
+    border-radius: var(--foods-radius-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .FOODS-title {
+    font-size: 1.5rem;
+  }
+
+  .FOODS-alarm-card {
+    padding: 0.875rem;
+    border-radius: var(--foods-radius-md);
+  }
+
+  .FOODS-delete-alarm-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .FOODS-section {
+    background: white;
+    color: black;
+    box-shadow: none;
+  }
+
+  .FOODS-delete-alarm-btn,
+  .FOODS-test-button,
+  .FOODS-add-alarm-btn {
+    display: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .FOODS-alarm-card {
+    border-width: 2px;
+  }
+
+  .FOODS-day-button {
+    border-width: 2px;
+  }
+
+  .FOODS-save-button,
+  .FOODS-test-button {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .FOODS-alarm-card:hover {
+    transform: none;
+  }
+
+  .FOODS-day-button:hover,
+  .FOODS-save-button:hover {
+    transform: none;
+  }
+}
+
+/* Color blindness support - respect global filter */
+.FOODS-section {
+  filter: var(--active-color-filter, none);
+}
+
+/* Override filter for images within the component */
+.FOODS-section img,
+.FOODS-section video,
+.FOODS-section iframe {
+  filter: none !important;
+}
+
+/* Theme toggle animation support */
+.FOODS-section * {
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Ensure proper contrast in all modes */
+@media (prefers-contrast: high) {
+  .FOODS-alarm-card {
+    border-width: 3px;
+  }
+
+  .FOODS-day-button {
+    border-width: 3px;
+  }
+
+  .FOODS-save-button,
+  .FOODS-test-button {
+    border-width: 2px;
+    border-style: solid;
+    border-color: currentColor;
+  }
+
+  .FOODS-add-alarm-btn {
+    border-width: 3px;
   }
 }

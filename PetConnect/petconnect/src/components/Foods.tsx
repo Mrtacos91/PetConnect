@@ -137,9 +137,12 @@ const Foods: React.FC = () => {
               // Extraer nombre de mascota y hora si es posible
               const match = notification.message?.match(/alimentar a ([^ ]+)/i);
               const petName = match ? match[1] : "tu mascota";
-              const horaMatch = notification.message?.match(/a las ([0-9:apm ]+)/i);
+              const horaMatch =
+                notification.message?.match(/a las ([0-9:apm ]+)/i);
               const hora = horaMatch ? horaMatch[1] : "la hora programada";
-              const dias = notification.days ? `Días: ${notification.days.join(", ")}` : "";
+              const dias = notification.days
+                ? `Días: ${notification.days.join(", ")}`
+                : "";
               new Notification(`¡Hora de comer, ${petName}!`, {
                 body:
                   notification.message ||
@@ -147,8 +150,8 @@ const Foods: React.FC = () => {
                 icon: "/public/images/logo_gradient.png", // Cambia por tu ícono preferido
                 badge: "/public/images/logo_gradient.png", // Badge opcional
                 data: {
-                  url: window.location.origin
-                }
+                  url: window.location.origin,
+                },
               });
             }
           }
@@ -240,12 +243,13 @@ const Foods: React.FC = () => {
         Thursday: "J",
         Friday: "V",
         Saturday: "S",
-        Sunday: "D"
+        Sunday: "D",
       }[currentDay];
       const todayDate = now.format("YYYY-MM-DD");
 
       const activeAlarms = alarms.filter(
-        (alarm) => alarm.active && alarm.time && alarm.days.length > 0 && alarm.name
+        (alarm) =>
+          alarm.active && alarm.time && alarm.days.length > 0 && alarm.name
       );
       if (activeAlarms.length === 0) return;
 
@@ -265,13 +269,17 @@ const Foods: React.FC = () => {
         // Enviar notificación a través de Supabase
         await sendFoodNotification(
           userId,
-          `¡Es hora de alimentar a ${alarm.name} a las ${alarm.time.format("h:mm A")}`,
+          `¡Es hora de alimentar a ${alarm.name} a las ${alarm.time.format(
+            "h:mm A"
+          )}`,
           "success"
         );
         // Actualizar la fecha de última notificación localmente
         setAlarms((prev) =>
           prev.map((a) =>
-            a.id === alarm.id ? { ...a, lastNotification: now.toISOString() } : a
+            a.id === alarm.id
+              ? { ...a, lastNotification: now.toISOString() }
+              : a
           )
         );
       });
@@ -297,7 +305,7 @@ const Foods: React.FC = () => {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [alarms, userId]);
 
   // Manejar cambios en las alarmas
@@ -545,13 +553,16 @@ const Foods: React.FC = () => {
     const ua = navigator.userAgent;
     const isChromium = /Chrome|Chromium|Edg|Brave|Opera/i.test(ua);
     const isWebView =
-      (/wv|WebView|; wv\)/i.test(ua) ||
-        (window.navigator.userAgent.includes('Version/') && window.navigator.userAgent.includes('Mobile/'))
-      );
+      /wv|WebView|; wv\)/i.test(ua) ||
+      (window.navigator.userAgent.includes("Version/") &&
+        window.navigator.userAgent.includes("Mobile/"));
 
     try {
-      const dias = alarm.days.length > 0 ? `Días: ${alarm.days.join(", ")}` : "";
-      const hora = alarm.time ? alarm.time.format("h:mm A") : "hora no definida";
+      const dias =
+        alarm.days.length > 0 ? `Días: ${alarm.days.join(", ")}` : "";
+      const hora = alarm.time
+        ? alarm.time.format("h:mm A")
+        : "hora no definida";
       const testMessage = `¡Recordatorio de prueba! Es hora de alimentar a ${alarm.name} a las ${hora}. ${dias}`;
       showNotification("success", testMessage);
 
@@ -563,19 +574,27 @@ const Foods: React.FC = () => {
         if ("serviceWorker" in navigator) {
           try {
             const registration = await navigator.serviceWorker.ready;
-            await registration.showNotification(`¡Hora de comer, ${alarm.name}!`, {
-              body: `¡Es hora de alimentar a ${alarm.name} a las ${hora}! ${dias}`,
-              icon: "/public/images/logo_gradient.png",
-              badge: "/public/images/logo_gradient.png",
-              data: { url: window.location.origin }
-            });
+            await registration.showNotification(
+              `¡Hora de comer, ${alarm.name}!`,
+              {
+                body: `¡Es hora de alimentar a ${alarm.name} a las ${hora}! ${dias}`,
+                icon: "/public/images/logo_gradient.png",
+                badge: "/public/images/logo_gradient.png",
+                data: { url: window.location.origin },
+              }
+            );
             if (process.env.NODE_ENV === "development") {
-              console.log("Notificación mostrada vía Service Worker (Chromium/PWA)");
+              console.log(
+                "Notificación mostrada vía Service Worker (Chromium/PWA)"
+              );
             }
             return;
           } catch (err) {
             if (process.env.NODE_ENV === "development") {
-              console.warn("Fallo Service Worker, intentando Notification directa", err);
+              console.warn(
+                "Fallo Service Worker, intentando Notification directa",
+                err
+              );
             }
             // Fallback a notificación clásica si falla el Service Worker
           }
@@ -586,27 +605,45 @@ const Foods: React.FC = () => {
             body: `¡Es hora de alimentar a ${alarm.name} a las ${hora}! ${dias}`,
             icon: "/public/images/logo_gradient.png",
             badge: "/public/images/logo_gradient.png",
-            data: { url: window.location.origin }
+            data: { url: window.location.origin },
           });
           if (process.env.NODE_ENV === "development") {
             console.log("Notificación mostrada vía Notification directa");
           }
         } catch (err2) {
           if (isWebView) {
-            showNotification("warning", "Este WebView no soporta notificaciones push. Usa el navegador para recibir alertas.");
+            showNotification(
+              "warning",
+              "Este WebView no soporta notificaciones push. Usa el navegador para recibir alertas."
+            );
           } else if (isChromium) {
-            showNotification("warning", "No se pudo mostrar la notificación push. Verifica los permisos o prueba en modo PWA.");
+            showNotification(
+              "warning",
+              "No se pudo mostrar la notificación push. Verifica los permisos o prueba en modo PWA."
+            );
           } else {
-            showNotification("warning", "No se pudo mostrar la notificación push en este dispositivo/navegador.");
+            showNotification(
+              "warning",
+              "No se pudo mostrar la notificación push en este dispositivo/navegador."
+            );
           }
         }
       } else {
         if (isWebView) {
-          showNotification("warning", "Este WebView no soporta notificaciones push. Usa el navegador para recibir alertas.");
+          showNotification(
+            "warning",
+            "Este WebView no soporta notificaciones push. Usa el navegador para recibir alertas."
+          );
         } else if (isChromium) {
-          showNotification("warning", "Activa los permisos de notificaciones en tu navegador para recibir alertas.");
+          showNotification(
+            "warning",
+            "Activa los permisos de notificaciones en tu navegador para recibir alertas."
+          );
         } else {
-          showNotification("warning", "El navegador no permite notificaciones push o no se han concedido permisos.");
+          showNotification(
+            "warning",
+            "El navegador no permite notificaciones push o no se han concedido permisos."
+          );
         }
       }
     } catch (error) {
@@ -647,7 +684,7 @@ const Foods: React.FC = () => {
         renderSkeleton()
       ) : (
         <>
-          <h2 className="FOODS-title">Programar Comidas</h2>
+          <h2 className="FOODS-title"> Programar Comidas </h2>
           <div>
             {alarms.map((alarm, idx) => (
               <div key={alarm.id} className="FOODS-alarm-card">
