@@ -9,6 +9,7 @@ import "../styles/style.css";
 import supabase from "../supabase";
 import { useNavigate } from "react-router-dom";
 import AlertMessage from "./AlertMessage";
+import { messaging, onMessage, getOrCreateFCMToken } from "../../firebase";
 
 // Configurar dayjs para manejo de timezone (CDMX)
 dayjs.extend(utc);
@@ -21,6 +22,15 @@ const TIMEZONE = "America/Mexico_City";
 const utcToLocal = (time: string | null) => {
   if (!time) return null;
   return dayjs.utc(time).tz(TIMEZONE);
+};
+
+// Función auxiliar para transformar cadenas "HH:mm" o "HH:mm:ss" en objetos dayjs
+// y ajustarlas a la zona horaria local especificada
+const parseHourToLocal = (hour: string | null): dayjs.Dayjs | null => {
+  if (!hour) return null;
+  // Si sólo viene HH:mm añadimos los segundos para evitar errores
+  const normalized = hour.split(":").length === 2 ? `${hour}:00` : hour;
+  return utcToLocal(`2000-01-01T${normalized}Z`);
 };
 
 const daysOfWeek = [
@@ -129,29 +139,45 @@ const Foods: React.FC = () => {
               notification.message || "¡Es hora de alimentar a tu mascota!"
             );
 
-            // Personalización de la notificación push
+            // Compatibilidad total: siempre intenta Service Worker primero
             if (
+              "serviceWorker" in navigator &&
               "Notification" in window &&
               Notification.permission === "granted"
             ) {
-              // Extraer nombre de mascota y hora si es posible
-              const match = notification.message?.match(/alimentar a ([^ ]+)/i);
-              const petName = match ? match[1] : "tu mascota";
-              const horaMatch =
-                notification.message?.match(/a las ([0-9:apm ]+)/i);
-              const hora = horaMatch ? horaMatch[1] : "la hora programada";
-              const dias = notification.days
-                ? `Días: ${notification.days.join(", ")}`
-                : "";
-              new Notification(`¡Hora de comer, ${petName}!`, {
+              navigator.serviceWorker.ready
+                .then((registration) => {
+                  registration.showNotification(`¡Hora de comer!`, {
+                    body:
+                      notification.message ||
+                      "¡Es hora de alimentar a tu mascota!",
+                    icon: "/public/images/logo_gradient.png",
+                    badge: "/public/images/logo_gradient.png",
+                    data: { url: window.location.origin },
+                  });
+                })
+                .catch(() => {
+                  // Fallback clásico
+                  new Notification(`¡Hora de comer!`, {
+                    body:
+                      notification.message ||
+                      "¡Es hora de alimentar a tu mascota!",
+                    icon: "/public/images/logo_gradient.png",
+                    badge: "/public/images/logo_gradient.png",
+                    data: { url: window.location.origin },
+                  });
+                });
+            } else if (
+              "Notification" in window &&
+              Notification.permission === "granted"
+            ) {
+              // Fallback clásico si no hay Service Worker
+              new Notification(`¡Hora de comer!`, {
                 body:
-                  notification.message ||
-                  `¡Es hora de alimentar a ${petName} a las ${hora}! ${dias}`,
-                icon: "/public/images/logo_gradient.png", // Cambia por tu ícono preferido
-                badge: "/public/images/logo_gradient.png", // Badge opcional
-                data: {
-                  url: window.location.origin,
-                },
+                  notification.message || "¡Es hora de alimentar a tu mascota!",
+                icon: "/public/images/logo_gradient.png",
+                badge: "/public/images/logo_gradient.png",
+                data: { url: window.location.origin },
               });
             }
           }
@@ -171,6 +197,81 @@ const Foods: React.FC = () => {
     }
   }, []);
 
+  // ---- INTEGRACIÓN FCM PARA PWA ----
+  useEffect(() => {
+    const initFCM = async () => {
+      try {
+        // Registrar el Service Worker de Firebase si aún no está registrado
+        if ("serviceWorker" in navigator) {
+          const existingRegistration = await navigator.serviceWorker
+            .getRegistrations()
+            .then((regs) =>
+              regs.find((r) =>
+                r.active?.scriptURL.includes("firebase-messaging-sw.js")
+              )
+            );
+
+          if (!existingRegistration) {
+            await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+          }
+        }
+
+        // Solicitar/obtener token FCM
+        const token = await getOrCreateFCMToken();
+        if (process.env.NODE_ENV === "development") {
+          console.log("[FCM] Token:", token);
+        }
+      } catch (err) {
+        console.error("[FCM] Error inicializando FCM:", err);
+      }
+    };
+
+    // Ejecutar al montar el componente
+    initFCM();
+
+    // Escuchar mensajes en primer plano
+    let unsubscribe: (() => void) | undefined;
+    if (messaging) {
+      unsubscribe = onMessage(messaging, (payload) => {
+        if (process.env.NODE_ENV === "development") {
+          console.log("[FCM] Mensaje en primer plano:", payload);
+        }
+        const title = payload.notification?.title ?? "PetConnect";
+        const body = payload.notification?.body ?? "Nueva notificación";
+        // Mostrar notificación en UI
+        showNotification("success", body);
+
+        // Intentar notificación nativa usando Service Worker
+        if (
+          "serviceWorker" in navigator &&
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
+          navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification(title, {
+              body,
+              icon: "/public/images/logo_gradient.png",
+              badge: "/public/images/logo_gradient.png",
+              data: payload.data,
+            });
+          });
+        }
+      });
+    }
+
+    // Cleanup
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [showNotification]);
+
+  // Detectar si es móvil para usar input nativo de hora
+  const isMobile =
+    typeof window !== "undefined" &&
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
+      navigator.userAgent
+    );
+
   // Cargar alarmas desde la base de datos
   const fetchAlarms = useCallback(
     async (userId: number) => {
@@ -187,9 +288,7 @@ const Foods: React.FC = () => {
         if (data) {
           const formattedAlarms = data.map((alarm) => {
             // Convertir la hora almacenada (asumida como UTC) a la zona horaria local
-            const localTime = alarm.hour
-              ? utcToLocal(`2000-01-01T${alarm.hour}:00Z`)
-              : null;
+            const localTime = alarm.hour ? parseHourToLocal(alarm.hour) : null;
 
             return {
               id: alarm.id.toString(),
@@ -484,7 +583,7 @@ const Foods: React.FC = () => {
                   id: updatedAlarm.id.toString(),
                   name: updatedAlarm.title,
                   days: updatedAlarm.days,
-                  time: dayjs(updatedAlarm.hour, "HH:mm"),
+                  time: parseHourToLocal(updatedAlarm.hour),
                   active: updatedAlarm.active,
                   lastNotification: undefined,
                 }
@@ -722,13 +821,30 @@ const Foods: React.FC = () => {
                 </div>
 
                 <div className="FOODS-time-picker-container">
-                  <TimePicker
-                    value={alarm.time}
-                    onChange={(time) => handleAlarmChange(idx, "time", time)}
-                    format="h:mm A"
-                    use12Hours
-                    className="FOODS-time-picker"
-                  />
+                  {isMobile ? (
+                    <input
+                      type="time"
+                      value={alarm.time ? alarm.time.format("HH:mm") : ""}
+                      onChange={(e) => {
+                        const [h, m] = e.target.value.split(":");
+                        handleAlarmChange(
+                          idx,
+                          "time",
+                          dayjs().tz(TIMEZONE).hour(Number(h)).minute(Number(m))
+                        );
+                      }}
+                      className="FOODS-time-picker"
+                      style={{ width: "100%", maxWidth: 200 }}
+                    />
+                  ) : (
+                    <TimePicker
+                      value={alarm.time}
+                      onChange={(time) => handleAlarmChange(idx, "time", time)}
+                      format="h:mm A"
+                      use12Hours
+                      className="FOODS-time-picker"
+                    />
+                  )}
                 </div>
 
                 <div className="FOODS-button-group">
