@@ -740,17 +740,19 @@ const Nfc: React.FC = () => {
         return;
       }
 
-      // Usar la URL escaneada si existe, de lo contrario mostrar error
-      if (!scanResult) {
+      // Obtener la URL desde el QR o la lectura NFC
+      const detectedUrl = scanResult || readResult;
+      if (!detectedUrl) {
         setAlert({
-          message: "No hay una URL escaneada. Primero escanea un código QR.",
+          message:
+            "No se ha detectado ninguna URL aún. Acerca tu dispositivo a la etiqueta NFC o escanea un QR para obtener la URL.",
           type: "error",
         });
         return;
       }
 
       // Validar la URL
-      let urlToWrite = scanResult.trim();
+      let urlToWrite = detectedUrl.trim();
       if (!urlToWrite.match(/^https?:\/\//i)) {
         urlToWrite = "https://" + urlToWrite;
       }
