@@ -130,65 +130,60 @@ const Nfc: React.FC = () => {
         type: "success",
       });
 
-      // Configurar el listener para la lectura
-      ndef.addEventListener("reading", ({ message, serialNumber }: any) => {
-        console.log(`NFC tag read with serial number: ${serialNumber}`);
+      // Función unificada para manejar la URL detectada
+      const handleUrlDetected = async (url: string) => {
+        stopNfcReading(); // Detener la lectura para evitar múltiples detecciones
 
-        // Procesar los registros del mensaje NDEF
+        // Validar que sea una URL absoluta válida
+        try {
+          new URL(url);
+        } catch (e) {
+          setAlert({
+            message: `La etiqueta NFC debe contener una URL absoluta válida.`,
+            type: "error",
+          });
+          return;
+        }
+
+        setReadResult(url);
+        setScanResult(url);
+        setPublicUrl(url);
+
+        setAlert({
+          message: "URL de la etiqueta NFC vinculada exitosamente a tu perfil.",
+          type: "success",
+        });
+
+        // Guardar la URL en la base de datos
+        await updateUrlAsigned(url);
+
+        // Cerrar el modal después de un momento
+        setTimeout(() => {
+          setIsModalOpen(false);
+        }, 1500);
+      };
+
+      // Configurar el listener para la lectura
+      ndef.addEventListener("reading", ({ message }: any) => {
         for (const record of message.records) {
+          let detectedUrl: string | null = null;
+
           if (record.recordType === "url") {
             const decoder = new TextDecoder();
-            const url = decoder.decode(record.data);
-            console.log("URL found in NFC tag:", url);
-
-            setReadResult(url);
-            setAlert({
-              message: `URL detectada: ${url}`,
-              type: "success",
-            });
-
-            // Preguntar al usuario si quiere ser redirigido
-            setTimeout(() => {
-              if (
-                window.confirm(
-                  `Se detectó una URL en la etiqueta NFC: ${url}\n\n¿Quieres ser redirigido a esta URL?`
-                )
-              ) {
-                redirectToUrl(url);
-              }
-            }, 1000);
-
-            break;
+            detectedUrl = decoder.decode(record.data);
+            console.log("URL found in NFC tag:", detectedUrl);
           } else if (record.recordType === "text") {
             const decoder = new TextDecoder();
             const text = decoder.decode(record.data);
-            console.log("Text found in NFC tag:", text);
-
-            // Verificar si el texto contiene una URL
             if (text.startsWith("http://") || text.startsWith("https://")) {
-              setReadResult(text);
-              setAlert({
-                message: `URL detectada en texto: ${text}`,
-                type: "success",
-              });
-
-              setTimeout(() => {
-                if (
-                  window.confirm(
-                    `Se detectó una URL en la etiqueta NFC: ${text}\n\n¿Quieres ser redirigido a esta URL?`
-                  )
-                ) {
-                  redirectToUrl(text);
-                }
-              }, 1000);
-            } else {
-              setReadResult(text);
-              setAlert({
-                message: `Texto detectado: ${text}`,
-                type: "success",
-              });
+              detectedUrl = text;
+              console.log("URL found in NFC text record:", detectedUrl);
             }
-            break;
+          }
+
+          if (detectedUrl) {
+            handleUrlDetected(detectedUrl);
+            break; // Salir del bucle una vez que se maneja una URL
           }
         }
       });
@@ -701,6 +696,12 @@ const Nfc: React.FC = () => {
     }
   };
 
+  const handleLinkNfcTag = async () => {
+    // Llama directamente a writeNfcTag para iniciar el proceso de escritura.
+    // La función writeNfcTag ya muestra alertas al usuario.
+    await writeNfcTag();
+  };
+
   // Handle save button click
   const handleSaveOnly = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1174,13 +1175,12 @@ const Nfc: React.FC = () => {
                   {hasNfc && (
                     <>
                       <button
-                        onClick={() => {
-                          setModalView("nfc");
-                          writeNfcTag();
-                        }}
-                        className="nfc-button"
+                        onClick={handleLinkNfcTag}
+                        className="nfc-button primary"
+                        disabled={isLoading}
                       >
-                        <FaMicrochip /> Escribir en NFC
+                        <FaMicrochip />{" "}
+                        {isLoading ? "Vinculando..." : "Vincular con NFC"}
                       </button>
                       <button
                         onClick={() => {

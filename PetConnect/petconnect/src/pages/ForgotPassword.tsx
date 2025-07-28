@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FiMail, FiArrowLeft, FiCheck } from "react-icons/fi";
 import supabase from "../supabase";
 import "../styles/ForgotPassword.css";
+import logo from "../assets/images/Logo.png";
 
 type MessageType = "success" | "error" | "info";
 
@@ -107,7 +108,7 @@ const ForgotPassword: React.FC = () => {
       <div className="forgot-password-container">
         <div className="logo-container">
           <img
-            src="/public/images/Logo.png"
+            src={logo}
             alt="PetConnect Logo"
             className="logo"
             onClick={() => navigate("/")}
