@@ -63,18 +63,18 @@ const Shop = () => {
   const products: Product[] = [
     {
       id: 1,
-      name: "Collar Inteligente PetConnect",
+      name: "Pechera Inteligente PetConnect",
       description:
-        "Collar con tecnología GPS para la localización segura de tu mascota. Resistente al agua y duradero.",
+        "Pechera con tecnología GPS para la localización segura de tu mascota. Resistente al agua y duradero.",
       price: 599,
       originalPrice: 799,
-      image: "/images/collar_demo.png",
+      image: "/images/demo_pechera.png",
       features: [
         "Tecnología GPS integrada",
         "Resistente al agua",
         "Ajustable para todo tipo de razas",
         "Material hipoalergénico",
-        "Diseño elegante y cómodo",
+        "Diseño amigable y cómodo",
       ],
       isBestSeller: true,
     },
@@ -778,7 +778,7 @@ const Shop = () => {
                   </span>
                   {selectedProduct.originalPrice && (
                     <span className="shop-original-price">
-                      ${selectedProduct.originalPrice.toLocaleString("es-MX")} {" "}
+                      ${selectedProduct.originalPrice.toLocaleString("es-MX")}{" "}
                       MXN
                     </span>
                   )}
@@ -815,7 +815,7 @@ const Shop = () => {
                   <FaShoppingCart /> Añadir al carrito ($
                   {(selectedProduct.price * quantity).toLocaleString(
                     "es-MX"
-                  )} {" "}
+                  )}{" "}
                   MXN)
                 </button>
               </div>

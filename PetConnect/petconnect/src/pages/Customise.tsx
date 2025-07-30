@@ -1,7 +1,5 @@
 import {
   FaPencilAlt,
-  FaCheck,
-  FaTimes,
   FaArrowLeft,
   FaArrowRight,
   FaPaw,
@@ -13,6 +11,7 @@ import "../styles/Customise.css";
 import "../styles/style.css";
 import { useState, useEffect } from "react";
 import BackButton from "../components/BackButton";
+import AlertMessage from "../components/AlertMessage";
 import {
   getCurrentUser,
   getLocalUserId,
@@ -293,26 +292,14 @@ const Customise: React.FC = () => {
       </div>
 
       {/* Contenedor de notificaciones */}
-      <div className="customise-notification-container">
+      <div className="alert-message-container">
         {notifications.map((notification) => (
-          <div
+          <AlertMessage
             key={notification.id}
-            className={`customise-notification-item ${notification.type}`}
-          >
-            <div className="customise-notification-content">
-              <div className="customise-notification-icon">
-                {notification.type === "success" ? <FaCheck /> : <FaTimes />}
-              </div>
-              <div className="customise-notification-text">{notification.message}</div>
-            </div>
-            <div
-              className="customise-notification-close"
-              onClick={() => closeNotification(notification.id)}
-            >
-              <FaTimes />
-            </div>
-            <div className="customise-notification-progress-bar"></div>
-          </div>
+            type={notification.type}
+            message={notification.message}
+            onClose={() => closeNotification(notification.id)}
+          />
         ))}
       </div>
 
@@ -392,7 +379,11 @@ const Customise: React.FC = () => {
             <label htmlFor="petPhoto" className="customise-pet-photo-label">
               <div className="customise-pet-photo-circle">
                 {photoPreview ? (
-                  <img src={photoPreview} alt="Mascota" className="customise-pet-photo" />
+                  <img
+                    src={photoPreview}
+                    alt="Mascota"
+                    className="customise-pet-photo"
+                  />
                 ) : (
                   <span className="customise-upload-text">📷</span>
                 )}
