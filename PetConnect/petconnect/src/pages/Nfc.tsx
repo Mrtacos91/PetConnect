@@ -58,7 +58,7 @@ const Nfc: React.FC = () => {
     tagId ? parseInt(tagId, 10) : null
   );
 
-  // Estados del componente (sin cambios)
+  // Estados del componente
   const [hasNfc, setHasNfc] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -71,6 +71,10 @@ const Nfc: React.FC = () => {
     message: string;
     type: "success" | "error";
   } | null>(null);
+
+  // Estado para el selector de correo
+  const [emailOption, setEmailOption] = useState<"saved" | "custom">("saved");
+  const [userEmail, setUserEmail] = useState<string>("");
 
   // **NUEVO**: Estados para la funcionalidad de lectura NFC
   const [isReading, setIsReading] = useState<boolean>(false);
@@ -133,34 +137,68 @@ const Nfc: React.FC = () => {
       // Función unificada para manejar la URL detectada
       const handleUrlDetected = async (url: string) => {
         stopNfcReading(); // Detener la lectura para evitar múltiples detecciones
+        setIsLoading(true);
+        setAlert(null);
 
-        // Validar que sea una URL absoluta válida
         try {
-          new URL(url);
-        } catch (e) {
+          // Validar que sea una URL absoluta válida
+          try {
+            new URL(url);
+          } catch (e) {
+            throw new Error(
+              "La etiqueta NFC debe contener una URL absoluta válida."
+            );
+          }
+
+          // Verificar si la URL ya está en uso por otro usuario
+          const { data: existingUrl, error: urlError } = await supabase
+            .from("pettag_contactinfo")
+            .select("user_id, id")
+            .eq("url_asigned", url)
+            .neq("user_id", localUserId) // Excluir al usuario actual
+            .maybeSingle();
+
+          if (urlError) {
+            throw new Error("Error al verificar la URL asignada");
+          }
+
+          if (existingUrl) {
+            throw new Error(
+              "Esta URL ya está en uso por otro perfil. Por favor, utiliza una URL única."
+            );
+          }
+
+          // Actualizar la interfaz con la nueva URL
+          setReadResult(url);
+          setScanResult(url);
+          setPublicUrl(url);
+
+          // Guardar la URL en la base de datos
+          const success = await updateUrlAsigned(url);
+
+          if (success) {
+            setAlert({
+              message:
+                "URL de la etiqueta NFC vinculada exitosamente a tu perfil.",
+              type: "success",
+            });
+
+            // Cerrar el modal después de un momento
+            setTimeout(() => {
+              setIsModalOpen(false);
+            }, 1500);
+          }
+        } catch (error: any) {
+          console.error("Error en handleUrlDetected:", error);
           setAlert({
-            message: `La etiqueta NFC debe contener una URL absoluta válida.`,
+            message:
+              error.message ||
+              "Error al procesar la etiqueta NFC. Intenta de nuevo.",
             type: "error",
           });
-          return;
+        } finally {
+          setIsLoading(false);
         }
-
-        setReadResult(url);
-        setScanResult(url);
-        setPublicUrl(url);
-
-        setAlert({
-          message: "URL de la etiqueta NFC vinculada exitosamente a tu perfil.",
-          type: "success",
-        });
-
-        // Guardar la URL en la base de datos
-        await updateUrlAsigned(url);
-
-        // Cerrar el modal después de un momento
-        setTimeout(() => {
-          setIsModalOpen(false);
-        }, 1500);
       };
 
       // Configurar el listener para la lectura
@@ -436,6 +474,82 @@ const Nfc: React.FC = () => {
     }
   }, [modalView, isModalOpen, scanResult, user, localUserId]);
 
+  // Verificar soporte NFC
+  const checkNfcSupport = () => {
+    // @ts-ignore - La API de Web NFC no está tipada por defecto
+    const nfcSupport = "NDEFReader" in window;
+    setHasNfc(nfcSupport);
+    return nfcSupport;
+  };
+
+  // Cargar perfil del usuario
+  const loadUserProfile = async () => {
+    if (!user) return;
+
+    try {
+      setIsLoading(true);
+      const userId = localUserId || (await getLocalUserId());
+      if (!userId) return;
+
+      const { data, error } = await supabase
+        .from("pettag_contactinfo")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        // PGRST116 = No se encontraron resultados
+        throw error;
+      }
+
+      if (data) {
+        setProfileId(data.id);
+        setPetInfo({
+          petname: data.petname || "",
+          pettype: data.pettype || "",
+          petbreed: data.petbreed || "",
+          petconditions: data.petconditions || "",
+          petpartsigns: data.petpartsigns || "",
+        });
+        setContactInfo({
+          phone: data.phone || "",
+          email: data.email || "",
+          address: data.address || "",
+          othercontact: data.othercontact || "",
+        });
+      }
+    } catch (error) {
+      console.error("Error al cargar el perfil:", error);
+      setAlert({
+        message: "Error al cargar el perfil. Por favor, inténtalo de nuevo.",
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Cargar datos del perfil existente al montar el componente
+  useEffect(() => {
+    checkNfcSupport();
+    loadUserProfile();
+
+    // Cargar el correo del usuario actual
+    const loadUserEmail = async () => {
+      const currentUser = await getCurrentUser();
+      if (currentUser?.email) {
+        setUserEmail(currentUser.email);
+        // Establecer el correo guardado como valor predeterminado
+        setContactInfo((prev) => ({
+          ...prev,
+          email: currentUser.email || "",
+        }));
+      }
+    };
+
+    loadUserEmail();
+  }, [user]);
+
   // Cargar las mascotas del usuario
   useEffect(() => {
     const loadPets = async () => {
@@ -511,6 +625,24 @@ const Nfc: React.FC = () => {
     setContactInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Manejador para cambiar entre correo guardado y personalizado
+  const handleEmailOptionChange = (option: "saved" | "custom") => {
+    setEmailOption(option);
+    if (option === "saved") {
+      // Restaurar el correo guardado
+      setContactInfo((prev) => ({
+        ...prev,
+        email: userEmail,
+      }));
+    } else {
+      // Limpiar el campo de correo para entrada personalizada
+      setContactInfo((prev) => ({
+        ...prev,
+        email: "",
+      }));
+    }
+  };
+
   // Función mejorada para guardar los datos del perfil
   const saveData = async (): Promise<boolean> => {
     // Verificar autenticación
@@ -551,7 +683,7 @@ const Nfc: React.FC = () => {
       // 1. Verificar si ya existe un perfil para este usuario
       const { data: existingProfile } = await supabase
         .from("pettag_contactinfo")
-        .select("id")
+        .select("id, url_asigned")
         .eq("user_id", userId)
         .maybeSingle();
 
@@ -567,7 +699,37 @@ const Nfc: React.FC = () => {
         updated_at: new Date().toISOString(),
       };
 
-      // 3. Realizar la operación de guardado
+      // 3. Si hay una URL para asignar, verificar que no esté en uso
+      if (publicUrl) {
+        // Verificar si la URL ya está asignada a otro usuario
+        const { data: existingUrl, error: urlError } = await supabase
+          .from("pettag_contactinfo")
+          .select("user_id, id")
+          .eq("url_asigned", publicUrl)
+          .neq("user_id", userId) // Excluir al usuario actual
+          .maybeSingle();
+
+        if (urlError) {
+          throw new Error("Error al verificar la URL asignada");
+        }
+
+        if (existingUrl) {
+          setAlert({
+            message:
+              "Esta URL ya está en uso por otro perfil. Por favor, utiliza una URL única.",
+            type: "error",
+          });
+          return false;
+        }
+
+        // Si la validación es exitosa, asignar la URL
+        dataToSave.url_asigned = publicUrl;
+      } else if (existingProfile?.url_asigned) {
+        // Mantener la URL existente si no se está cambiando
+        dataToSave.url_asigned = existingProfile.url_asigned;
+      }
+
+      // 4. Realizar la operación de guardado
       let query = supabase.from("pettag_contactinfo");
 
       // Usar update si existe el perfil, insert si no
@@ -585,6 +747,12 @@ const Nfc: React.FC = () => {
       if (data && !existingProfile?.id) {
         setProfileId(data.id);
       }
+
+      // Mostrar mensaje de éxito
+      setAlert({
+        message: "Perfil guardado exitosamente.",
+        type: "success",
+      });
 
       return true;
     } catch (error) {
@@ -1021,16 +1189,42 @@ const Nfc: React.FC = () => {
               </div>
               <div className="nfc-form-group">
                 <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={contactInfo.email}
-                  onChange={handleContactInfoChange}
-                  placeholder="Email"
-                  required
-                  autoComplete="off"
-                />
+                <div className="email-selector">
+                  <div className="email-options">
+                    <button
+                      type="button"
+                      className={`email-option ${
+                        emailOption === "saved" ? "active" : ""
+                      }`}
+                      onClick={() => handleEmailOptionChange("saved")}
+                    >
+                      Usar mi correo
+                    </button>
+                    <button
+                      type="button"
+                      className={`email-option ${
+                        emailOption === "custom" ? "active" : ""
+                      }`}
+                      onClick={() => handleEmailOptionChange("custom")}
+                    >
+                      Otro correo
+                    </button>
+                  </div>
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={contactInfo.email}
+                    onChange={handleContactInfoChange}
+                    placeholder={
+                      emailOption === "saved" ? userEmail : "Ingresa el correo"
+                    }
+                    required
+                    autoComplete="off"
+                    disabled={emailOption === "saved"}
+                    className={emailOption === "saved" ? "disabled-email" : ""}
+                  />
+                </div>
               </div>
               <div className="nfc-form-group">
                 <label htmlFor="address">Dirección</label>
