@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import supabase from "../supabase";
 import { User } from "@supabase/supabase-js";
 import { Html5QrcodeScanner } from "html5-qrcode";
+import NfcLink from "./NfcLink";
 import {
   getCurrentUser,
   getLocalUserId as getLocalUserIdFromService,
@@ -20,8 +21,6 @@ import {
   FaQrcode,
   FaEye,
   FaSearch,
-  FaPlay,
-  FaStop,
 } from "react-icons/fa";
 
 // Interfaces de datos (sin cambios)
@@ -113,137 +112,19 @@ const Nfc: React.FC = () => {
     }
   };
 
-  // **NUEVO**: Función para iniciar la lectura de etiquetas NFC
-  const startNfcReading = async () => {
-    if (!hasNfc) {
-      setAlert({
-        message: "Tu dispositivo no soporta NFC.",
-        type: "error",
-      });
-      return;
-    }
+  // Función para manejar el éxito de vinculación NFC
+  const handleNfcLinkSuccess = (url: string) => {
+    setScanResult(url);
+    setPublicUrl(url);
+    setAlert({
+      message: "URL de la etiqueta NFC vinculada exitosamente a tu perfil.",
+      type: "success",
+    });
 
-    try {
-      const ndef = new (window as any).NDEFReader();
-      setNfcReader(ndef);
-      setIsReading(true);
-      setReadResult(null);
-
-      setAlert({
-        message: "Acerca una etiqueta NFC para leerla...",
-        type: "success",
-      });
-
-      // Función unificada para manejar la URL detectada
-      const handleUrlDetected = async (url: string) => {
-        stopNfcReading(); // Detener la lectura para evitar múltiples detecciones
-        setIsLoading(true);
-        setAlert(null);
-
-        try {
-          // Validar que sea una URL absoluta válida
-          try {
-            new URL(url);
-          } catch (e) {
-            throw new Error(
-              "La etiqueta NFC debe contener una URL absoluta válida."
-            );
-          }
-
-          // Verificar si la URL ya está en uso por otro usuario
-          const { data: existingUrl, error: urlError } = await supabase
-            .from("pettag_contactinfo")
-            .select("user_id, id")
-            .eq("url_asigned", url)
-            .neq("user_id", localUserId) // Excluir al usuario actual
-            .maybeSingle();
-
-          if (urlError) {
-            throw new Error("Error al verificar la URL asignada");
-          }
-
-          if (existingUrl) {
-            throw new Error(
-              "Esta URL ya está en uso por otro perfil. Por favor, utiliza una URL única."
-            );
-          }
-
-          // Actualizar la interfaz con la nueva URL
-          setReadResult(url);
-          setScanResult(url);
-          setPublicUrl(url);
-
-          // Guardar la URL en la base de datos
-          const success = await updateUrlAsigned(url);
-
-          if (success) {
-            setAlert({
-              message:
-                "URL de la etiqueta NFC vinculada exitosamente a tu perfil.",
-              type: "success",
-            });
-
-            // Cerrar el modal después de un momento
-            setTimeout(() => {
-              setIsModalOpen(false);
-            }, 1500);
-          }
-        } catch (error: any) {
-          console.error("Error en handleUrlDetected:", error);
-          setAlert({
-            message:
-              error.message ||
-              "Error al procesar la etiqueta NFC. Intenta de nuevo.",
-            type: "error",
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      // Configurar el listener para la lectura
-      ndef.addEventListener("reading", ({ message }: any) => {
-        for (const record of message.records) {
-          let detectedUrl: string | null = null;
-
-          if (record.recordType === "url") {
-            const decoder = new TextDecoder();
-            detectedUrl = decoder.decode(record.data);
-            console.log("URL found in NFC tag:", detectedUrl);
-          } else if (record.recordType === "text") {
-            const decoder = new TextDecoder();
-            const text = decoder.decode(record.data);
-            if (text.startsWith("http://") || text.startsWith("https://")) {
-              detectedUrl = text;
-              console.log("URL found in NFC text record:", detectedUrl);
-            }
-          }
-
-          if (detectedUrl) {
-            handleUrlDetected(detectedUrl);
-            break; // Salir del bucle una vez que se maneja una URL
-          }
-        }
-      });
-
-      // Configurar el listener para errores
-      ndef.addEventListener("readingerror", () => {
-        setAlert({
-          message: "Error al leer la etiqueta NFC. Inténtalo de nuevo.",
-          type: "error",
-        });
-      });
-
-      // Iniciar el escaneo
-      await ndef.scan();
-    } catch (error) {
-      console.error("Error starting NFC reading:", error);
-      setIsReading(false);
-      setAlert({
-        message: "Error al iniciar la lectura NFC. Verifica los permisos.",
-        type: "error",
-      });
-    }
+    // Cerrar el modal después de un momento
+    setTimeout(() => {
+      setIsModalOpen(false);
+    }, 1500);
   };
 
   // **NUEVO**: Función para detener la lectura de etiquetas NFC
@@ -864,12 +745,6 @@ const Nfc: React.FC = () => {
     }
   };
 
-  const handleLinkNfcTag = async () => {
-    // Llama directamente a writeNfcTag para iniciar el proceso de escritura.
-    // La función writeNfcTag ya muestra alertas al usuario.
-    await writeNfcTag();
-  };
-
   // Handle save button click
   const handleSaveOnly = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1019,7 +894,7 @@ const Nfc: React.FC = () => {
           )}
         </div>
 
-        {/* **NUEVO**: Sección para lectura de etiquetas NFC */}
+        {/* Sección para lectura de etiquetas NFC */}
         {hasNfc && (
           <div className="nfc-reader-section">
             <h2>
@@ -1030,34 +905,16 @@ const Nfc: React.FC = () => {
               Usa esta función para leer etiquetas NFC y ser redirigido
               automáticamente.
             </p>
-            <div className="nfc-reader-controls">
-              {!isReading ? (
-                <button
-                  className="nfc-button primary"
-                  onClick={startNfcReading}
-                  disabled={isLoading}
-                >
-                  <FaPlay style={{ marginRight: 8 }} />
-                  Iniciar Lectura NFC
-                </button>
-              ) : (
-                <button
-                  className="nfc-button secondary"
-                  onClick={stopNfcReading}
-                >
-                  <FaStop style={{ marginRight: 8 }} />
-                  Detener Lectura
-                </button>
-              )}
+            <div className="nfc-reader-wrapper">
+              <NfcLink
+                readOnly={true}
+                onLinkSuccess={(url) => {
+                  // Abrir la URL en una nueva pestaña cuando se lea exitosamente
+                  window.open(url, "_blank");
+                }}
+                onClose={() => {}} // No necesitamos hacer nada al cerrar en este caso
+              />
             </div>
-            {readResult && (
-              <div className="nfc-read-result">
-                <h3>Resultado de la lectura:</h3>
-                <p>
-                  <strong>{readResult}</strong>
-                </p>
-              </div>
-            )}
           </div>
         )}
 
@@ -1365,30 +1222,41 @@ const Nfc: React.FC = () => {
             <div className="modal-body">
               {modalView === "select" && (
                 <div className="link-options">
-                  <button onClick={() => setModalView("qr")}>
+                  <button
+                    onClick={() => setModalView("qr")}
+                    className="nfc-button primary"
+                  >
                     <FaQrcode /> Escanear QR
                   </button>
                   {hasNfc && (
                     <>
                       <button
-                        onClick={handleLinkNfcTag}
+                        onClick={() => setModalView("nfc")}
+                        className="nfc-button primary"
+                      >
+                        <FaMicrochip /> Vincular con NFC
+                      </button>
+                      <button
+                        onClick={writeNfcTag}
                         className="nfc-button primary"
                         disabled={isLoading}
                       >
-                        <FaMicrochip />{" "}
-                        {isLoading ? "Vinculando..." : "Vincular con NFC"}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setModalView("read");
-                          startNfcReading();
-                        }}
-                        className="nfc-button secondary"
-                      >
-                        <FaSearch /> Leer Etiqueta NFC
+                        {isLoading ? "Escribiendo..." : "Escribir en NFC"}
                       </button>
                     </>
                   )}
+                </div>
+              )}
+
+              {modalView === "nfc" && (
+                <div className="nfc-link-container">
+                  <NfcLink
+                    onLinkSuccess={(url) => {
+                      handleNfcLinkSuccess(url);
+                      setModalView("view");
+                    }}
+                    onClose={() => setModalView("select")}
+                  />
                 </div>
               )}
               {modalView === "qr" && !scanResult && (
@@ -1396,51 +1264,16 @@ const Nfc: React.FC = () => {
               )}
               {modalView === "read" && (
                 <div className="nfc-read-modal">
-                  <div className="nfc-reading-status">
-                    {isReading ? (
-                      <div className="reading-active">
-                        <FaSearch className="spinning-icon" />
-                        <p>Esperando etiqueta NFC...</p>
-                        <p className="reading-instruction">
-                          Acerca tu dispositivo a una etiqueta NFC para leerla
-                        </p>
-                        <button
-                          className="nfc-button secondary"
-                          onClick={stopNfcReading}
-                        >
-                          <FaStop /> Detener Lectura
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="reading-inactive">
-                        <button
-                          className="nfc-button primary"
-                          onClick={startNfcReading}
-                        >
-                          <FaPlay /> Iniciar Lectura NFC
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  {readResult && (
-                    <div className="nfc-read-result-modal">
-                      <h3>URL Detectada:</h3>
-                      <div className="url-result">
-                        <input
-                          type="text"
-                          value={readResult}
-                          readOnly
-                          className="url-input"
-                        />
-                        <button
-                          className="redirect-button"
-                          onClick={() => redirectToUrl(readResult)}
-                        >
-                          Ir a URL
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <NfcLink
+                    readOnly={true}
+                    onLinkSuccess={(url) => {
+                      setReadResult(url);
+                      if (url) {
+                        redirectToUrl(url);
+                      }
+                    }}
+                    onClose={() => setModalView("select")}
+                  />
                 </div>
               )}
               {modalView === "view" && (

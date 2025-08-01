@@ -254,7 +254,7 @@ h2 {
   }
 }
 
-.input-container-login .error-message {
+.input-container-login .error-message-login {
   color: #ff6b6b;
   font-size: 0.75rem;
   position: absolute;
@@ -313,7 +313,7 @@ h2 {
   font-size: 15px;
 }
 
-.input-container-register .error-message {
+.input-container-register .error-message-login {
   color: #ff6b6b;
   font-size: 0.75rem;
   position: absolute;
@@ -342,7 +342,7 @@ h2 {
   border-bottom-color: #ff6b6b;
 }
 
-.error-message {
+.error-message-login {
   color: #ff3e3e;
   font-size: 0.8rem;
   margin-top: 4px;

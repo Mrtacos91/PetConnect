@@ -245,7 +245,7 @@ const Login: React.FC = () => {
           />
           <label>Ingresa tu email</label>
           {errors.email && (
-            <span className="error-message">{errors.email}</span>
+            <span className="error-message-login">{errors.email}</span>
           )}
         </div>
 
@@ -261,7 +261,7 @@ const Login: React.FC = () => {
           />
           <label>Ingresa tu contraseña</label>
           {errors.password && (
-            <span className="error-message">{errors.password}</span>
+            <span className="error-message-login">{errors.password}</span>
           )}
           <span
             className="toggle-password"
