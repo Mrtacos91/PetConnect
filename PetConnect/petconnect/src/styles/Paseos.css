@@ -789,7 +789,7 @@ body.foods-mode .foods-alarm-name:focus {
 }
 
 /* Days Container */
-.days-container {
+  .days-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
   gap: 0.5rem;
@@ -803,7 +803,7 @@ body.foods-mode .foods-alarm-name:focus {
 }
 
 /* Day Buttons */
-.day-button {
+  .day-button {
   aspect-ratio: 1;
   border: 2px solid var(--paseos-border);
   background: var(--paseos-bg-secondary);
@@ -931,7 +931,7 @@ body.foods-mode .foods-alarm-name:focus {
   bottom: 0;
   background: var(--paseos-bg-secondary);
   border: 2px solid var(--paseos-border);
-  transition: all 0.3s ease;
+    transition: all 0.3s ease;
   border-radius: 1.5rem;
 }
 
@@ -1224,7 +1224,7 @@ body.foods-mode .foods-alarm-name:focus {
     height: 0.5rem;
   }
 
-  .paseos-switch-container {
+.paseos-switch-container {
     flex-direction: column;
     gap: 0.5rem;
   }
@@ -1273,9 +1273,9 @@ body.foods-mode .foods-alarm-name:focus {
 
   .paseos-time-display {
     border-width: 3px;
-  }
+}
 
-  .paseos-slider {
+.paseos-slider {
     border-width: 3px;
   }
 

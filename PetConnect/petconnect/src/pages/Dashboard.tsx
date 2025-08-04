@@ -8,6 +8,7 @@ import "../styles/dashboard.css";
 import "../styles/Actividades.css";
 import "../styles/TrackingMedico.css";
 import ThemeToggle from "../components/ThemeToggle";
+import UnlinkGpsDevice from "../components/UnlinkGpsDevice";
 
 // Componentes lazy
 const MyPetCard = lazy(() => import("../components/MyPetCard"));
@@ -187,12 +188,14 @@ const Dashboard: React.FC = () => {
       case "localizar":
         return (
           <Suspense fallback={<LoadingFallback />}>
+            
             <section className="Location">
               <Location
                 latitude={19.564559}
                 longitude={-99.255172}
                 name={petData?.pet_name || "Fido"}
               />
+              <UnlinkGpsDevice />
             </section>
           </Suspense>
         );

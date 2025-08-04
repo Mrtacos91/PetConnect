@@ -1,0 +1,491 @@
+/* Variables CSS para el tema */
+:root {
+  --unlink-bg-primary: #ffffff;
+  --unlink-bg-secondary: #f8f9fa;
+  --unlink-bg-card: #ffffff;
+  --unlink-text-primary: #1a1a1a;
+  --unlink-text-secondary: #4a5568;
+  --unlink-text-muted: #718096;
+  --unlink-border: #e2e8f0;
+  --unlink-border-hover: #cbd5e0;
+  --unlink-accent: #e53e3e;
+  --unlink-accent-hover: #c53030;
+  --unlink-accent-light: rgba(229, 62, 62, 0.1);
+  --unlink-success: #10b981;
+  --unlink-success-light: rgba(16, 185, 129, 0.1);
+  --unlink-warning: #f59e0b;
+  --unlink-warning-light: rgba(245, 158, 11, 0.1);
+  --unlink-danger: #ef4444;
+  --unlink-danger-light: rgba(239, 68, 68, 0.1);
+  --unlink-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --unlink-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --unlink-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --unlink-radius-sm: 0.375rem;
+  --unlink-radius-md: 0.5rem;
+  --unlink-radius-lg: 0.75rem;
+  --unlink-radius-xl: 1rem;
+}
+
+/* Dark theme colors */
+body.dark-mode {
+  --unlink-bg-primary: #121212;
+  --unlink-bg-secondary: #1e1e1e;
+  --unlink-bg-card: #1e1e1e;
+  --unlink-text-primary: #f8f9fa;
+  --unlink-text-secondary: #e2e8f0;
+  --unlink-text-muted: #a0aec0;
+  --unlink-border: #2d3748;
+  --unlink-border-hover: #4a5568;
+  --unlink-accent: #fc8181;
+  --unlink-accent-hover: #feb2b2;
+  --unlink-accent-light: rgba(252, 129, 129, 0.2);
+  --unlink-success: #34d399;
+  --unlink-success-light: rgba(52, 211, 153, 0.2);
+  --unlink-warning: #fbbf24;
+  --unlink-warning-light: rgba(251, 191, 36, 0.2);
+  --unlink-danger: #f87171;
+  --unlink-danger-light: rgba(248, 113, 113, 0.2);
+  --unlink-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --unlink-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --unlink-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Transiciones suaves */
+.unlink-gps-container,
+.unlink-gps-card,
+.unlink-gps-btn,
+.unlink-modal {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Contenedor principal */
+.unlink-gps-container {
+  max-width: 500px;
+  margin: 0 auto;
+  margin-bottom: 100px;
+  padding: 1.5rem;
+}
+
+/* Tarjeta principal */
+.unlink-gps-card {
+  background: var(--unlink-bg-card);
+  border: 1px solid var(--unlink-border);
+  border-radius: var(--unlink-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--unlink-shadow-sm);
+  transition: all 0.3s ease;
+}
+
+/* Header de la tarjeta */
+.unlink-gps-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.unlink-gps-icon {
+  font-size: 1.25rem;
+  color: var(--unlink-accent);
+}
+
+.unlink-gps-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+}
+
+/* Contenido de la tarjeta */
+.unlink-gps-content {
+  margin-bottom: 1.5rem;
+}
+
+.device-info {
+  background: var(--unlink-bg-secondary);
+  padding: 0.75rem;
+  border-radius: var(--unlink-radius-md);
+  border: 1px solid var(--unlink-border);
+}
+
+.device-label {
+  display: block;
+  font-weight: 600;
+  color: var(--unlink-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.device-id-unlink {
+  display: block;
+  font-family: 'Poppins', monospace;
+  background: var(--unlink-bg-primary);
+  padding: 0.5rem;
+  border-radius: var(--unlink-radius-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+  border: 1px solid var(--unlink-border);
+}
+
+
+
+/* Estado sin dispositivo */
+.no-device {
+  text-align: center;
+  padding: 2rem;
+  color: var(--unlink-text-muted);
+}
+
+.no-device-icon {
+  font-size: 3rem;
+  color: var(--unlink-success);
+  margin-bottom: 1rem;
+}
+
+.no-device-text {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Botón de acción */
+.unlink-gps-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.unlink-gps-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--unlink-accent) !important;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--unlink-radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.unlink-gps-btn:hover:not(.disabled) {
+  background: var(--unlink-accent-hover);
+}
+
+.unlink-gps-btn.disabled {
+  background: var(--unlink-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Spinner de carga */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal de confirmación */
+.unlink-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+.unlink-modal {
+  background: var(--unlink-bg-card);
+  border-radius: var(--unlink-radius-lg);
+  max-width: 350px;
+  width: 90%;
+  box-shadow: var(--unlink-shadow-md);
+  border: 1px solid var(--unlink-border);
+  animation: slideIn 0.3s ease;
+  overflow: hidden;
+}
+
+.unlink-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--unlink-border);
+  background: var(--unlink-bg-secondary);
+}
+
+.unlink-modal-header h3 {
+  margin: 0;
+  color: var(--unlink-text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.unlink-modal-close {
+  background: none;
+  border: none;
+  color: var(--unlink-text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.unlink-modal-close:hover {
+  background: var(--unlink-bg-primary);
+  color: var(--unlink-text-primary);
+}
+
+.unlink-modal-content {
+  padding: 1rem;
+  text-align: center;
+}
+
+.unlink-modal-warning-icon {
+  font-size: 2rem;
+  color: var(--unlink-warning);
+  margin-bottom: 0.75rem;
+}
+
+.unlink-modal-content p {
+  margin: 0 0 0.75rem 0;
+  color: var(--unlink-text-secondary);
+  line-height: 1.5;
+}
+
+.unlink-modal-device-id {
+  font-family: 'Courier New', monospace;
+  background: var(--unlink-bg-secondary);
+  padding: 0.5rem;
+  border-radius: var(--unlink-radius-sm);
+  color: var(--unlink-accent);
+  font-weight: 500;
+  border: 1px solid var(--unlink-border);
+  font-size: 0.9rem;
+}
+
+.unlink-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-top: 1px solid var(--unlink-border);
+  background: var(--unlink-bg-secondary);
+}
+
+.unlink-modal-cancel,
+.unlink-modal-confirm {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--unlink-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.unlink-modal-cancel {
+  background: var(--unlink-bg-primary);
+  color: var(--unlink-text-secondary);
+  border: 1px solid var(--unlink-border);
+}
+
+.unlink-modal-cancel:hover {
+  background: var(--unlink-bg-secondary);
+  color: var(--unlink-text-primary);
+}
+
+.unlink-modal-confirm {
+  background: var(--unlink-accent) !important;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.unlink-modal-confirm:hover:not(:disabled) {
+  background: var(--unlink-accent-hover);
+}
+
+.unlink-modal-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Notificaciones */
+.unlink-notification {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  padding: 1rem 1.5rem;
+  border-radius: var(--unlink-radius-md);
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000000;
+  box-shadow: var(--unlink-shadow-lg);
+  animation: slideInRight 0.3s ease;
+  max-width: 400px;
+}
+
+.unlink-notification.success {
+  background: var(--unlink-success);
+}
+
+.unlink-notification.error {
+  background: var(--unlink-danger);
+}
+
+.unlink-notification.warning {
+  background: var(--unlink-warning);
+}
+
+.notification-message {
+  flex: 1;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .unlink-gps-container {
+    padding: 1rem;
+  }
+
+  .unlink-gps-card {
+    padding: 1.5rem;
+  }
+
+  .unlink-gps-title {
+    font-size: 1.25rem;
+  }
+
+  .unlink-modal {
+    width: 95%;
+  }
+
+  .unlink-modal-actions {
+    flex-direction: column;
+  }
+
+  .unlink-notification {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .unlink-gps-card {
+    padding: 1rem;
+  }
+
+  .unlink-gps-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .unlink-gps-btn {
+    min-width: 100%;
+  }
+}
+
+/* Soporte para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --unlink-bg-primary: #121212;
+    --unlink-bg-secondary: #1e1e1e;
+    --unlink-bg-card: #1e1e1e;
+    --unlink-text-primary: #f8f9fa;
+    --unlink-text-secondary: #e2e8f0;
+    --unlink-text-muted: #a0aec0;
+    --unlink-border: #2d3748;
+  }
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .unlink-gps-container,
+  .unlink-gps-card,
+  .unlink-gps-btn,
+  .unlink-modal {
+    transition: none;
+  }
+
+  .loading-spinner,
+  .loading-spinner-small {
+    animation: none;
+  }
+}
