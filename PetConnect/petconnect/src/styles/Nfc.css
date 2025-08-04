@@ -124,6 +124,7 @@
   max-width: 450px;
   width: 100%;
   overflow: hidden;
+  scroll-behavior: smooth;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 

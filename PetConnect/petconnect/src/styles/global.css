@@ -15,6 +15,7 @@ body {
   box-shadow: none;
   outline: none;
   transition: background 0.3s ease, color 0.3s ease, filter 0.3s ease;
+  scroll-behavior: smooth;
 }
 
 :root {

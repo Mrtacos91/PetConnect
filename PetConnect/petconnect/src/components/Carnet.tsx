@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../styles/Carnet.css";
-import { FaTrashAlt, FaEye, FaDownload, FaTimes, FaPlus } from "react-icons/fa";
+import {
+  FaTrashAlt,
+  FaEye,
+  FaDownload,
+  FaTimes,
+  FaPlus,
+  FaChevronDown,
+} from "react-icons/fa";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { getAllPetsByUserId, PetData } from "../services/pet-service";
+import supabase from "../supabase";
+import { useNavigate } from "react-router-dom";
 
 interface VaccinationRecord {
   id: number;
@@ -41,6 +51,7 @@ const Carnet: React.FC<CarnetProps> = ({
   onUpdateCarnet,
   onDeleteCarnet,
 }) => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(loading);
   const [showPreview, setShowPreview] = useState(false);
@@ -48,12 +59,125 @@ const Carnet: React.FC<CarnetProps> = ({
   const [petSpeciesValue, setPetSpeciesValue] = useState(petSpecies);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [carnetToDelete, setCarnetToDelete] = useState<number | null>(null);
+  const [showPetModal, setShowPetModal] = useState(false);
+  const [userPets, setUserPets] = useState<PetData[]>([]);
+  const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
+  const [isLoadingPets, setIsLoadingPets] = useState(false);
+  const [petError, setPetError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
+
+  // Verificar autenticación y cargar datos del usuario
+  useEffect(() => {
+    const checkUser = async () => {
+      // 1️⃣ OBTENER USUARIO DE SUPABASE AUTH
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getUser();
+
+      if (sessionError || !sessionData?.user) {
+        console.error("Error de sesión:", sessionError);
+        navigate("/login");
+        return;
+      }
+
+      try {
+        // 2️⃣ BUSCAR ID LOCAL EN TABLA "Users"
+        const { data: localUser, error: localUserError } = await supabase
+          .from("Users")
+          .select("id")
+          .eq("email", sessionData.user.email)
+          .single();
+
+        if (localUserError || !localUser?.id) {
+          console.error("Error al obtener el usuario local:", localUserError);
+          setIsLoading(false);
+          return;
+        }
+
+        if (!localUser || !localUser.id) {
+          console.error("No se encontró el usuario local");
+          setIsLoading(false);
+          return;
+        }
+
+        // Establecer el ID del usuario
+        const userId = localUser.id;
+        setUserId(userId);
+        console.log("ID del usuario local:", userId);
+
+        // Cargar las mascotas del usuario
+        await loadUserPets(userId);
+      } catch (e) {
+        console.error("Error al identificar el usuario:", e);
+        setIsLoading(false);
+      }
+    };
+
+    checkUser();
+  }, [navigate]);
+
+  // Load user pets when modal is opened
+  useEffect(() => {
+    const loadPets = async () => {
+      if (showPetModal && userId) {
+        setIsLoadingPets(true);
+        setPetError(null);
+        try {
+          await loadUserPets(userId);
+        } catch (error) {
+          console.error("Error loading pets:", error);
+          setPetError("No se pudieron cargar las mascotas. Intente de nuevo.");
+        } finally {
+          setIsLoadingPets(false);
+        }
+      }
+    };
+
+    loadPets();
+  }, [showPetModal, userId]);
 
   // Actualizar los estados cuando cambien las props
   useEffect(() => {
     setPetNameValue(petName);
     setPetSpeciesValue(petSpecies);
   }, [petName, petSpecies]);
+
+  // Cargar mascotas del usuario
+  const loadUserPets = async (userId: number) => {
+    try {
+      const pets = await getAllPetsByUserId(userId.toString());
+      if (!pets || pets.length === 0) {
+        setPetError(
+          "No hay mascotas registradas. Por favor, agregue una mascota primero."
+        );
+        setUserPets([]);
+      } else {
+        setUserPets(pets);
+        setPetError(null);
+      }
+      return pets;
+    } catch (error) {
+      console.error("Error al cargar las mascotas:", error);
+      setPetError("Error al cargar las mascotas. Intente de nuevo.");
+      setUserPets([]);
+      throw error;
+    }
+  };
+
+  // Manejar la selección de mascota
+  const handlePetSelect = (pet: PetData) => {
+    if (pet) {
+      setSelectedPet(pet);
+      setPetNameValue(pet.pet_name || "");
+      setPetSpeciesValue(pet.pet_type || "");
+      setShowPetModal(false);
+
+      // Update the form data if in edit mode
+      if (isEditing && onUpdateCarnet && carnetId) {
+        onUpdateCarnet(carnetId, pet.pet_name || "", pet.pet_type || "");
+      }
+    }
+  };
+
   const [records, setRecords] = useState<VaccinationRecord[]>([
     {
       id: 1,
@@ -257,25 +381,80 @@ const Carnet: React.FC<CarnetProps> = ({
               <label>
                 <strong>Mascota:</strong>
               </label>
-              <input
-                type="text"
-                className="input-field"
-                value={petNameValue}
-                onChange={(e) => setPetNameValue(e.target.value)}
-                placeholder="Nombre de la mascota"
-              />
-            </div>
-            <div className="form-field">
-              <label>
-                <strong>Especie:</strong>
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                value={petSpeciesValue}
-                onChange={(e) => setPetSpeciesValue(e.target.value)}
-                placeholder="Especie de la mascota"
-              />
+              <div className="form-group">
+                <label>Mascota:</label>
+                <div
+                  className="pet-selector"
+                  onClick={() => setShowPetModal(true)}
+                >
+                  {selectedPet ? (
+                    <div className="selected-pet">
+                      <span className="pet-name-display">
+                        {selectedPet.pet_name}
+                      </span>
+                      <span className="pet-type-display">
+                        {selectedPet.pet_type}
+                      </span>
+                      <FaChevronDown className="dropdown-icon" />
+                    </div>
+                  ) : (
+                    <div className="select-pet-placeholder">
+                      Seleccionar mascota
+                      <FaChevronDown className="dropdown-icon" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              {showPetModal && (
+                <div
+                  className="pet-modal-overlay"
+                  onClick={() => setShowPetModal(false)}
+                >
+                  <div
+                    className="pet-modal"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="pet-modal-header">
+                      <h3>Seleccionar Mascota</h3>
+                      <button
+                        className="close-button"
+                        onClick={() => setShowPetModal(false)}
+                      >
+                        <FaTimes />
+                      </button>
+                    </div>
+                    <div className="pet-list">
+                      {isLoadingPets ? (
+                        <div className="loading-pets">Cargando mascotas...</div>
+                      ) : petError ? (
+                        <div className="pet-error">{petError}</div>
+                      ) : userPets.length > 0 ? (
+                        <>
+                          {userPets.map((pet) => (
+                            <div
+                              key={pet.id}
+                              className={`pet-item ${
+                                selectedPet?.id === pet.id ? "selected" : ""
+                              }`}
+                              onClick={() => handlePetSelect(pet)}
+                            >
+                              <div className="pet-name">{pet.pet_name}</div>
+                              <div className="pet-type">
+                                {pet.pet_type} •{" "}
+                                {pet.pet_breed || "Sin raza especificada"}
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        <div className="no-pets">
+                          No hay mascotas registradas
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         ) : (

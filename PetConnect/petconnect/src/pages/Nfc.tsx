@@ -654,14 +654,12 @@ const Nfc: React.FC = () => {
   // Maneja el clic del botón "Guardar Cambios"
   // Obtener la URL asignada de la base de datos
 
-  // Handle view plate button click
   const handleViewPlate = async (e: React.MouseEvent) => {
     e.preventDefault();
     console.log("Botón Ver placa clickeado");
     setIsLoading(true);
 
     try {
-      // Si hay un resultado de escaneo, mostrarlo directamente
       if (scanResult) {
         console.log("Usando scanResult:", scanResult);
         setPublicUrl(scanResult);

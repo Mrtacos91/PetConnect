@@ -1,16 +1,18 @@
 /* Estilos para la página de Carnet */
 :root {
-  --primary-color: #4a6fa5;
-  --secondary-color: #6c757d;
+  --primary-color: #000000;
+  --secondary-color: #555555;
   --success-color: #28a745;
   --danger-color: #dc3545;
-  --light-gray: #f8f9fa;
-  --border-color: #dee2e6;
-  --shadow-default: rgba(0, 0, 0, 0.1);
-  --card-background: #ffffff;
-  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.993);
+  --light-gray: #f0f0f0;
+  --border-color: #927e4d;
+  --shadow-default: rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   --border-radius: 8px;
   --transition: all 0.3s ease;
+  --accent-color: #000000;
+  --text-primary: #000000;
+  --text-secondary: #555555;
 }
 
 .carnet-container {
@@ -46,6 +48,210 @@
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+/* Pet Selection Modal */
+.pet-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.pet-modal {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--card-shadow);
+  animation: modalFadeIn 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pet-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--card-background);
+  z-index: 10;
+  background: var(--card-background);
+}
+
+.pet-modal-header h3 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: var(--light-gray);
+}
+
+.pet-list {
+  padding: 15px;
+}
+
+.pet-item {
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background-color: var(--card-background);
+}
+
+.pet-item:hover {
+  background-color: var(--light-gray);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pet-item.selected {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-left: 3px solid var(--accent-color);
+  font-weight: 500;
+}
+
+.pet-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.pet-type {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.no-pets,
+.loading-pets,
+.pet-error {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.loading-pets {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+.loading-pets::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pet-error {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-radius: 4px;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border-left: 3px solid #e74c3c;
+}
+
+/* Pet Selector */
+.pet-selector {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--card-background);
+  transition: all 0.3s ease;
+  min-width: 250px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  min-height: 50px;
+}
+
+.pet-name-display {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.pet-type-display {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  opacity: 0.9;
+}
+
+.pet-selector:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.select-pet-placeholder {
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.dropdown-icon {
+  margin-left: 10px;
+  color: #6c757d;
+  font-size: 0.8rem;
 }
 
 /* Información de la mascota */
@@ -1211,7 +1417,7 @@ select.input-field {
   align-items: center;
   margin-bottom: 30px;
   margin-top: 30px;
-  padding-top:  80px;
+  padding-top: 80px;
   padding-bottom: 15px;
   border-bottom: 1px solid var(--border-color);
 }

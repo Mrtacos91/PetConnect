@@ -145,6 +145,60 @@
   cursor: pointer;
 }
 
+/* Install Button */
+.sidebar-install {
+  margin: 8px 5px;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+}
+
+.sidebar-install::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 0;
+  background-color: #10b981;
+  transition: height 0.3s ease;
+  border-radius: 0 0 4px 4px;
+}
+
+.sidebar-install:hover {
+  background: linear-gradient(135deg, var(--accent-hover), var(--accent-color));
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.sidebar-install:hover::before {
+  height: 100%;
+  cursor: pointer;
+}
+
+.sidebar-install .sidebar-menu-link {
+  color: white;
+}
+
+.sidebar-install .sidebar-icon {
+  color: white;
+}
+
+.sidebar-install:hover .sidebar-icon {
+  transform: scale(1.1);
+  color: white;
+  cursor: pointer;
+}
+
+.sidebar-install:hover .sidebar-link-text {
+  transform: translateX(4px);
+  color: white;
+  cursor: pointer;
+}
+
 /* Logout Button */
 .sidebar-logout {
   margin-top: auto;
@@ -308,4 +362,284 @@
     transform: scale(0.98);
     background-color: var(--card-background-active);
   }
+}
+
+/* Install Instructions Modal */
+.install-instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+  pointer-events: auto;
+  isolation: isolate;
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+}
+
+.install-instructions-modal {
+  background: var(--card-background);
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  animation: slideIn 0.3s ease;
+  z-index: 1000000;
+  position: relative;
+  isolation: isolate;
+}
+
+.install-instructions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--card-background);
+  border-radius: 16px 16px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.install-instructions-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.install-instructions-actions {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--card-background);
+  text-align: center;
+}
+
+.install-pwa-btn {
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.install-pwa-btn:hover {
+  background: linear-gradient(135deg, var(--accent-hover), var(--accent-color));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.install-pwa-btn:active {
+  transform: translateY(0);
+}
+
+.install-or-text {
+  margin: 16px 0 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.install-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.install-close-btn:hover {
+  background: var(--card-background-hover);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.install-instructions-content {
+  padding: 24px;
+}
+
+.install-step {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--card-background-hover);
+  border-radius: 12px;
+  border-left: 4px solid var(--accent-color);
+}
+
+.install-step h4 {
+  margin: 0 0 12px 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.install-step ol {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+
+.install-step li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.install-step strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.install-benefits {
+  margin-top: 24px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.install-benefits h4 {
+  margin: 0 0 12px 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.install-benefits ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+
+.install-benefits li {
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+  .install-instructions-modal {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .install-instructions-header {
+    padding: 16px 20px;
+  }
+
+  .install-instructions-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .install-instructions-actions {
+    padding: 16px 20px;
+  }
+
+  .install-pwa-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .install-instructions-content {
+    padding: 20px;
+  }
+
+  .install-step {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .install-step h4 {
+    font-size: 1rem;
+  }
+
+  .install-benefits {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .install-instructions-modal {
+    width: 98%;
+    max-height: 90vh;
+  }
+
+  .install-instructions-header {
+    padding: 12px 16px;
+  }
+
+  .install-instructions-actions {
+    padding: 12px 16px;
+  }
+
+  .install-pwa-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .install-instructions-content {
+    padding: 16px;
+  }
+
+  .install-step {
+    padding: 10px;
+  }
+}
+
+/* Force modal to be above sidebar */
+.install-instructions-overlay,
+.install-instructions-modal {
+  z-index: 999999 !important;
+}
+
+.install-instructions-overlay {
+  z-index: 999999 !important;
+}
+
+.install-instructions-modal {
+  z-index: 1000000 !important;
 }
