@@ -80,9 +80,6 @@ const Nfc: React.FC = () => {
   const [nfcReader, setNfcReader] = useState<any>(null);
   const [readResult, setReadResult] = useState<string | null>(null);
 
-  // **NUEVO**: Estados para mejorar la experiencia del escáner QR
-  const [qrScanInstructions, setQrScanInstructions] = useState<string>("");
-
   // Estados del formulario (sin cambios)
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPet, setSelectedPet] = useState<string>("");
@@ -306,36 +303,20 @@ const Nfc: React.FC = () => {
     }
   };
 
-  // Lógica del escáner QR mejorada para códigos QR pequeños
+  // Lógica del escáner QR
   useEffect(() => {
     if (modalView === "qr" && isModalOpen && !scanResult) {
-      let scanner: any = null;
-      
-      try {
-        // Configuración optimizada para códigos QR pequeños de placas NFC
-        scanner = new Html5QrcodeScanner(
-          "qr-scanner-container",
-          {
-            // Área de escaneo más pequeña para mejor precisión en QR pequeños
-            qrbox: { width: 200, height: 200 },
-            // FPS más alto para mejor detección
-            fps: 10,
-            // Configuración de cámara optimizada
-            facingMode: { exact: "environment" },
-            // Configuraciones adicionales para mejor detección
-            aspectRatio: 1.0,
-            // Habilitar zoom para códigos QR muy pequeños
-            experimentalFeatures: {
-              useBarCodeDetectorIfSupported: true
-            }
-          },
-          false
-        );
-
+      const scanner = new Html5QrcodeScanner(
+        "qr-scanner-container",
+        {
+          qrbox: { width: 250, height: 250 },
+          fps: 5,
+          facingMode: { exact: "environment" },
+        },
+        false
+      );
       const onScanSuccess = async (result: string) => {
-        if (scanner) {
-          scanner.clear();
-        }
+        scanner.clear();
 
         // Guardar la URL absoluta escaneada
         const urlToSet = result.trim();
@@ -360,123 +341,19 @@ const Nfc: React.FC = () => {
         setPublicUrl(urlToSet);
 
         // Guardar la URL absoluta en la base de datos
-        const success = await updateUrlAsigned(urlToSet);
-        if (!success) {
-          // Si falla al guardar, no cerrar el modal
-          return;
-        }
+        await updateUrlAsigned(urlToSet);
 
         setTimeout(() => {
           setIsModalOpen(false);
         }, 1500);
       };
 
-      const onScanFailure = (error: any) => {
-        // Manejar errores de escaneo de manera más silenciosa
-        console.log("Error de escaneo QR:", error);
-        // No mostrar alertas para errores de escaneo normales
-      };
-
-      // Función para mostrar instrucciones dinámicas basadas en la calidad del video
-      const showDynamicInstructions = () => {
-        try {
-          const videoElement = document.querySelector('#qr-scanner-container video') as HTMLVideoElement;
-          if (videoElement && videoElement.readyState >= 2 && videoElement.videoWidth > 0) {
-            // Detectar si el video está enfocado correctamente
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              // Usar un tamaño más pequeño para mejor rendimiento
-              const sampleSize = Math.min(100, videoElement.videoWidth, videoElement.videoHeight);
-              canvas.width = sampleSize;
-              canvas.height = sampleSize;
-              
-              // Dibujar solo una porción central del video
-              const centerX = Math.max(0, (videoElement.videoWidth - sampleSize) / 2);
-              const centerY = Math.max(0, (videoElement.videoHeight - sampleSize) / 2);
-              
-              ctx.drawImage(
-                videoElement, 
-                centerX, centerY, sampleSize, sampleSize,
-                0, 0, sampleSize, sampleSize
-              );
-              
-              // Analizar la nitidez del video usando un algoritmo simplificado
-              const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
-              const data = imageData.data;
-              let sharpnessScore = 0;
-              
-              // Calcular la varianza de los píxeles (indicador de nitidez)
-              for (let y = 1; y < sampleSize - 1; y++) {
-                for (let x = 1; x < sampleSize - 1; x++) {
-                  const idx = (y * sampleSize + x) * 4;
-                  const current = data[idx];
-                  const right = data[idx + 4];
-                  const bottom = data[idx + sampleSize * 4];
-                  
-                  // Calcular gradiente
-                  const gradientX = Math.abs(current - right);
-                  const gradientY = Math.abs(current - bottom);
-                  sharpnessScore += gradientX + gradientY;
-                }
-              }
-              
-              // Normalizar el score
-              sharpnessScore = sharpnessScore / (sampleSize * sampleSize);
-              
-              // Mostrar instrucciones basadas en la nitidez
-              if (sharpnessScore < 5) {
-                setQrScanInstructions("🔍 Acerca más la cámara al código QR");
-              } else if (sharpnessScore > 30) {
-                setQrScanInstructions("📏 Aléjate un poco de la cámara");
-              } else if (sharpnessScore > 15) {
-                setQrScanInstructions("✅ Distancia correcta - mantén estable");
-              } else {
-                setQrScanInstructions("🎯 Perfecto - intenta escanear ahora");
-              }
-            }
-          } else {
-            // Si el video no está listo, mostrar instrucción genérica
-            setQrScanInstructions("📱 Inicializando cámara...");
-          }
-        } catch (error) {
-          // Si hay error en el análisis, mostrar instrucción genérica
-          console.log("Error en análisis de calidad:", error);
-          setQrScanInstructions("📱 Posiciona la cámara sobre el código QR");
-        }
-      };
-
-      // Configurar un intervalo para verificar la calidad del video
-      const qualityInterval = setInterval(showDynamicInstructions, 1000);
-
-      try {
-        scanner.render(onScanSuccess, onScanFailure);
-      } catch (error) {
-        console.error("Error al inicializar el escáner QR:", error);
-        setAlert({
-          message: "Error al inicializar la cámara. Por favor, intenta de nuevo.",
-          type: "error",
-        });
-        return;
-      }
-      
+      scanner.render(onScanSuccess, () => {});
       return () => {
-        clearInterval(qualityInterval);
-        setQrScanInstructions("");
-        if (scanner) {
-          scanner.clear().catch(() => {});
-        }
+        scanner.clear().catch(() => {});
       };
-      
-    } catch (error) {
-      console.error("Error al crear el escáner QR:", error);
-      setAlert({
-        message: "Error al inicializar el escáner QR. Por favor, intenta de nuevo.",
-        type: "error",
-      });
     }
-    }
-  }, [modalView, isModalOpen, scanResult, user, localUserId, updateUrlAsigned]);
+  }, [modalView, isModalOpen, scanResult, user, localUserId]);
 
   // Verificar soporte NFC
   const checkNfcSupport = () => {
@@ -1310,14 +1187,11 @@ const Nfc: React.FC = () => {
       {isModalOpen && (
         <div
           className="modal-overlay"
-                          onClick={() => {
-                  // Si se cierra el modal mientras está en modo QR, limpiar scanResult para permitir reintentos
-                  if (modalView === "qr") {
-                    setScanResult(null);
-                    setQrScanInstructions("");
-                  }
-                  setIsModalOpen(false);
-                }}
+          onClick={() => {
+            // Si se cierra el modal mientras está en modo QR, limpiar scanResult para permitir reintentos
+            if (modalView === "qr") setScanResult(null);
+            setIsModalOpen(false);
+          }}
         >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
@@ -1336,10 +1210,7 @@ const Nfc: React.FC = () => {
                 className="modal-close-button"
                 onClick={() => {
                   // Si se cierra el modal desde la X en modo QR, limpiar scanResult
-                  if (modalView === "qr") {
-                    setScanResult(null);
-                    setQrScanInstructions("");
-                  }
+                  if (modalView === "qr") setScanResult(null);
                   setIsModalOpen(false);
                 }}
               >
@@ -1387,27 +1258,7 @@ const Nfc: React.FC = () => {
                 </div>
               )}
               {modalView === "qr" && !scanResult && (
-                <div className="qr-scan-container">
-                  <div className="qr-instructions">
-                    <h3>📱 Escaneo de Código QR</h3>
-                    <p>Para escanear códigos QR pequeños de placas NFC:</p>
-                    <ul>
-                      <li>🔍 Acerca la cámara a 10-15 cm del código QR</li>
-                      <li>📐 Mantén la cámara estable y paralela a la superficie</li>
-                      <li>💡 Asegúrate de tener buena iluminación</li>
-                      <li>🎯 Centra el código QR en el área de escaneo</li>
-                    </ul>
-                  </div>
-                  
-                  {/* Indicador dinámico de calidad de enfoque */}
-                  {qrScanInstructions && (
-                    <div className="qr-focus-indicator">
-                      <span className="focus-message">{qrScanInstructions}</span>
-                    </div>
-                  )}
-                  
-                  <div id="qr-scanner-container"></div>
-                </div>
+                <div id="qr-scanner-container"></div>
               )}
               {modalView === "read" && (
                 <div className="nfc-read-modal">
