@@ -986,6 +986,8 @@ button:disabled {
   align-items: center;
   z-index: 1000;
   backdrop-filter: blur(4px);
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
 }
 
 .modal-content {
@@ -1078,14 +1080,203 @@ button:disabled {
   color: var(--primary-color);
 }
 
-/* Estilos para el lector QR */
+/* Estilos para el lector QR optimizado para códigos QR pequeños */
 #qr-scanner-container {
   width: 100%;
-  min-height: 300px;
-  background: #f0f0f0;
-  border-radius: 8px;
+  min-height: 400px;
+  max-height: 500px;
+  background: #000000;
+  border-radius: 12px;
   overflow: hidden;
   margin: 1rem 0;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Mejoras para el video del escáner */
+#qr-scanner-container video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Estilos para el área de escaneo */
+#qr-scanner-container .qr-scanner__scan_region {
+  border: 2px solid var(--primary-color) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Indicador de enfoque para códigos QR pequeños */
+#qr-scanner-container::before {
+  content: "🔍 Acerca la cámara al código QR";
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  #qr-scanner-container {
+    min-height: 350px;
+    max-height: 450px;
+  }
+  
+  #qr-scanner-container::before {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  #qr-scanner-container {
+    min-height: 300px;
+    max-height: 400px;
+  }
+}
+
+/* Estilos para el contenedor de escaneo QR con instrucciones */
+.qr-scan-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.qr-instructions {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.qr-instructions h3 {
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qr-instructions p {
+  color: var(--text-secondary);
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+}
+
+.qr-instructions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.qr-instructions li {
+  color: var(--text-primary);
+  margin: 0.5rem 0;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.qr-instructions li:last-child {
+  border-bottom: none;
+}
+
+/* Responsive para las instrucciones */
+@media (max-width: 768px) {
+  .qr-instructions {
+    padding: 1rem;
+  }
+  
+  .qr-instructions h3 {
+    font-size: 1.1rem;
+  }
+  
+  .qr-instructions li {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-instructions {
+    padding: 0.75rem;
+  }
+  
+  .qr-instructions h3 {
+    font-size: 1rem;
+  }
+  
+  .qr-instructions li {
+    font-size: 0.8rem;
+  }
+}
+
+/* Indicador dinámico de calidad de enfoque */
+.qr-focus-indicator {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  margin: 1rem 0;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.focus-message {
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.5);
+  }
+  100% {
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  }
+}
+
+/* Responsive para el indicador de enfoque */
+@media (max-width: 768px) {
+  .qr-focus-indicator {
+    padding: 0.6rem 1.2rem;
+  }
+  
+  .focus-message {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-focus-indicator {
+    padding: 0.5rem 1rem;
+  }
+  
+  .focus-message {
+    font-size: 0.85rem;
+  }
 }
 
 /* Estilos para el lector NFC */
