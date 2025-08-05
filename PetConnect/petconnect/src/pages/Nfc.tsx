@@ -318,15 +318,15 @@ const Nfc: React.FC = () => {
           {
             qrbox: { width: 150, height: 150 }, // Tamaño reducido para mejor detección de QRs pequeños
             fps: 10, // Aumentado para mejor respuesta
-            facingMode: { exact: "environment" },
             aspectRatio: 1.0, // Relación de aspecto cuadrada para mejor enfoque
             experimentalFeatures: {
               useBarCodeDetectorIfSupported: true, // Usar detector de códigos de barras nativo si está disponible
             },
-            rememberLastUsedCamera: false, // Recordar la última cámara usada
+            rememberLastUsedCamera: false, // No recordar la última cámara usada
             // Eliminamos supportedScanTypes que causaba el error
             focusMode: "continuous", // Enfoque continuo para mejor detección
             videoConstraints: {
+              facingMode: { exact: "environment" }, // Forzar cámara trasera estrictamente
               width: { min: 640, ideal: 1280, max: 1920 },
               height: { min: 480, ideal: 720, max: 1080 },
               advanced: [{ focusMode: "continuous" }]
