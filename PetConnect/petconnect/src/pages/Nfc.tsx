@@ -306,154 +306,51 @@ const Nfc: React.FC = () => {
   // Lógica del escáner QR
   useEffect(() => {
     if (modalView === "qr" && isModalOpen && !scanResult) {
-      // Bandera para controlar el ciclo de vida del componente
-      let isMounted = true;
-      
-      // Retraso para asegurar que el DOM esté listo
-      setTimeout(() => {
-        if (!isMounted) return;
-        
-        const scanner = new Html5QrcodeScanner(
-          "qr-scanner-container",
-          {
-            qrbox: { width: 200, height: 200 }, // Tamaño reducido para mejor detección de QRs pequeños
-            fps: 10, // Aumentado para mejor respuesta
-            facingMode: { exact: "environment" },
-            aspectRatio: 1.0, // Relación de aspecto cuadrada para mejor enfoque
-            experimentalFeatures: {
-              useBarCodeDetectorIfSupported: true, // Usar detector de códigos de barras nativo si está disponible
-            },
-            rememberLastUsedCamera: true, // Recordar la última cámara usada
-            // Eliminamos supportedScanTypes que causaba el error
-            focusMode: "continuous", // Enfoque continuo para mejor detección
-            videoConstraints: {
-              width: { min: 640, ideal: 1280, max: 1920 },
-              height: { min: 480, ideal: 720, max: 1080 },
-              advanced: [{ focusMode: "continuous" }]
-            }
-          },
-          false
-        );
-        
-        // Función para mostrar instrucciones dinámicas al usuario
-        const showDynamicInstructions = () => {
-          if (!isMounted) return;
-          
-          const container = document.getElementById("qr-scanner-container");
-          if (!container) return;
-          
-          const instructionsDiv = document.createElement("div");
-          instructionsDiv.className = "qr-instructions";
-          instructionsDiv.style.position = "absolute";
-          instructionsDiv.style.bottom = "10px";
-          instructionsDiv.style.left = "0";
-          instructionsDiv.style.right = "0";
-          instructionsDiv.style.textAlign = "center";
-          instructionsDiv.style.color = "white";
-          instructionsDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
-          instructionsDiv.style.padding = "10px";
-          instructionsDiv.style.zIndex = "1000";
-          instructionsDiv.innerHTML = "Acerca la cámara al código QR y mantén estable";
-          
-          container.appendChild(instructionsDiv);
-          
-          // Actualizar instrucciones basadas en la detección
-          let lastUpdate = Date.now();
-          const updateInterval = setInterval(() => {
-            if (!isMounted) {
-              clearInterval(updateInterval);
-              return;
-            }
-            
-            const now = Date.now();
-            if (now - lastUpdate > 1000) { // Actualizar cada segundo
-              lastUpdate = now;
-              const videoElement = container.querySelector("video");
-              if (videoElement) {
-                // Alternar entre diferentes consejos
-                const tips = [
-                  "Acerca la cámara al código QR y mantén estable",
-                  "Asegúrate de tener buena iluminación",
-                  "Evita sombras sobre el código QR",
-                  "Mantén la cámara paralela al código"
-                ];
-                const tipIndex = Math.floor((now / 3000) % tips.length);
-                instructionsDiv.innerHTML = tips[tipIndex];
-              }
-            }
-          }, 1000);
-        };
-        
-        // Mostrar instrucciones después de un breve retraso
-        setTimeout(showDynamicInstructions, 1000);
-        
-        const onScanSuccess = async (result: string) => {
-          if (!isMounted) return;
-          
-          scanner.clear();
+      const scanner = new Html5QrcodeScanner(
+        "qr-scanner-container",
+        {
+          qrbox: { width: 250, height: 250 },
+          fps: 5,
+          facingMode: { exact: "environment" },
+        },
+        false
+      );
+      const onScanSuccess = async (result: string) => {
+        scanner.clear();
 
-          // Guardar la URL absoluta escaneada
-          const urlToSet = result.trim();
+        // Guardar la URL absoluta escaneada
+        const urlToSet = result.trim();
 
-          // Validar que sea una URL absoluta válida
-          try {
-            new URL(urlToSet);
-          } catch (e) {
-            setAlert({
-              message: `El QR debe contener una URL absoluta válida, por ejemplo: https://petconnectmx.netlify.app/public/pet/1`,
-              type: "error",
-            });
-            return;
-          }
-
-          setScanResult(urlToSet);
+        // Validar que sea una URL absoluta válida
+        try {
+          new URL(urlToSet);
+        } catch (e) {
           setAlert({
-            message: `URL escaneada exitosamente y guardada en tu perfil.`,
-            type: "success",
+            message: `El QR debe contener una URL absoluta válida, por ejemplo: https://petconnectmx.netlify.app/public/pet/1`,
+            type: "error",
           });
-
-          setPublicUrl(urlToSet);
-
-          // Guardar la URL absoluta en la base de datos
-          await updateUrlAsigned(urlToSet);
-
-          setTimeout(() => {
-            setIsModalOpen(false);
-          }, 1500);
-        };
-        
-        const onScanFailure = (error: any) => {
-          // Solo registrar errores críticos, no los normales de detección
-          if (error && error.name !== "NotFoundException") {
-            console.error("Error de escaneo QR:", error);
-          }
-        };
-
-        scanner.render(onScanSuccess, onScanFailure);
-      }, 500); // Retraso para asegurar que el DOM esté listo
-      
-      return () => {
-        isMounted = false;
-        // Intentar limpiar el escáner si existe
-        const scannerElement = document.getElementById("qr-scanner-container");
-        if (scannerElement) {
-          // Limpiar cualquier contenido dinámico
-          const instructions = scannerElement.querySelector(".qr-instructions");
-          if (instructions) {
-            instructions.remove();
-          }
-          
-          try {
-            const html5QrcodeScanner = new Html5QrcodeScanner(
-              "qr-scanner-container",
-              { fps: 1 },
-              false
-            );
-            html5QrcodeScanner.clear();
-          } catch (error) {
-            console.error("Error al limpiar el escáner:", error);
-          }
+          return;
         }
+
+        setScanResult(urlToSet);
+        setAlert({
+          message: `URL escaneada exitosamente y guardada en tu perfil.`,
+          type: "success",
+        });
+
+        setPublicUrl(urlToSet);
+
+        // Guardar la URL absoluta en la base de datos
+        await updateUrlAsigned(urlToSet);
+
+        setTimeout(() => {
+          setIsModalOpen(false);
+        }, 1500);
+      };
+
+      scanner.render(onScanSuccess, () => {});
+      return () => {
+        scanner.clear().catch(() => {});
       };
     }
   }, [modalView, isModalOpen, scanResult, user, localUserId]);
