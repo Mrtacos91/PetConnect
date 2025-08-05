@@ -323,7 +323,7 @@ const Nfc: React.FC = () => {
             experimentalFeatures: {
               useBarCodeDetectorIfSupported: true, // Usar detector de códigos de barras nativo si está disponible
             },
-            rememberLastUsedCamera: true, // Recordar la última cámara usada
+            rememberLastUsedCamera: false, // Recordar la última cámara usada
             // Eliminamos supportedScanTypes que causaba el error
             focusMode: "continuous", // Enfoque continuo para mejor detección
             videoConstraints: {
