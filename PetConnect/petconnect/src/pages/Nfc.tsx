@@ -316,7 +316,7 @@ const Nfc: React.FC = () => {
         const scanner = new Html5QrcodeScanner(
           "qr-scanner-container",
           {
-            qrbox: { width: 150, height: 150 }, // Tamaño reducido para mejor detección de QRs pequeños
+            qrbox: { width: 140, height: 140 }, // Tamaño reducido para mejor detección de QRs pequeños
             fps: 10, // Aumentado para mejor respuesta
             aspectRatio: 1.0, // Relación de aspecto cuadrada para mejor enfoque
             experimentalFeatures: {
