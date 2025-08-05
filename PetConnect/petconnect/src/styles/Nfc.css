@@ -986,6 +986,8 @@ button:disabled {
   align-items: center;
   z-index: 1000;
   backdrop-filter: blur(4px);
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
 }
 
 .modal-content {
